@@ -68,8 +68,9 @@ public class TestRepositoryTest
             {new Strategy(){Name = "DD"},0.12593985}
         }
         });
-        for(int i = 0; i < 2; ++i){
-            CollectionAssert.AreEquivalent(expected[i].Vector,actual[i].Vector);
+        for (int i = 0; i < 2; ++i)
+        {
+            CollectionAssert.AreEquivalent(expected[i].Vector, actual[i].Vector);
         }
     }
 }

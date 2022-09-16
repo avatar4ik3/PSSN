@@ -1,17 +1,25 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using PSSN.Api.Data;
 using PSSN.Common;
 
 namespace PSSN.Api.Controllers;
 
+[ApiController]
+[Route("api/v1/")]
 public class TestApiGraphController : ControllerBase
 {
-    public TestApiGraphController()
+    private readonly ITestRepository _repository;
+    private readonly IMapper _mapper;
+
+    public TestApiGraphController(ITestRepository repository, IMapper mapper)
     {
-        
+        this._repository = repository;
+        this._mapper = mapper;
     }
 
-    [HttpGet]
-    public ActionResult<IEnumerable<VectorResponse>> GetVectors(){
-        return Ok();
+    [HttpGet("test")]
+    public async Task<ActionResult<IEnumerable<VectorResponse>>> GetVectorsAsync(){
+        return Ok(_mapper.Map<VectorResponse>(await _repository.GetVectors()));
     }
 }
