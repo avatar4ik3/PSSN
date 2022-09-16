@@ -4,21 +4,21 @@ using PSSN.Api.Model;
 
 namespace PSSN.ApiTests;
 
-[TestClass]
+
 public class TestRepositoryTest
 {
     private readonly Mock<IFileLineProvider> _provider = new Mock<IFileLineProvider>();
 
-    [TestInitialize()]
-    public void Init()
+    public TestRepositoryTest()
     {
-        _provider.Setup(x => x.ReadAllLines(It.IsAny<string>())).Returns(Task.FromResult<string[]>(new string[]{
+         _provider.Setup(x => x.ReadAllLines(It.IsAny<string>())).Returns(Task.FromResult<string[]>(new string[]{
                 "C	CTT	CRTT	CD	DC	DTT	DRTT	DD",
                 "0	0,125	0,125	0,125	0,125	0,125	0,125	0,125	0,125",
                 "1	0,12406015	0,124530075	0,124530075	0,125	0,125	0,125469925	0,125469925	0,12593985",
         }));
     }
-    [TestMethod]
+
+    [Fact]
     public async Task Repo_Count_ShouldBe2()
     {
 
@@ -26,10 +26,10 @@ public class TestRepositoryTest
 
         var actual = await repo.GetVectors();
 
-        Assert.AreEqual(actual.Count(), 2);
+        Assert.Equal(actual.Count(), 2);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Repo_Values_AsExpected()
     {
 
@@ -70,7 +70,17 @@ public class TestRepositoryTest
         });
         for (int i = 0; i < 2; ++i)
         {
-            CollectionAssert.AreEquivalent(expected[i].Vector, actual[i].Vector);
+            Assert.Equal(expected[i].Vector, actual[i].Vector);
         }
+    }
+
+    [Fact]
+    public async Task Repository_ReadsFile_Succesfull()
+    {
+        // Given
+        var repo = new TestRepository("vectors.txt",new FileLineProvider());
+        // When
+        var actual = await repo.GetVectors();
+        // Then
     }
 }

@@ -20,6 +20,6 @@ public class TestApiGraphController : ControllerBase
 
     [HttpGet("test")]
     public async Task<ActionResult<IEnumerable<VectorResponse>>> GetVectorsAsync(){
-        return Ok(_mapper.Map<VectorResponse>(await _repository.GetVectors()));
+        return Ok(_mapper.Map<IEnumerable<VectorResponse>>(await _repository.GetVectors()));
     }
 }
