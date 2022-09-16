@@ -21,11 +21,13 @@ public class IntegrationTests
     public async Task App_StatusCode_ShouldBe_Ok()
     {
         var response = await _client.GetAsync("/api/v1/test");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
         using var sr = new StreamReader(await response.Content.ReadAsStreamAsync());
         var src = await sr.ReadToEndAsync();
-        var desir = JsonSerializer.Deserialize<IEnumerable<VectorResponse>>(src);
-        desir.Count().Should().Be(2001);
+        var data = JsonSerializer.Deserialize<IEnumerable<VectorResponse>>(src);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        data.Count().Should().Be(2001);
     }
 
 }
