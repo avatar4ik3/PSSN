@@ -23,8 +23,20 @@ public class Program
 
         builder.Services.AddSwaggerGen();
 
+        // builder.Services.AddCors(options => {
+        //     options.
+        // })
         var app = builder.Build();
-
+        app.UseCors(cfg => {
+            cfg.AllowAnyHeader();
+            cfg.AllowAnyMethod();
+            cfg.AllowAnyOrigin();
+            // cfg.AllowCredentials();
+        });
+        // app.Use(async (content,next) => {
+        //     content.Request.Headers.Add("Content-Security-Policy", "default-src 'self';");
+        //     await next();
+        // });
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -32,7 +44,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
