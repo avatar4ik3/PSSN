@@ -1,0 +1,38 @@
+html{
+    display: contents;
+    height: 100%;
+}
+body{
+    height: 100%;
+}
+
+main{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: [col-start]1fr [col-2] 5fr [col-end];
+    grid-auto-rows: 1fr 2fr;
+    grid-template-areas:
+        "req resp"
+        "gr gr";
+    justify-content: center;
+    align-content: center;
+}
+
+.request{
+    grid-area: req;
+    border : solid black;
+}
+
+.response{
+    grid-area: resp;
+    border : solid red;
+
+}
+
+.graph{
+    grid-area: gr;
+    border : solid green;
+
+}
