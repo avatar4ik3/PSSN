@@ -28,12 +28,19 @@ main{
 .response{
     grid-area: resp;
     border : solid red;
+}
 
+.response ol{
+    overflow: hidden;
+    overflow-y: scroll;
+    width: 100%;
 }
 
 .graph{
     grid-area: gr;
     border : solid green;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .btn{
