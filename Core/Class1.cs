@@ -1,4 +1,4 @@
-﻿namespace Core;
+﻿namespace PSSN.Core;
 public class Class1
 {
 

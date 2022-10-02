@@ -2,7 +2,6 @@ namespace PSSN.Api;
 using PSSN.Api.Data;
 using Serilog;
 
-
 public class Program
 {
     private static void Main(string[] args)
@@ -16,10 +15,11 @@ public class Program
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddTransient(cfg => "vectors.txt");
-        builder.Services.AddTransient<ITestRepository, TestRepository>();
-        builder.Services.AddTransient<IFileLineProvider, FileLineProvider>();
+        builder.Services.AddScoped(cfg => "vectors.txt");
+        builder.Services.AddScoped<ITestRepository, TestRepository>();
+        builder.Services.AddScoped<IFileLineProvider, FileLineProvider>();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddScoped<IServiceCollection>(_ => builder.Services);
 
         builder.Services.AddSwaggerGen();
 
