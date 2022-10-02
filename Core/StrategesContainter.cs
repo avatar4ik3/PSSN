@@ -9,16 +9,16 @@ public class StrategesContainter
 
     public StrategesContainter()
     {
-        var types =
+        var instances = 
             from assembly in AppDomain.CurrentDomain.GetAssemblies()
             from type in assembly.GetTypes()
             where typeof(IStrategy).IsAssignableFrom(type)
             where type.IsAbstract is false
             where type.IsInterface is false
-            select type;
+            select Activator.CreateInstance(type) as IStrategy;
+
         
-        foreach(var type in types){
-            var instance = Activator.CreateInstance(type) as IStrategy;
+        foreach(var instance in instances){
             _strategies.Add(instance.Name,instance);
         }
         
