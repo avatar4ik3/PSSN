@@ -1,6 +1,8 @@
 namespace PSSN.Api;
 using PSSN.Api.Data;
 using Serilog;
+using PSSN.Core;
+using PSSN.Core.Matrices;
 
 public class Program
 {
@@ -20,6 +22,8 @@ public class Program
         builder.Services.AddScoped<IFileLineProvider, FileLineProvider>();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddScoped<IServiceCollection>(_ => builder.Services);
+        builder.Services.AddSingleton<StrategesContainer>();
+        builder.Services.AddSingleton<PopulationFrequency>();
 
         builder.Services.AddSwaggerGen();
 

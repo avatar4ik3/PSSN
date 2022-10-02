@@ -9,7 +9,7 @@ public class StratifiesContainerTests
     public void TestName()
     {
         // Given
-        var container = new StrategesContainter();
+        var container = new StrategesContainer();
         // When
     
         // Then

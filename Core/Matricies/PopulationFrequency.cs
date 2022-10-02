@@ -8,7 +8,7 @@ public class PopulationFrequency
     public List<Vector<double>> listP = new List<Vector<double>>();
     public List<Vector<double>> Research(int cycleCount, params IStrategy[] strategies){
         
-        var vectorElls = Vector<double>.Build.Dense(strategies.Length,(i) => 1 / strategies.Length);
+        var vectorElls = Vector<double>.Build.Dense(strategies.Length,(i) => 1.0 / strategies.Length);
         listP.Add(vectorElls);
 
         var A = Matrix<double>.Build.DenseOfArray(MatrixPayoff.buildInStageMatrix(strategies));

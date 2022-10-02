@@ -3,11 +3,11 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core;
 
-public class StrategesContainter
+public class StrategesContainer
 {
     private readonly Dictionary<string, IStrategy> _strategies = new Dictionary<string, IStrategy>();
 
-    public StrategesContainter()
+    public StrategesContainer()
     {
         var instances = 
             from assembly in AppDomain.CurrentDomain.GetAssemblies()
