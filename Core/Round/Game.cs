@@ -1,15 +1,18 @@
 using PSSN.Core.Matrices;
 using PSSN.Core.States;
 
-namespace PSSN.Core;
+namespace PSSN.Core.Round;
 
 public class Game
 {
+    private readonly double[][] _payoffs;
+
     public GameState State { get; set; }
 
-    public Game(PlayerState ps1, PlayerState ps2)
+    public Game(PlayerState ps1, PlayerState ps2,double[][] payoffs)
     {
         State = new GameState(ps1, ps2);
+        this._payoffs = payoffs;
     }
 
     public void Play()
@@ -26,19 +29,19 @@ public class Game
     {
         var b1 = State.ps1.currentBehaviour;
         var b2 = State.ps2.currentBehaviour;
-        var win1 = MatrixPayoff.payoffs[(int)b1,(int)b2];
-        var win2 = MatrixPayoff.payoffs[(int)b2,(int)b1];
+        var win1 = _payoffs[(int)b1][(int)b2];
+        var win2 = _payoffs[(int)b2][(int)b1];
         var map = new PlayerPayoffRoundMap();
-        map[State.ps1.p] = (int)win1;
-        map[State.ps2.p] = (int)win2;
+        map[State.ps1.p] = win1;
+        map[State.ps2.p] = win2;
         return map;
     }
 
-    public int getP1TotalScore(){
+    public double getP1TotalScore(){
         return State.ps1.scores;
     }
 
-    public int getP2TotalScore(){
+    public double getP2TotalScore(){
         return State.ps2.scores;
     }
 }

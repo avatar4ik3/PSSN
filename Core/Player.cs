@@ -19,4 +19,7 @@ public class Player
     {
         return HashCode.Combine(Name);
     }
+
+    public static Player P2 => new Player("p2");
+    public static Player P1 => new Player("p1");
 }

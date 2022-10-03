@@ -2,9 +2,9 @@ namespace PSSN.Core.Matrices;
 
 public class PlayerPayoffRoundMap
 {
-    private Dictionary<Player,int> payoffs {get;init; }= new Dictionary<Player, int>();
+    private Dictionary<Player,double> payoffs {get;init; }= new Dictionary<Player, double>();
 
-    public int this[Player player]{
+    public double this[Player player]{
         get => payoffs[player];
         set => payoffs[player] = value;
     }

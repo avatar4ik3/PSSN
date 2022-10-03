@@ -1,3 +1,5 @@
+using PSSN.Core.Round;
+
 namespace PSSN.Core.Strategies;
 
 public abstract class FixedCTTStrategyBase : StrategyBase

@@ -1,3 +1,5 @@
+using PSSN.Core.Round;
+
 namespace PSSN.Core.States;
 
 public interface State
