@@ -3,6 +3,7 @@ using PSSN.Api.Data;
 using Serilog;
 using PSSN.Core;
 using PSSN.Core.Matrices;
+using PSSN.Core.Round;
 
 public class Program
 {
@@ -23,7 +24,8 @@ public class Program
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddScoped<IServiceCollection>(_ => builder.Services);
         builder.Services.AddSingleton<StrategesContainer>();
-        builder.Services.AddSingleton<PopulationFrequency>();
+        builder.Services.AddScoped<PopulationFrequency>();
+        builder.Services.AddScoped<IGameRunner,ParallelGameRunner>();
 
         builder.Services.AddSwaggerGen();
 

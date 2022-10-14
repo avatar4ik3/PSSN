@@ -24,6 +24,17 @@ public static class GameRunnerResultExtensions{
         }
         return tree;
     }
+
+    public static double[,] ToArray(this IEnumerable<GameRunnerResult> result){
+        var strategies = result.Select(r => r.S1).ToHashSet();
+        var array = new double[strategies.Count,strategies.Count];
+        var dic = strategies.Zip(Enumerable.Range(0,strategies.Count)).ToDictionary(i => i.First,s => s.Second);
+        foreach(var r in result){
+            array[dic[r.S1],dic[r.S2]] = r.Score1;
+            array[dic[r.S2],dic[r.S1]] = r.Score2;
+        }
+        return array;
+    }
 }
 
 public class TreeGameRunnerResult

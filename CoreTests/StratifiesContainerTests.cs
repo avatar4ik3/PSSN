@@ -1,4 +1,6 @@
 using PSSN.Core;
+using PSSN.Core.Strategies;
+
 namespace PSSN.CoreTests;
 
 
@@ -21,6 +23,9 @@ public class StratifiesContainerTests
         Assert.Equal("CTT4D",container["CTT4D"].Name);
         Assert.Equal("CTT5D",container["CTT5D"].Name);
         Assert.Equal("CTT6D",container["CTT6D"].Name);
+
+
+        Assert.Equal(container["CD"],new CD());
         
     }    
 }
