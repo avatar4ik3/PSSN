@@ -3,25 +3,26 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.States;
 
-public class PlayerState : State
+public class PlayerState : IPlayerState
 {
-    public Player p {get;init;}
+    public Player p { get; init; }
 
-    public IStrategy strategy {get;set;}
-    public List<Behavior> previousBehaviours {get;set;} = new List<Behavior>();
+    public IStrategy strategy { get; set; }
+    public List<Behavior> previousBehaviours { get; set; } = new List<Behavior>();
 
-    public Behavior currentBehaviour {get;set;}
+    public Behavior currentBehaviour { get; set; }
 
-    public PlayerState(Player p, IStrategy strategy) {
+    public PlayerState(Player p, IStrategy strategy)
+    {
         this.p = p;
         this.strategy = strategy;
         this.currentBehaviour = strategy.StartBehaviour;
     }
 
-    public double scores {get;set;}
+    public double Scores { get; set; }
     public bool Next(Game g)
     {
-        currentBehaviour = strategy.GetNextBehaviour(g,p);
+        currentBehaviour = strategy.GetNextBehaviour(g, p);
         return true;
     }
 }

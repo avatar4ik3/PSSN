@@ -7,5 +7,5 @@ public interface IStrategy
     public Behavior StartBehaviour { get; init; }
     public Behavior GetNextBehaviour(Game g, Player p);
 
-    public String Name { get; init; }
+    public String Name { get; set; }
 }

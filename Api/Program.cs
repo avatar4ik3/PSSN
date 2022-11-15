@@ -25,7 +25,7 @@ public class Program
         builder.Services.AddScoped<IServiceCollection>(_ => builder.Services);
         builder.Services.AddSingleton<StrategesContainer>();
         builder.Services.AddScoped<PopulationFrequency>();
-        builder.Services.AddScoped<IGameRunner,ParallelGameRunner>();
+        builder.Services.AddScoped<IGameRunner, SimpleGameRunner>();
 
         builder.Services.AddSwaggerGen();
 
@@ -33,7 +33,8 @@ public class Program
         //     options.
         // })
         var app = builder.Build();
-        app.UseCors(cfg => {
+        app.UseCors(cfg =>
+        {
             cfg.AllowAnyHeader();
             cfg.AllowAnyMethod();
             cfg.AllowAnyOrigin();

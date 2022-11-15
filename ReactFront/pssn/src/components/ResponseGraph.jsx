@@ -5,10 +5,14 @@ const ResponseGraph = ({ lines }) => {
   useEffect(() => {
     DrawGraph(GetSeries(lines));
   }, []);
-  return <div id="grp"></div>;
+  const style1 = {
+    height: "500px",
+  };
+  return <div id="grp" style={style1}></div>;
 };
 
 function GetSeries(lines) {
+  console.log(lines);
   let names = [];
   let series = [];
   for (let [key, value] of Object.entries(lines[0].values)) {
@@ -25,6 +29,7 @@ function GetSeries(lines) {
   let result = [];
   for (let name of names) {
     result.push({ name: name, points: series[name] });
+    console.log({ name: name, points: series[name] });
   }
   return result;
 }
