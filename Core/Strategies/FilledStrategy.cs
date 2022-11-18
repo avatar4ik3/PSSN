@@ -25,7 +25,7 @@ public sealed class FilledStrategy : IStrategy
 
     public FilledStrategy()
     {
-
+        this.behaviours = new();
     }
 
     public Behavior GetNextBehaviour(Game g, Player p)
