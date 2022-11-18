@@ -2,7 +2,7 @@ using PSSN.Core.Round;
 
 namespace PSSN.Core.Strategies;
 
-public interface IStrategy
+public interface IStrategy //: IEquatable<IStrategy>
 {
     public Behavior StartBehaviour { get; init; }
     public Behavior GetNextBehaviour(Game g, Player p);

@@ -9,6 +9,8 @@ public interface IPlayerState
     public IStrategy strategy { get; set; }
     public List<Behavior> previousBehaviours { get; set; }
     public Behavior currentBehaviour { get; set; }
-    public double Scores { get; set; }
+    public Dictionary<int, double> Scores { get; set; }
+
+    public Double TotalScore { get; set; }
     public bool Next(Game g);
 }

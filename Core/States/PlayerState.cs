@@ -12,6 +12,10 @@ public class PlayerState : IPlayerState
 
     public Behavior currentBehaviour { get; set; }
 
+    public Dictionary<int, double> Scores { get; set; } = new Dictionary<int, double>();
+
+    public double TotalScore { get => Scores.Values.Sum(); set => _ = value; }
+
     public PlayerState(Player p, IStrategy strategy)
     {
         this.p = p;
@@ -19,7 +23,7 @@ public class PlayerState : IPlayerState
         this.currentBehaviour = strategy.StartBehaviour;
     }
 
-    public double Scores { get; set; }
+
     public bool Next(Game g)
     {
         currentBehaviour = strategy.GetNextBehaviour(g, p);

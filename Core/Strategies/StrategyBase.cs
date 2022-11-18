@@ -14,10 +14,19 @@ public abstract class StrategyBase : IStrategy
                Name == @base.Name;
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(StartBehaviour, Name);
-    }
+    // public bool Equals(IStrategy? other)
+    // {
+    //     if (other is IStrategy o)
+    //     {
+    //         return o.GetType() == this.GetType() && this.Name == o.Name;
+    //     }
+    //     return false;
+    // }
+
+    // public override int GetHashCode()
+    // {
+    //     return HashCode.Combine(StartBehaviour, Name);
+    // }
 
     public abstract Behavior GetNextBehaviour(Game g, Player p);
 

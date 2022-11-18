@@ -27,8 +27,8 @@ public class CrossingOverTests
             }
         ));
         // When
-        var op = new CrossingOverOperator(2);
-        var res = op.Operate(new[] { s1, s2 });
+        var op = new DefaultCrossingOverOperator(2);
+        var res = op.Operate(s1, s2);
         // Then
         var r1 = (FilledStrategy)res.ElementAt(0);
         var r2 = (FilledStrategy)res.ElementAt(1);
@@ -58,8 +58,8 @@ public class CrossingOverTests
             }
         ));
         // When
-        var op = new CrossingOverOperator(3);
-        var res = op.Operate(new[] { s1, s2 });
+        var op = new DefaultCrossingOverOperator(3);
+        var res = op.Operate(s1, s2);
         // Then
         var r1 = (FilledStrategy)res.ElementAt(0);
         var r2 = (FilledStrategy)res.ElementAt(1);

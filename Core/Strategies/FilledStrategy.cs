@@ -4,11 +4,11 @@ namespace PSSN.Core.Strategies;
 
 public sealed class FilledStrategy : IStrategy
 {
-    public Dictionary<int, Behavior> behaviours { get; set; } = null;
+    public Dictionary<int, Behavior> behaviours { get; set; }
     public Behavior StartBehaviour
     {
         get => behaviours[0];
-        init => behaviours[0] = value;
+        init => throw new NotSupportedException();
     }
     public String Name { get; set; } = "Filled";
 
@@ -32,4 +32,18 @@ public sealed class FilledStrategy : IStrategy
     {
         return behaviours[g.State.currentStage];
     }
+
+    // public bool Equals(IStrategy? other)
+    // {
+    //     if (other is FilledStrategy o)
+    //     {
+    //         return this.Name.Equals(o.Name);
+    //     }
+    //     return false;
+    // }
+
+    // public override int GetHashCode()
+    // {
+    //     return HashCode.Combine(behaviours, Name);
+    // }
 }

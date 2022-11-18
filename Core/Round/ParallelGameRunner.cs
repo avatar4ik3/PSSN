@@ -11,9 +11,9 @@ public class ParallelGameRunner : IGameRunner
 
     }
 
-    public IEnumerable<GameRunnerResult> Play(IEnumerable<IStrategy> strategies, double[][] payoffs)
+    public TreeGameRunnerResult Play(IEnumerable<IStrategy> strategies, double[][] payoffs)
     {
-        ConcurrentBag<GameRunnerResult> results = new();
+        TreeGameRunnerResult results = new();
         var combos = new Combinations<IStrategy>(strategies, 2, GenerateOption.WithRepetition);
         Parallel.ForEach(combos,
             new ParallelOptions()
@@ -30,13 +30,8 @@ public class ParallelGameRunner : IGameRunner
                     payoffs
                 );
                 game.Play();
-                var result = new GameRunnerResult(
-                        s1,
-                        s2,
-                        game.getP1TotalScore(),
-                        game.getP2TotalScore()
-                );
-                results.Add(result);
+                results[s1, s2] = game.P1Scores();
+                results[s2, s1] = game.P2Scores();
             });
         return results;
     }

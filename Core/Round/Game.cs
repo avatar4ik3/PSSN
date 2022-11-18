@@ -17,11 +17,12 @@ public class Game
 
     public void Play()
     {
-        while (State.Next(this) is false)
+        while (State.IsOver() is false)
         {
+            State.Next(this);
             PlayerPayoffRoundMap payoffs = GetPayoffs();
-            State.ps1.Scores += (payoffs[State.ps1.p]);
-            State.ps2.Scores += (payoffs[State.ps2.p]);
+            State.ps1.Scores[State.currentStage] = (payoffs[State.ps1.p]);
+            State.ps2.Scores[State.currentStage] = (payoffs[State.ps2.p]);
         }
     }
 
@@ -32,12 +33,12 @@ public class Game
         return map;
     }
 
-    public double getP1TotalScore()
+    public Dictionary<int, double> P1Scores()
     {
         return State.ps1.Scores;
     }
 
-    public double getP2TotalScore()
+    public Dictionary<int, double> P2Scores()
     {
         return State.ps2.Scores;
     }

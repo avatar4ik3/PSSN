@@ -4,6 +4,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.Matrices;
 
+[Obsolete($"{nameof(MatrixPayoff)} is deprecated, use {nameof(IGameRunner)} and pass payoffs as a parameter instead.")]
 public class MatrixPayoff
 {
     // TODO: 6/4/2021 сделать нормальное заполнение матрицы!!!!!!!!!! 
@@ -13,7 +14,7 @@ public class MatrixPayoff
     {
         payoffs = arr;
     }
-
+    [Obsolete($"{nameof(buildInStageMatrix)} is deprecated, use {nameof(IGameRunner)} instead.")]
     public static double[,] buildInStageMatrix(params IStrategy[] strategies)
     {
         int outSize = strategies.Length;
@@ -26,13 +27,13 @@ public class MatrixPayoff
             for (int s2Index = 0; s2Index < outSize; s2Index++)
             {
                 var strategy2 = strategies[s2Index];
-                var ps1 = new PlayerState(p1, (StrategyBase)strategy1);
-                var ps2 = new PlayerState(p2, (StrategyBase)strategy2);
+                var ps1 = new PlayerState(p1, strategy1);
+                var ps2 = new PlayerState(p2, strategy2);
                 Game g = new Game(ps1, ps2, new double[][]{
                     new double[]{4,0},new double[]{6,1}
                 });
                 g.Play();
-                outArr[s1Index, s2Index] = g.getP1TotalScore();
+                outArr[s1Index, s2Index] = g.P1Scores().Values.Sum();
             }
         }
         return outArr;

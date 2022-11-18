@@ -11,6 +11,7 @@ public class GameState
 
     public int maxCountOfStages { get; init; } = 0;
 
+    //TODO переделать наконец в то что количество стадий настраиваемо
     public GameState(IPlayerState ps1, IPlayerState ps2, int countOfStages = 5)
     {
         this.ps1 = ps1;
@@ -33,13 +34,13 @@ public class GameState
         return null;
     }
 
-    private bool IsOver()
+    public bool IsOver()
     {
         var res = currentStage > maxCountOfStages;
-        currentStage++;
+
         return res;
     }
-    public bool Next(Game g)
+    public void Next(Game g)
     {
         if (currentStage == 0)
         {
@@ -54,7 +55,6 @@ public class GameState
             ps1.Next(g);
             ps2.Next(g);
         }
-
-        return IsOver();
+        currentStage++;
     }
 }

@@ -25,15 +25,15 @@ public class SimpleGameRunnerTests
         );
 
         var expected = MatrixPayoff.buildInStageMatrix(strategies);
-        var actual = results.ToTree();
+        var actual = results;
         // Then
         var c = new AlwaysC();
         var d = new AlwaysD();
 
-        Assert.Equal(actual[c,c],expected[0,0]);
-        Assert.Equal(actual[c,d],expected[0,1]);
-        Assert.Equal(actual[d,c],expected[1,0]);
-        Assert.Equal(actual[d,d],expected[1,1]);
+        Assert.Equal(actual[c, c].Values.Sum(), expected[0, 0]);
+        Assert.Equal(actual[c, d].Values.Sum(), expected[0, 1]);
+        Assert.Equal(actual[d, c].Values.Sum(), expected[1, 0]);
+        Assert.Equal(actual[d, d].Values.Sum(), expected[1, 1]);
 
     }
 }

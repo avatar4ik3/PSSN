@@ -3,7 +3,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.Operators;
 
-public class MutationOperator : IOperator<FilledStrategy, IStrategy>
+public class MutationOperator
 {
     private readonly double _chance;
     private readonly Random _random;

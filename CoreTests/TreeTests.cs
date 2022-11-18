@@ -1,17 +1,12 @@
-using Moq;
-using PSSN.Core.States;
 using PSSN.Core;
-using PSSN.Core.Operators;
-using FluentAssertions;
 using PSSN.Core.Round;
-using System;
 
 namespace PSSN.CoreTests;
 
-public class SelectionTests
+public class TreeTests
 {
     [Fact]
-    public void TestName1()
+    public void TestName()
     {
         // Given
         Random random = new Random();
@@ -31,16 +26,6 @@ public class SelectionTests
             }
         }
 
-        var op = new SelectionOperator(10, random, tree);
-        // When
-        var result = op.Operate(population);
-        //Then
-        var maxValue = tree
-            .Select(kvp1 => kvp1.Value
-                            .Select(kvp2 => kvp2.Value.Values
-                            .Sum())
-                    .Sum())
-            .Max();
-        SelectionOperator.GetTotalScore(result, tree).Should().BeApproximately(maxValue, 1e-5);
+        var a = 2;
     }
 }
