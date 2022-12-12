@@ -37,7 +37,7 @@ public class ResearchController : ControllerBase
         try
         {
             var strategies = strats.Select(s => _container[s]);
-            return Ok(await RunGamePhase(k, r, strategies, po));
+            return Ok((await RunGamePhase(k, r, strategies, po)).Matrix);
         }
         catch (Exception e)
         {
