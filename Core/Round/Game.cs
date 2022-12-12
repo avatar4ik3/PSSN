@@ -9,9 +9,9 @@ public class Game
 
     public GameState State { get; set; }
 
-    public Game(IPlayerState ps1, IPlayerState ps2, double[][] payoffs)
+    public Game(GameState initialState, double[][] payoffs)
     {
-        State = new GameState(ps1, ps2);
+        State = initialState;
         this._payoffs = payoffs;
     }
 
@@ -19,10 +19,10 @@ public class Game
     {
         while (State.IsOver() is false)
         {
-            State.Next(this);
             PlayerPayoffRoundMap payoffs = GetPayoffs();
             State.ps1.Scores[State.currentStage] = (payoffs[State.ps1.p]);
             State.ps2.Scores[State.currentStage] = (payoffs[State.ps2.p]);
+            State.Next(this);
         }
     }
 

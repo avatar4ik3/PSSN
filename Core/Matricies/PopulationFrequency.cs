@@ -15,14 +15,15 @@ public class PopulationFrequency
         this._runner = runner;
     }
 
-    [Obsolete($"{nameof(Research)} is deprecated, use {nameof(IGameRunner)} instead.")]
-    public List<Vector<double>> Research(int cycleCount, IStrategy[] strategies, double[][] payoffs)
+    public (List<Vector<double>> Vectors, TreeGameRunnerResult Tree) Research(int cycleCount, int roundCount, IStrategy[] strategies, double[][] payoffs)
     {
 
         var vectorElls = Vector<double>.Build.Dense(strategies.Length, (i) => 1.0 / strategies.Length);
         listP.Add(vectorElls);
 
-        var A = Matrix<double>.Build.DenseOfArray(_runner.Play(strategies, payoffs).ToArray());
+        var tree = _runner.Play(strategies, payoffs, roundCount);
+
+        var A = Matrix<double>.Build.DenseOfArray(tree.ToArray());
 
         for (int cycleIndexer = 1; cycleIndexer <= cycleCount; ++cycleIndexer)
         {
@@ -37,6 +38,6 @@ public class PopulationFrequency
 
             listP.Add(PElls);
         }
-        return listP;
+        return new(listP, tree);
     }
 }

@@ -26,8 +26,8 @@ public class DefaultCrossingOverOperator
             dic2[i] = s1.behaviours[i];
         }
 
-        var ns1 = new FilledStrategy(dic1);
-        var ns2 = new FilledStrategy(dic2);
+        var ns1 = new FilledStrategy(dic1, s1.Name);
+        var ns2 = new FilledStrategy(dic2, s2.Name);
 
         return new List<FilledStrategy>() { ns1, ns2 };
     }

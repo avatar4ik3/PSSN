@@ -28,7 +28,7 @@ public class MutationOperator
                 behs[key] = strategy.behaviours[key];
             }
         }
-        return new FilledStrategy(behs);
+        return new FilledStrategy(behs, strategy.Name);
     }
 
     public IEnumerable<IStrategy> Operate(IEnumerable<FilledStrategy> strategies)

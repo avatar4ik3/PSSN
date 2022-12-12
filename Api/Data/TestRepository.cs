@@ -1,4 +1,5 @@
 using PSSN.Api.Model;
+using PSSN.Core.Strategies;
 
 namespace PSSN.Api.Data;
 
@@ -19,7 +20,7 @@ public sealed class TestRepository : ITestRepository
     {
 
         var lines = await _provider.ReadAllLines(_file);
-        var columnNames = lines[0].Split().Where(str => String.IsNullOrWhiteSpace(str) is false && String.IsNullOrWhiteSpace(str) is false).Select(x => new Strategy { Name = x }).ToList();
+        var columnNames = lines[0].Split().Where(str => String.IsNullOrWhiteSpace(str) is false && String.IsNullOrWhiteSpace(str) is false).Select(x => new FilledStrategy(null!) { Name = x }).ToList();
 
         Console.WriteLine("Started");
         var result = new List<ResultVector>();
@@ -29,7 +30,7 @@ public sealed class TestRepository : ITestRepository
             //  _logger.LogDebug("Current Line {line}", i);
             var vector = new ResultVector() { Stage = i - 1, Vector = new() };
             var values = lines[i].Split().Skip(1).Select(x => Double.Parse(x)).ToList();
-            for (int column = 0; column < columnNames.Count; ++column)
+            for (int column = 0; column < columnNames.Count(); ++column)
             {
                 vector.Vector.Add(columnNames[column], values[column]);
             }

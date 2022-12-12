@@ -19,7 +19,7 @@ public class LazyTests
             new double[][]{
                 new double []{4,0},
                 new double[]{6,1}
-            });
+            }, 6);
         // Then
         var selectionOpeerator = new SelectionOperator(k: 4, random, results);
         var selected1 = selectionOpeerator.Operate(population);

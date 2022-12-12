@@ -84,6 +84,9 @@ public class BestScorePickerCrossingOverOperator
         {
             newS1dic[index] = s2.behaviours[index];
         }
-        return new[] { new FilledStrategy(newS1dic), new FilledStrategy(newS2dic) };
+
+        var newS1 = new FilledStrategy(newS1dic, s1.Name);
+        var newS2 = new FilledStrategy(newS2dic, s2.Name);
+        return new[] { newS1, newS2 };
     }
 }

@@ -36,7 +36,7 @@ public class GameState
 
     public bool IsOver()
     {
-        var res = currentStage > maxCountOfStages;
+        var res = currentStage >= maxCountOfStages;
 
         return res;
     }

@@ -22,6 +22,7 @@ public class SimpleGameRunnerTests
             new double[][]{
                 new double []{4,0},new double[]{6,1}
             }
+            , 6
         );
 
         var expected = MatrixPayoff.buildInStageMatrix(strategies);

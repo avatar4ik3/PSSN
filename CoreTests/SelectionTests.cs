@@ -35,7 +35,7 @@ public class SelectionTests
         // When
         var result = op.Operate(population);
         //Then
-        var maxValue = tree
+        var maxValue = tree.map
             .Select(kvp1 => kvp1.Value
                             .Select(kvp2 => kvp2.Value.Values
                             .Sum())

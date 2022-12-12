@@ -18,6 +18,7 @@ public class Program
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddScoped<Random>();
         builder.Services.AddScoped(cfg => "vectors.txt");
         builder.Services.AddScoped<ITestRepository, TestRepository>();
         builder.Services.AddScoped<IFileLineProvider, FileLineProvider>();

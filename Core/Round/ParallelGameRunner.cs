@@ -11,7 +11,7 @@ public class ParallelGameRunner : IGameRunner
 
     }
 
-    public TreeGameRunnerResult Play(IEnumerable<IStrategy> strategies, double[][] payoffs)
+    public TreeGameRunnerResult Play(IEnumerable<IStrategy> strategies, double[][] payoffs, int rounds)
     {
         TreeGameRunnerResult results = new();
         var combos = new Combinations<IStrategy>(strategies, 2, GenerateOption.WithRepetition);
@@ -25,9 +25,11 @@ public class ParallelGameRunner : IGameRunner
                 var s1 = combo[0];
                 var s2 = combo[1];
                 var game = new Game(
-                    new States.PlayerState(Player.P1, s1),
-                    new States.PlayerState(Player.P2, s2),
-                    payoffs
+                    new States.GameState(
+                        new States.PlayerState(Player.P1, s1),
+                        new States.PlayerState(Player.P2, s2),
+                        rounds
+                    ), payoffs
                 );
                 game.Play();
                 results[s1, s2] = game.P1Scores();

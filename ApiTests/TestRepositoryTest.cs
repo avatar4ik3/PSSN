@@ -1,6 +1,7 @@
 using Moq;
 using PSSN.Api.Data;
 using PSSN.Api.Model;
+using PSSN.Core.Strategies;
 
 namespace PSSN.ApiTests;
 
@@ -11,7 +12,7 @@ public class TestRepositoryTest
 
     public TestRepositoryTest()
     {
-         _provider.Setup(x => x.ReadAllLines(It.IsAny<string>())).Returns(Task.FromResult<string[]>(new string[]{
+        _provider.Setup(x => x.ReadAllLines(It.IsAny<string>())).Returns(Task.FromResult<string[]>(new string[]{
                 "C	CTT	CRTT	CD	DC	DTT	DRTT	DD",
                 "0	0,125	0,125	0,125	0,125	0,125	0,125	0,125	0,125",
                 "1	0,12406015	0,124530075	0,124530075	0,125	0,125	0,125469925	0,125469925	0,12593985",
@@ -42,30 +43,30 @@ public class TestRepositoryTest
         expected.Add(new ResultVector
         {
             Stage = 0,
-            Vector = new Dictionary<Strategy, double>{
-            {new Strategy(){Name = "C"},0.125},
-            {new Strategy(){Name = "CTT"},0.125},
-            {new Strategy(){Name = "CRTT"},0.125},
-            {new Strategy(){Name = "CD"},0.125},
-            {new Strategy(){Name = "DC"},0.125},
-            {new Strategy(){Name = "DTT"},0.125},
-            {new Strategy(){Name = "DRTT"},0.125},
-            {new Strategy(){Name = "DD"},0.125}
+            Vector = new Dictionary<IStrategy, double>{
+            {new EmptyStrategy(){Name = "C"},0.125},
+            {new EmptyStrategy(){Name = "CTT"},0.125},
+            {new EmptyStrategy(){Name = "CRTT"},0.125},
+            {new EmptyStrategy(){Name = "CD"},0.125},
+            {new EmptyStrategy(){Name = "DC"},0.125},
+            {new EmptyStrategy(){Name = "DTT"},0.125},
+            {new EmptyStrategy(){Name = "DRTT"},0.125},
+            {new EmptyStrategy(){Name = "DD"},0.125}
         }
         });
 
         expected.Add(new ResultVector
         {
             Stage = 1,
-            Vector = new Dictionary<Strategy, double>{
-            {new Strategy(){Name = "C"},0.12406015},
-            {new Strategy(){Name = "CTT"},0.124530075},
-            {new Strategy(){Name = "CRTT"},0.124530075},
-            {new Strategy(){Name = "CD"},0.125},
-            {new Strategy(){Name = "DC"},0.125},
-            {new Strategy(){Name = "DTT"},0.125469925},
-            {new Strategy(){Name = "DRTT"}, 0.125469925},
-            {new Strategy(){Name = "DD"},0.12593985}
+            Vector = new Dictionary<IStrategy, double>{
+            {new EmptyStrategy(){Name = "C"},0.12406015},
+            {new EmptyStrategy(){Name = "CTT"},0.124530075},
+            {new EmptyStrategy(){Name = "CRTT"},0.124530075},
+            {new EmptyStrategy(){Name = "CD"},0.125},
+            {new EmptyStrategy(){Name = "DC"},0.125},
+            {new EmptyStrategy(){Name = "DTT"},0.125469925},
+            {new EmptyStrategy(){Name = "DRTT"}, 0.125469925},
+            {new EmptyStrategy(){Name = "DD"},0.12593985}
         }
         });
         for (int i = 0; i < 2; ++i)
@@ -78,7 +79,7 @@ public class TestRepositoryTest
     public async Task Repository_ReadsFile_Succesfull()
     {
         // Given
-        var repo = new TestRepository("vectors.txt",new FileLineProvider());
+        var repo = new TestRepository("vectors.txt", new FileLineProvider());
         // When
         var actual = await repo.GetVectors();
         // Then

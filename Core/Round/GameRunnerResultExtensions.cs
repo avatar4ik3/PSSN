@@ -4,19 +4,6 @@ namespace PSSN.Core.Round;
 
 public static class GameRunnerResultExtensions
 {
-
-
-    // public static TreeGameRunnerResult ToTree(this IEnumerable<GameRunnerResult> result)
-    // {
-    //     var tree = new TreeGameRunnerResult();
-    //     foreach (var res in result)
-    //     {
-    //         tree[res.S1, res.S2] = res.Score1;
-    //         tree[res.S2, res.S1] = res.Score2;
-    //     }
-    //     return tree;
-    // }
-
     public static double[,] ToArray(this TreeGameRunnerResult result)
     {
         var array = new double[result.map.Count, result.map.Count];

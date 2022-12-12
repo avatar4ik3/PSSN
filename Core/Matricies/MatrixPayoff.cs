@@ -29,9 +29,13 @@ public class MatrixPayoff
                 var strategy2 = strategies[s2Index];
                 var ps1 = new PlayerState(p1, strategy1);
                 var ps2 = new PlayerState(p2, strategy2);
-                Game g = new Game(ps1, ps2, new double[][]{
-                    new double[]{4,0},new double[]{6,1}
-                });
+                Game g = new Game(
+                    new GameState(ps1, ps2, 6),
+                    new double[][]{
+                            new double[]{4,0},
+                            new double[]{6,1}
+                    }
+                );
                 g.Play();
                 outArr[s1Index, s2Index] = g.P1Scores().Values.Sum();
             }

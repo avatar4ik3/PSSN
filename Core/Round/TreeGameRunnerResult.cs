@@ -4,9 +4,9 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.Round;
 
-public class TreeGameRunnerResult : IEnumerable<KeyValuePair<IStrategy, Dictionary<IStrategy, Dictionary<int, double>>>>
+public class TreeGameRunnerResult
 {
-    internal readonly Dictionary<IStrategy, Dictionary<IStrategy, Dictionary<int, double>>> map = new(new StrategyComparer());
+    public Dictionary<IStrategy, Dictionary<IStrategy, Dictionary<int, double>>> map = new(new StrategyComparer());
 
     public Dictionary<int, double> this[IStrategy s1, IStrategy s2]
     {
@@ -43,15 +43,6 @@ public class TreeGameRunnerResult : IEnumerable<KeyValuePair<IStrategy, Dictiona
         get => map[s];
     }
 
-    public IEnumerator<KeyValuePair<IStrategy, Dictionary<IStrategy, Dictionary<int, double>>>> GetEnumerator()
-    {
-        return map.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return map.GetEnumerator();
-    }
 }
 
 public class StrategyComparer : IEqualityComparer<IStrategy>
