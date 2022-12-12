@@ -40,21 +40,25 @@ public class GameState
 
         return res;
     }
+
+    public IEnumerable<(IPlayerState s1, IPlayerState s2, int stage)> States(Game g)
+    {
+        while (IsOver() == false)
+        {
+            yield return new(ps1, ps2, currentStage);
+            Next(g);
+        }
+    }
+
     public void Next(Game g)
     {
-        if (currentStage == 0)
-        {
-            ps1.Next(g);
-            ps2.Next(g);
-        }
-        else
-        {
-            ps1.previousBehaviours.Add(ps1.currentBehaviour);
-            ps2.previousBehaviours.Add(ps2.currentBehaviour);
-
-            ps1.Next(g);
-            ps2.Next(g);
-        }
         currentStage++;
+
+        ps1.previousBehaviours.Add(ps1.currentBehaviour);
+        ps2.previousBehaviours.Add(ps2.currentBehaviour);
+
+        ps1.Next(g);
+        ps2.Next(g);
+
     }
 }

@@ -17,12 +17,11 @@ public class Game
 
     public void Play()
     {
-        while (State.IsOver() is false)
+        foreach (var (s1, s2, s) in State.States(this))
         {
             PlayerPayoffRoundMap payoffs = GetPayoffs();
-            State.ps1.Scores[State.currentStage] = (payoffs[State.ps1.p]);
-            State.ps2.Scores[State.currentStage] = (payoffs[State.ps2.p]);
-            State.Next(this);
+            s1.Scores[s] = (payoffs[s1.p]);
+            s2.Scores[s] = (payoffs[s2.p]);
         }
     }
 

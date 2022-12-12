@@ -36,8 +36,19 @@ public class ResearchController : ControllerBase
     {
         try
         {
-            var strategies = strats.Select(s => _container[s]);
-            return Ok((await RunGamePhase(k, r, strategies, po)).Matrix);
+            var strategies = strats.Select(s => _container[s]).ToArray();
+            var innerResult = _researcher.Research(k, 6, strategies, po).Vectors;
+            List<VectorResponse> response = new List<VectorResponse>();
+            for (int i = 0; i < k; ++i)
+            {
+                var vector = new VectorResponse() { Ki = i };
+                for (int s = 0; s < strats.Count(); ++s)
+                {
+                    vector.Values.Add(strategies[s].Name, innerResult[i][s]);
+                }
+                response.Add(vector);
+            }
+            return Ok(response);
         }
         catch (Exception e)
         {
