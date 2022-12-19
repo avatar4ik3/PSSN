@@ -46,19 +46,24 @@ public class GameState
         while (IsOver() == false)
         {
             yield return new(ps1, ps2, currentStage);
-            Next(g);
+            if (IsOver() == false)
+            {
+                Next(g);
+            }
         }
     }
 
     public void Next(Game g)
     {
         currentStage++;
+        if (IsOver() == false)
+        {
+            ps1.previousBehaviours.Add(ps1.currentBehaviour);
+            ps2.previousBehaviours.Add(ps2.currentBehaviour);
 
-        ps1.previousBehaviours.Add(ps1.currentBehaviour);
-        ps2.previousBehaviours.Add(ps2.currentBehaviour);
-
-        ps1.Next(g);
-        ps2.Next(g);
+            ps1.Next(g);
+            ps2.Next(g);
+        }
 
     }
 }

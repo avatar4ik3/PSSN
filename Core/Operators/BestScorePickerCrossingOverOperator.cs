@@ -33,6 +33,7 @@ public class BestScorePickerCrossingOverOperator
 
         foreach (var round in s1.behaviours.Keys)
         {
+            var a = 2;
             s1Sums[round] = rest.Where(s => s != s1).Select(s => _results[s1, s, round]).Sum();
             s2Sums[round] = rest.Where(s => s != s1).Select(s => _results[s2, s, round]).Sum();
         }
