@@ -9,3 +9,5 @@
 **/.env*.local
 appsettings.**.json
 **/ClientApp/build/**
+.sonarqube
+**/.sonarqube
