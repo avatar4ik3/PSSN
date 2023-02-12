@@ -62,11 +62,6 @@ public class ResearchController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<FilledStrategyModel>))]
     public ActionResult<GenerationResponse> ResearchGeneration([FromQuery] GenerationRequest request)
     {
-        request.Ro = new[]
-        {
-            new double[] {4, 0}, new double[] {6, 1}
-        };
-
         var gen = new FilledStrategiesGenerator(
             request.Population,
             new SingleFilledStrategyGenerator(request.GenCount));
@@ -79,7 +74,7 @@ public class ResearchController : ControllerBase
 
         foreach (var _ in ..request.Population)
         {
-            var tree = _gameRunner.Play(strats, request.Ro, request.GenCount);
+            var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
             var m_s = _mapper.Map<List<FilledStrategyModel>>(strats);
             var m_t = _mapper.Map<ResultTree>(tree);
