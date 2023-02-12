@@ -18,7 +18,7 @@ public class SelectionOperator
         _result = result;
     }
 
-    public IStrategy Operate(IEnumerable<IStrategy> strategies)
+    public FilledStrategy Operate(IEnumerable<FilledStrategy> strategies)
     {
         var selected = strategies.SelectCombination(_k, _random).ToList();
         return selected.MaxBy(s => GetTotalScore(s, _result))

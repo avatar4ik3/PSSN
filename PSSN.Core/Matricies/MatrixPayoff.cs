@@ -5,14 +5,8 @@ using PSSN.Core.Strategies;
 namespace PSSN.Core.Matricies;
 
 [Obsolete($"{nameof(MatrixPayoff)} is deprecated, use {nameof(IGameRunner)} and pass payoffs as a parameter instead.")]
-public class MatrixPayoff
+public static class MatrixPayoff
 {
-    private readonly double[,] _payoffs = { { 4, 0 }, { 6, 1 } };
-
-    public MatrixPayoff(double[,] arr)
-    {
-        _payoffs = arr;
-    }
 
     [Obsolete($"{nameof(buildInStageMatrix)} is deprecated, use {nameof(IGameRunner)} instead.")]
     public static double[,] buildInStageMatrix(params IStrategy[] strategies)

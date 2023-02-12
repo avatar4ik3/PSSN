@@ -13,7 +13,7 @@ public class MutationOperator
         _random = random;
     }
 
-    public IStrategy Operate(FilledStrategy strategy)
+    public FilledStrategy Operate(FilledStrategy strategy)
     {
         var behs = new Dictionary<int, Behavior>();
 
@@ -25,7 +25,7 @@ public class MutationOperator
         return new FilledStrategy(behs, strategy.Name);
     }
 
-    public IEnumerable<IStrategy> Operate(IEnumerable<FilledStrategy> strategies)
+    public IEnumerable<FilledStrategy> Operate(IEnumerable<FilledStrategy> strategies)
     {
         return strategies.Select(Operate);
     }

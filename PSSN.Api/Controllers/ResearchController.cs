@@ -41,16 +41,16 @@ public class ResearchController : ControllerBase
     [HttpGet]
     [Route("simple")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<VectorResponse>))]
-    public ActionResult<IEnumerable<VectorResponse>> Research([FromQuery] int k, [FromQuery] int r, [FromQuery] string[] strats, [FromQuery] double[][] po)
+    public ActionResult<IEnumerable<VectorResponse>> Research([FromQuery] SimpleResearchRequest request)
     {
 
-        var strategies = strats.Select(s => _container[s]).ToArray();
-        var innerResult = _researcher.Research(k, 6, strategies, po).Vectors;
+        var strategies = request.Strats.Select(s => _container[s]).ToArray();
+        var innerResult = _researcher.Research(request.K, 6, strategies, request.A).Vectors;
         var response = new List<VectorResponse>();
-        for (var i = 0; i < k; ++i)
+        for (var i = 0; i < request.K; ++i)
         {
             var vector = new VectorResponse { Ki = i };
-            for (var s = 0; s < strats.Length; ++s) vector.Values.Add(strategies[s].Name, innerResult[i][s]);
+            for (var s = 0; s < request.Strats.Count(); ++s) vector.Values.Add(strategies[s].Name, innerResult[i][s]);
             response.Add(vector);
         }
 
@@ -81,7 +81,7 @@ public class ResearchController : ControllerBase
         {
             var tree = _gameRunner.Play(strats, request.Ro, request.GenCount);
 
-            var m_s = _mapper.Map<List<FilledStrategyModel>>(strats.Copy().ToList());
+            var m_s = _mapper.Map<List<FilledStrategyModel>>(strats);
             var m_t = _mapper.Map<ResultTree>(tree);
 
             result.Items.Add(new Item(m_s, m_t));
@@ -95,19 +95,23 @@ public class ResearchController : ControllerBase
 
             foreach (var __ in ..(strats.Count / 2 - 1))
             {
-                var s1 = (FilledStrategy)selectionOperator.Operate(strats);
-                var s2 = (FilledStrategy)selectionOperator.Operate(strats);
+                var s1 = selectionOperator.Operate(strats);
+                var s2 = selectionOperator.Operate(strats);
 
                 var crossovers = crossingOverOperator.Operate(s1, s2);
 
-                var mutated = mutationOperator.Operate(crossovers.Cast<FilledStrategy>());
+                var mutated = mutationOperator.Operate(crossovers);
 
-                newPopulation.AddRange(mutated.Cast<FilledStrategy>());
+                newPopulation.AddRange(mutated);
             }
 
-            strats = newPopulation.Copy()
+            strats = newPopulation
                 .Zip(Enumerable.Range(0, newPopulation.Count()))
-                .Select(x => new FilledStrategy(x.First.behaviours, x.Second.ToString()))
+                .Select(x =>
+                {
+                    x.First.Name = x.Second.ToString();
+                    return x.First;
+                })
                 .ToList();
         }
 
