@@ -34,18 +34,4 @@ public sealed class FilledStrategy : IStrategy
     {
         return behaviours[g.State.currentStage];
     }
-
-    // public bool Equals(IStrategy? other)
-    // {
-    //     if (other is FilledStrategy o)
-    //     {
-    //         return this.Name.Equals(o.Name);
-    //     }
-    //     return false;
-    // }
-
-    // public override int GetHashCode()
-    // {
-    //     return HashCode.Combine(behaviours, Name);
-    // }
 }

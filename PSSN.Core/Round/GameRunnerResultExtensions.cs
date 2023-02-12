@@ -8,13 +8,21 @@ public static class GameRunnerResultExtensions
     {
         var array = new double[result.map.Count, result.map.Count];
         List<(IStrategy s1, IStrategy s2, double Total)> shrimped = new();
-        foreach (var kvp1 in result.map)
-        foreach (var kvp2 in result.map[kvp1.Key])
-            shrimped.Add(new ValueTuple<IStrategy, IStrategy, double>(kvp1.Key, kvp2.Key,
-                result[kvp1.Key, kvp2.Key].Values.Sum()));
+        foreach (var key1 in result.map.Select(x => x.Key))
+        {
+            foreach (var key2 in result.map[key1].Select(x => x.Key))
+            {
+                shrimped.Add(new ValueTuple<IStrategy, IStrategy, double>(key1, key2,
+                    result[key1, key2].Values.Sum()));
+            }
+        }
         var strats = result.map.Keys;
         var indxs = strats.Zip(Enumerable.Range(0, strats.Count)).ToDictionary(i => i.First, s => s.Second);
-        foreach (var record in shrimped) array[indxs[record.s1], indxs[record.s2]] = record.Total;
+
+        foreach (var record in shrimped)
+        {
+            array[indxs[record.s1], indxs[record.s2]] = record.Total;
+        }
         return array;
     }
 

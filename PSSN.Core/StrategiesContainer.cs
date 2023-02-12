@@ -12,7 +12,6 @@ public class StrategiesContainer
             from assembly in AppDomain.CurrentDomain.GetAssemblies()
             from type in assembly.GetTypes()
             where typeof(IStrategy).IsAssignableFrom(type)
-            where typeof(EmptyStrategy).IsAssignableFrom(type) == false
             where type.IsAbstract is false
             where type.IsInterface is false
             select Activator.CreateInstance(type) as IStrategy;

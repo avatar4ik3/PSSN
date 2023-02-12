@@ -8,17 +8,18 @@ namespace PSSN.Core.Matricies;
 public class PopulationFrequency
 {
     private readonly IGameRunner _runner;
-    public List<Vector<double>> listP = new();
 
     public PopulationFrequency(IGameRunner runner)
     {
         _runner = runner;
     }
 
-    public (List<Vector<double>> Vectors, TreeGameRunnerResult Tree) Research(int cycleCount, int roundCount,
+    public (List<Vector<double>> Vectors, TreeGameRunnerResult Tree) Research(
+        int cycleCount, int roundCount,
         IStrategy[] strategies, double[][] payoffs)
     {
         var vectorElls = Vector<double>.Build.Dense(strategies.Length, i => 1.0 / strategies.Length);
+        List<Vector<double>> listP = new();
         listP.Add(vectorElls);
 
         var tree = _runner.Play(strategies, payoffs, roundCount);

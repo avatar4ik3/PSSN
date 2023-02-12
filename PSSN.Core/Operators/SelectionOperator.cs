@@ -7,14 +7,14 @@ namespace PSSN.Core.Operators;
 
 public class SelectionOperator
 {
-    private static Random? _random;
+    private readonly Random _random;
     private readonly int _k;
     private readonly TreeGameRunnerResult _result;
 
-    public SelectionOperator(int k, TreeGameRunnerResult result)
+    public SelectionOperator(int k, TreeGameRunnerResult result, Random random)
     {
         _k = k;
-        _random = new Random();
+        _random = random;
         _result = result;
     }
 

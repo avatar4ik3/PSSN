@@ -17,10 +17,8 @@ public class BestScorePickerCrossingOverOperator
         _results = results;
     }
 
-    public IEnumerable<IStrategy> Operate(IStrategy st1, IStrategy st2)
+    public IEnumerable<FilledStrategy> Operate(FilledStrategy s1, FilledStrategy s2)
     {
-        if (st1 is not FilledStrategy s1 || st2 is not FilledStrategy s2)
-            throw new NotSupportedException($"strats {nameof(st1)} and {nameof(st2)} must be FilledStrats!");
         //берем все стратегии, кроме переданых
         var rest = _all;
         //индексы которые будем свапать
@@ -47,11 +45,11 @@ public class BestScorePickerCrossingOverOperator
             .OrderByDescending(r => r.diff);
         //смотрим какие гены менять
 
-        foreach (var record in incrementList)
-            if (s1Sums[record.index] > s2Sums[record.index])
-                indexiesToSwapIntoS2.Add(record.index);
+        foreach (var index in incrementList.Select(x => x.index))
+            if (s1Sums[index] > s2Sums[index])
+                indexiesToSwapIntoS2.Add(index);
             else
-                indexiesToSwapIntoS1.Add(record.index);
+                indexiesToSwapIntoS1.Add(index);
         //берем максимум crossingSelector индексов
         //s1 -> s2
         var s1Take = indexiesToSwapIntoS2.Take(_crossingSelector);

@@ -25,15 +25,17 @@ public class ResearchController : ControllerBase
     private readonly StrategiesContainer _container;
     private readonly IGameRunner _gameRunner;
     private readonly IMapper _mapper;
+    private readonly Random _random;
     private readonly PopulationFrequency _researcher;
 
     public ResearchController(StrategiesContainer container, PopulationFrequency researcher,
-        IGameRunner gameRunner, IMapper mapper)
+        IGameRunner gameRunner, IMapper mapper, Random random)
     {
         _container = container;
         _researcher = researcher;
         _gameRunner = gameRunner;
         _mapper = mapper;
+        this._random = random;
     }
 
     [HttpGet]
@@ -85,11 +87,11 @@ public class ResearchController : ControllerBase
             result.Items.Add(new Item(m_s, m_t));
             var newPopulation = new List<FilledStrategy>();
 
-            var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree);
+            var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, _random);
             var crossingOverOperator =
                 new BestScorePickerCrossingOverOperator(
                     request.CrossingCount, strats, tree);
-            var mutationOperator = new MutationOperator(request.SwapChance);
+            var mutationOperator = new MutationOperator(request.SwapChance, _random);
 
             foreach (var __ in ..(strats.Count / 2 - 1))
             {

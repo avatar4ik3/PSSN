@@ -7,12 +7,11 @@ namespace PSSN.Core.Matricies;
 [Obsolete($"{nameof(MatrixPayoff)} is deprecated, use {nameof(IGameRunner)} and pass payoffs as a parameter instead.")]
 public class MatrixPayoff
 {
-    // TODO: 6/4/2021 сделать нормальное заполнение матрицы!!!!!!!!!! 
-    public static double[,] payoffs = {{4, 0}, {6, 1}};
+    private readonly double[,] _payoffs = { { 4, 0 }, { 6, 1 } };
 
     public MatrixPayoff(double[,] arr)
     {
-        payoffs = arr;
+        _payoffs = arr;
     }
 
     [Obsolete($"{nameof(buildInStageMatrix)} is deprecated, use {nameof(IGameRunner)} instead.")]
@@ -48,7 +47,6 @@ public class MatrixPayoff
 
     public static int getIndexPayoffByStrategies(Behavior b1, Behavior b2)
     {
-        //TODO 
         return -1;
     }
 }

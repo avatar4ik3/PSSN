@@ -28,7 +28,7 @@ public static class Startup
             .WriteTo.Console()
             .ReadFrom.Configuration(context.Configuration)
         );
-        
+
         builder.WebHost.ConfigureKestrel((_, opt) =>
         {
             var host = builder.Configuration.GetValue<string>("App:Host");
@@ -36,7 +36,7 @@ public static class Startup
 
             opt.Limits.MinRequestBodyDataRate = null;
 
-            opt.Listen(IPAddress.Parse(host), port, listenOptions =>
+            opt.Listen(IPAddress.Parse(host!), port, listenOptions =>
             {
                 Log.Information(
                     "The application rest api (http1) [{AppName}] is successfully started at [{StartTime}] (UTC)",
@@ -48,7 +48,7 @@ public static class Startup
 
             opt.AllowAlternateSchemes = true;
         });
-        
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("ClientPermissionCombined", policy =>
@@ -67,16 +67,17 @@ public static class Startup
                     .AllowCredentials();
             });
         });
-        
+
         builder.Services.AddSingleton<StrategiesContainer>();
-        
+
         builder.Services.AddScoped<IParserService, ParserService>();
-        
+
         builder.Services.AddScoped<IGameRunner, SimpleGameRunner>();
         builder.Services.AddScoped<PopulationFrequency>();
-        
+        builder.Services.AddScoped<Random>();
+
         builder.Services.AddAutoMapper(typeof(Program));
-        
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
 
@@ -92,7 +93,7 @@ public static class Startup
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
-        
+
         return builder;
     }
 
@@ -103,18 +104,18 @@ public static class Startup
         {
             if (serviceScope != null)
             {
-                
+
                 var service = serviceScope.ServiceProvider.GetRequiredService<IParserService>();
                 service.GetVectors();
             }
         }
-        
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
             Log.ForContext("Mode", app.Environment.EnvironmentName);
             Log.Debug("App activated in [{Environment}] mode", app.Environment.EnvironmentName);
-            
+
             app.UseSwagger();
             app.UseSwaggerUI();
         }
@@ -123,22 +124,22 @@ public static class Startup
             app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
-        
+
         app.UseCors("ClientPermissionCombined");
-        
+
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
                 "default",
                 "{controller}/{action=Index}/{id?}");
         });
-        
+
         app.MapFallbackToFile("index.html");
-        
+
         return app;
     }
 }
