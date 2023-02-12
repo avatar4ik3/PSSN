@@ -16,6 +16,6 @@ public class FilledStrategiesGenerator
 
     public IEnumerable<FilledStrategy> Generate()
     {
-        foreach (var current in ..(_count - 1)) yield return _generator.Generate(current.ToString());
+        foreach (var current in .._count) yield return _generator.Generate(current.ToString());
     }
 }

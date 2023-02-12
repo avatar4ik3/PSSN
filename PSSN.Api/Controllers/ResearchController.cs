@@ -56,7 +56,7 @@ public class ResearchController : ControllerBase
 
         return Ok(response);
     }
-
+    //примерная сложность p^3 
     [HttpGet]
     [Route("hard")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<FilledStrategyModel>))]
@@ -72,14 +72,17 @@ public class ResearchController : ControllerBase
 
         var result = new GenerationResponse();
 
-        foreach (var _ in ..request.Population)
+        foreach (var i in ..request.Population)
         {
+            //C_Count_2_Population * GenCount ::::: <- GenCount это GPR 
             var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
-            var m_s = _mapper.Map<List<FilledStrategyModel>>(strats);
+            //...
+            var m_s = _mapper.Map<List<FilledStrategyModel>>(strats.Copy().ToList());
             var m_t = _mapper.Map<ResultTree>(tree);
 
             result.Items.Add(new Item(m_s, m_t));
+
             var newPopulation = new List<FilledStrategy>();
 
             var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, _random);
@@ -87,26 +90,24 @@ public class ResearchController : ControllerBase
                 new BestScorePickerCrossingOverOperator(
                     request.CrossingCount, strats, tree);
             var mutationOperator = new MutationOperator(request.SwapChance, _random);
-
-            foreach (var __ in ..(strats.Count / 2 - 1))
+            //INNER_C = Population / 2 + 1 если Populations нечетное
+            foreach (var j in ..(strats.Count / 2 + strats.Count % 2))
             {
+                //INNER_C 
                 var s1 = selectionOperator.Operate(strats);
                 var s2 = selectionOperator.Operate(strats);
 
                 var crossovers = crossingOverOperator.Operate(s1, s2);
 
+                //INNER_C * Population
                 var mutated = mutationOperator.Operate(crossovers);
 
                 newPopulation.AddRange(mutated);
             }
 
-            strats = newPopulation
+            strats = newPopulation.Copy()
                 .Zip(Enumerable.Range(0, newPopulation.Count()))
-                .Select(x =>
-                {
-                    x.First.Name = x.Second.ToString();
-                    return x.First;
-                })
+                .Select(x => new FilledStrategy(x.First.behaviours, x.Second.ToString()))
                 .ToList();
         }
 
