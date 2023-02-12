@@ -32,7 +32,6 @@ public class BestScorePickerCrossingOverOperator
 
         foreach (var round in s1.behaviours.Keys)
         {
-            var a = 2;
             s1Sums[round] = rest.Where(s => s != s1).Select(s => _results[s1, s, round]).Sum();
             s2Sums[round] = rest.Where(s => s != s1).Select(s => _results[s2, s, round]).Sum();
         }
@@ -44,7 +43,7 @@ public class BestScorePickerCrossingOverOperator
         //сортируем инкримент по разнице в очках по убыванию
 
         var incrementList = increment
-            .Select(k => new {index = k.Key, diff = k.Value})
+            .Select(k => new { index = k.Key, diff = k.Value })
             .OrderByDescending(r => r.diff);
         //смотрим какие гены менять
 
@@ -73,6 +72,6 @@ public class BestScorePickerCrossingOverOperator
 
         var newS1 = new FilledStrategy(newS1dic, s1.Name);
         var newS2 = new FilledStrategy(newS2dic, s2.Name);
-        return new[] {newS1, newS2};
+        return new[] { newS1, newS2 };
     }
 }

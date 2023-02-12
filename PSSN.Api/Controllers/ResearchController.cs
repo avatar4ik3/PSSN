@@ -39,48 +39,26 @@ public class ResearchController : ControllerBase
     [HttpGet]
     [Route("simple")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<VectorResponse>))]
-    public async Task<ActionResult<IEnumerable<VectorResponse>>> ResearchAsync([FromQuery] int k,[FromQuery] int r,[FromQuery] string[] strats,[FromQuery] double[][] po)
+    public ActionResult<IEnumerable<VectorResponse>> Research([FromQuery] int k, [FromQuery] int r, [FromQuery] string[] strats, [FromQuery] double[][] po)
     {
-        try
-        {
-            var strategies = strats.Select(s => _container[s]).ToArray();
-            var innerResult = _researcher.Research(k, 6, strategies, po).Vectors;
-            var response = new List<VectorResponse>();
-            for (var i = 0; i < k; ++i)
-            {
-                var vector = new VectorResponse {Ki = i};
-                for (var s = 0; s < strats.Length; ++s) vector.Values.Add(strategies[s].Name, innerResult[i][s]);
-                response.Add(vector);
-            }
 
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return BadRequest($"{e.Message}");
-        }
-    }
-
-    private async Task<(IEnumerable<VectorResponse> Matrix, TreeGameRunnerResult Tree)> RunGamePhase(int k, int r,
-        IEnumerable<IStrategy> strats, double[][] po)
-    {
-        var strategies = strats.ToArray();
-        var innerResult = _researcher.Research(k, r, strategies, po);
+        var strategies = strats.Select(s => _container[s]).ToArray();
+        var innerResult = _researcher.Research(k, 6, strategies, po).Vectors;
         var response = new List<VectorResponse>();
         for (var i = 0; i < k; ++i)
         {
-            var vector = new VectorResponse {Ki = i};
-            for (var s = 0; s < strats.Count(); ++s) vector.Values.Add(strategies[s].Name, innerResult.Vectors[i][s]);
+            var vector = new VectorResponse { Ki = i };
+            for (var s = 0; s < strats.Length; ++s) vector.Values.Add(strategies[s].Name, innerResult[i][s]);
             response.Add(vector);
         }
 
-        return new ValueTuple<IEnumerable<VectorResponse>, TreeGameRunnerResult>(response, innerResult.Tree);
+        return Ok(response);
     }
 
     [HttpGet]
     [Route("hard")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<FilledStrategyModel>))]
-    public async Task<ActionResult<GenerationResponse>> ResearchGenerationAsync([FromQuery] GenerationRequest request)
+    public ActionResult<GenerationResponse> ResearchGeneration([FromQuery] GenerationRequest request)
     {
         request.Ro = new[]
         {
@@ -97,7 +75,7 @@ public class ResearchController : ControllerBase
 
         var result = new GenerationResponse();
 
-        foreach (var i in ..request.Population)
+        foreach (var _ in ..request.Population)
         {
             var tree = _gameRunner.Play(strats, request.Ro, request.GenCount);
 
@@ -113,10 +91,10 @@ public class ResearchController : ControllerBase
                     request.CrossingCount, strats, tree);
             var mutationOperator = new MutationOperator(request.SwapChance);
 
-            foreach (var j in ..(strats.Count / 2 - 1))
+            foreach (var __ in ..(strats.Count / 2 - 1))
             {
-                var s1 = (FilledStrategy) selectionOperator.Operate(strats);
-                var s2 = (FilledStrategy) selectionOperator.Operate(strats);
+                var s1 = (FilledStrategy)selectionOperator.Operate(strats);
+                var s2 = (FilledStrategy)selectionOperator.Operate(strats);
 
                 var crossovers = crossingOverOperator.Operate(s1, s2);
 
