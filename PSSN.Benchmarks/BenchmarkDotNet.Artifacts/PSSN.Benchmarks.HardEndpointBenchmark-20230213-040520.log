@@ -1,0 +1,74 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 3 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// ***** Done, took 00:00:00 (0.02 sec)   *****
+// Found 3 benchmarks:
+//   HardEndpointBenchmark.Default: MediumRun(Toolchain=InProcessNoEmitToolchain, IterationCount=15, LaunchCount=2, WarmupCount=10)
+//   HardEndpointBenchmark.NoToList: MediumRun(Toolchain=InProcessNoEmitToolchain, IterationCount=15, LaunchCount=2, WarmupCount=10)
+//   HardEndpointBenchmark.NoMapper: MediumRun(Toolchain=InProcessNoEmitToolchain, IterationCount=15, LaunchCount=2, WarmupCount=10)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: HardEndpointBenchmark.Default: MediumRun(Toolchain=InProcessNoEmitToolchain, IterationCount=15, LaunchCount=2, WarmupCount=10)
+// *** Execute ***
+// Launch: 1 / 2
+
+// Benchmark Process Environment Information:
+// Runtime=.NET 7.0.1 (7.0.122.56804), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, IterationCount=15, LaunchCount=2, WarmupCount=10)
+
+OverheadJitting  1: 1 op, 95400.00 ns, 95.4000 us/op
+WorkloadJitting  1: 1 op, 1309652800.00 ns, 1.3097 s/op
+
+OverheadJitting  2: 1 op, 1100.00 ns, 1.1000 us/op
+WorkloadJitting  2: 1 op, 967762800.00 ns, 967.7628 ms/op
+
+WorkloadWarmup   1: 1 op, 901886400.00 ns, 901.8864 ms/op
+WorkloadWarmup   2: 1 op, 957102100.00 ns, 957.1021 ms/op
+WorkloadWarmup   3: 1 op, 929725600.00 ns, 929.7256 ms/op
+WorkloadWarmup   4: 1 op, 907236400.00 ns, 907.2364 ms/op
+WorkloadWarmup   5: 1 op, 930435200.00 ns, 930.4352 ms/op
+WorkloadWarmup   6: 1 op, 939829500.00 ns, 939.8295 ms/op
+WorkloadWarmup   7: 1 op, 944405300.00 ns, 944.4053 ms/op
+WorkloadWarmup   8: 1 op, 1763680800.00 ns, 1.7637 s/op
+WorkloadWarmup   9: 1 op, 2485908800.00 ns, 2.4859 s/op
+WorkloadWarmup  10: 1 op, 1915559700.00 ns, 1.9156 s/op
+
+WorkloadActual   1: 1 op, 1469197600.00 ns, 1.4692 s/op
+WorkloadActual   2: 1 op, 1463887900.00 ns, 1.4639 s/op
+WorkloadActual   3: 1 op, 1420218900.00 ns, 1.4202 s/op
+WorkloadActual   4: 1 op, 1491673600.00 ns, 1.4917 s/op
+WorkloadActual   5: 1 op, 1594317300.00 ns, 1.5943 s/op
+WorkloadActual   6: 1 op, 1898579400.00 ns, 1.8986 s/op
+WorkloadActual   7: 1 op, 2247373300.00 ns, 2.2474 s/op
+WorkloadActual   8: 1 op, 2363483000.00 ns, 2.3635 s/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.Collections.Generic.KeyNotFoundException: The given key 'PSSN.Core.Strategies.FilledStrategy' was not present in the dictionary.
+   at System.Collections.Concurrent.ConcurrentDictionary`2.ThrowKeyNotFoundException(TKey key)
+   at PSSN.Core.Operators.BestScorePickerCrossingOverOperator.<>c__DisplayClass4_1.<Operate>b__3(IStrategy s) in C:\Users\cross\OneDrive\Desktop\PSSN\PSSN.Core\Operators\BestScorePickerCrossingOverOperator.cs:line 33
+   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   at System.Linq.Enumerable.Sum[TSource,TResult](IEnumerable`1 source)
+   at PSSN.Core.Operators.BestScorePickerCrossingOverOperator.Operate(FilledStrategy s1, FilledStrategy s2) in C:\Users\cross\OneDrive\Desktop\PSSN\PSSN.Core\Operators\BestScorePickerCrossingOverOperator.cs:line 73
+   at PSSN.Benchmarks.HardEndpointImps.Solution_Default(GenerationRequest request, Mapper mapper, IGameRunner gameRunner, Random random) in C:\Users\cross\OneDrive\Desktop\PSSN\PSSN.Benchmarks\HardEndpointImps.cs:line 52
+   at PSSN.Benchmarks.HardEndpointBenchmark.Default() in C:\Users\cross\OneDrive\Desktop\PSSN\PSSN.Benchmarks\HardEndpointBenchmark.cs:line 37
+   at BenchmarkDotNet.Toolchains.InProcess.NoEmit.InProcessNoEmitRunner.Runnable.<>c__DisplayClass0_0.<RunCore>b__0(Int64 invocationCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineStage.RunIteration(IterationMode mode, IterationStage stage, Int32 index, Int64 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineActualStage.RunSpecific(Int64 invokeCount, IterationMode iterationMode, Int32 iterationCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineActualStage.Run(Int64 invokeCount, IterationMode iterationMode, Boolean runAuto, Int32 unrollFactor, Boolean forceSpecific)
+   at BenchmarkDotNet.Engines.EngineActualStage.RunWorkload(Int64 invokeCount, Int32 unrollFactor, Boolean forceSpecific)
+   at BenchmarkDotNet.Engines.Engine.Run()
+   at BenchmarkDotNet.Toolchains.InProcess.NoEmit.InProcessNoEmitRunner.Runnable.RunCore(IHost host, BenchmarkCase benchmarkCase)
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodInvoker.Invoke(Object obj, IntPtr* args, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodInvoker.Invoke(Object obj, IntPtr* args, BindingFlags invokeAttr)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Toolchains.InProcess.NoEmit.InProcessNoEmitRunner.Run(IHost host, BenchmarkCase benchmarkCase)
+Successfully reverted power plan (GUID: 381b4222-f694-41f0-9685-ff5bb260df2e FriendlyName: Balanced)
+// * Artifacts cleanup *

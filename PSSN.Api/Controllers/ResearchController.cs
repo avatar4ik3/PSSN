@@ -1,7 +1,5 @@
 using AutoMapper;
-
 using Microsoft.AspNetCore.Mvc;
-
 using PSSN.Common.Model;
 using PSSN.Common.Requests;
 using PSSN.Common.Responses;
@@ -43,7 +41,6 @@ public class ResearchController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<VectorResponse>))]
     public ActionResult<IEnumerable<VectorResponse>> Research([FromQuery] SimpleResearchRequest request)
     {
-
         var strategies = request.Strats.Select(s => _container[s]).ToArray();
         var innerResult = _researcher.Research(request.K, 6, strategies, request.A).Vectors;
         var response = new List<VectorResponse>();
@@ -56,15 +53,16 @@ public class ResearchController : ControllerBase
 
         return Ok(response);
     }
+
     //примерная сложность p^3 
     [HttpGet]
     [Route("hard")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<FilledStrategyModel>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponse))]
     public ActionResult<GenerationResponse> ResearchGeneration([FromQuery] GenerationRequest request)
     {
         var gen = new FilledStrategiesGenerator(
             request.Population,
-            new SingleFilledStrategyGenerator(request.GenCount));
+            new SingleFilledStrategyGenerator(request.GenCount, _random));
 
         var strats = gen
             .Generate()
@@ -72,16 +70,14 @@ public class ResearchController : ControllerBase
 
         var result = new GenerationResponse();
 
-        foreach (var i in ..request.Population)
+        foreach (var _ in ..request.Population)
         {
             //C_Count_2_Population * GenCount ::::: <- GenCount это GPR 
             var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
-            //...
-            var m_s = _mapper.Map<List<FilledStrategyModel>>(strats.Copy().ToList());
-            var m_t = _mapper.Map<ResultTree>(tree);
-
-            result.Items.Add(new Item(m_s, m_t));
+            result.Items.Add(new(
+                _mapper.Map<List<FilledStrategyModel>>(strats.Copy().ToList()),
+                _mapper.Map<ResultTree>(tree)));
 
             var newPopulation = new List<FilledStrategy>();
 
@@ -91,7 +87,7 @@ public class ResearchController : ControllerBase
                     request.CrossingCount, strats, tree);
             var mutationOperator = new MutationOperator(request.SwapChance, _random);
             //INNER_C = Population / 2 + 1 если Populations нечетное
-            foreach (var j in ..(strats.Count / 2 + strats.Count % 2))
+            foreach (var __ in ..(strats.Count / 2 + strats.Count % 2))
             {
                 //INNER_C 
                 var s1 = selectionOperator.Operate(strats);
@@ -112,5 +108,59 @@ public class ResearchController : ControllerBase
         }
 
         return Ok(result);
+    }
+
+    [HttpGet]
+    [Route("generate")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<FilledStrategyModel>))]
+    public ActionResult<IEnumerable<FilledStrategyModel>> GenerateStrategies([FromQuery] GenerateStrategiesRequest request)
+    {
+        var gen = new FilledStrategiesGenerator(
+           request.Count,
+           new SingleFilledStrategyGenerator(request.GenCount, _random));
+
+        var strats = gen.Generate();
+
+        return Ok(_mapper.Map<List<FilledStrategyModel>>(strats));
+    }
+
+    [HttpGet]
+    [Route("split")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SingleGenerationResponse))]
+    public ActionResult<SingleGenerationResponse> ResearchSingleGeneration([FromQuery] SingleGenerationRequest request)
+    {
+        var strats = _mapper.Map<List<FilledStrategy>>(request.Strats);
+        var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
+
+        var newPopulation = new List<FilledStrategy>();
+
+        var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, _random);
+        var crossingOverOperator =
+            new BestScorePickerCrossingOverOperator(
+                request.CrossingCount, strats, tree);
+
+        var mutationOperator = new MutationOperator(request.SwapChance, _random);
+        foreach (var _ in ..(strats.Count / 2 + strats.Count % 2))
+        {
+            var s1 = selectionOperator.Operate(strats);
+            var s2 = selectionOperator.Operate(strats);
+
+            var crossovers = crossingOverOperator.Operate(s1, s2);
+
+            var mutated = mutationOperator.Operate(crossovers);
+
+            newPopulation.AddRange(mutated);
+        }
+
+        var response = new SingleGenerationResponse()
+        {
+            GameResult = new GenerationResponseItem(
+                _mapper.Map<List<FilledStrategyModel>>(strats),
+                _mapper.Map<ResultTree>(tree)
+            ),
+            NewStrats = _mapper.Map<List<FilledStrategyModel>>(newPopulation)
+        };
+
+        return Ok(response);
     }
 }

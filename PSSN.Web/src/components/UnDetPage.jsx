@@ -26,12 +26,20 @@ const UnDetPage = () => {
 
 	async function download() {
 		setIsLoaded(false)
+		console.log(
+			"http://localhost:8080/api/v1/research/hard/?" +
+				qs.stringify(request, { arrayFormat: "indices" })
+		)
 		return axios
 			.get(
 				"http://localhost:8080/api/v1/research/hard/?" +
 					qs.stringify(request, { arrayFormat: "indices" })
 			)
-			.then((r) => setdata(r.data))
+
+			.then((r) => {
+				console.log(r.request)
+				setdata(r.data)
+			})
 			.catch((r) => console.error(r))
 	}
 

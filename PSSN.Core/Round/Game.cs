@@ -3,7 +3,7 @@ using PSSN.Core.States;
 
 namespace PSSN.Core.Round;
 
-public class Game
+public class Game : IDisposable
 {
     private readonly double[][] _payoffs;
 
@@ -40,5 +40,10 @@ public class Game
     public Dictionary<int, double> P2Scores()
     {
         return State.ps2.Scores;
+    }
+
+    public void Dispose()
+    {
+        State.Dispose();
     }
 }

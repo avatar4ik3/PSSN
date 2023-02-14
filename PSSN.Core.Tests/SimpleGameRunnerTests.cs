@@ -11,7 +11,6 @@ public class SimpleGameRunnerTests
     {
         // Given
         var runner = new SimpleGameRunner();
-        var oldRunner = new MatrixPayoff(MatrixPayoff.payoffs);
         var strategies = new IStrategy[]
         {
             new AlwaysC(),

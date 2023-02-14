@@ -4,18 +4,18 @@ namespace PSSN.Common.Responses;
 
 public class GenerationResponse
 {
-    public List<Item> Items { get; set; } = new();
+    public List<GenerationResponseItem> Items { get; set; } = new();
 }
 
-public class Item
+public class GenerationResponseItem
 {
-    public Item(List<FilledStrategyModel> strats, ResultTree result)
+    public GenerationResponseItem(List<FilledStrategyModel> strats, ResultTree result)
     {
         Strats = strats;
         Result = result;
     }
 
-    public Item()
+    public GenerationResponseItem()
     {
     }
 

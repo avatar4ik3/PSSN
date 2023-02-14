@@ -2,7 +2,7 @@ using PSSN.Core.Round;
 
 namespace PSSN.Core.States;
 
-public class GameState
+public class GameState :IDisposable
 {
     //TODO переделать наконец в то что количество стадий настраиваемо
     public GameState(IPlayerState ps1, IPlayerState ps2, int countOfStages = 5)
@@ -60,5 +60,11 @@ public class GameState
             ps1.Next(g);
             ps2.Next(g);
         }
+    }
+
+    public void Dispose()
+    {
+        ps1.Dispose();
+        ps2.Dispose();
     }
 }

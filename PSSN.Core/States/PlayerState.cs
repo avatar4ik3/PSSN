@@ -32,4 +32,9 @@ public class PlayerState : IPlayerState
         currentBehaviour = strategy.GetNextBehaviour(g, p);
         return true;
     }
+
+    public void Dispose()
+    {
+        
+    }
 }

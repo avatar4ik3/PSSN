@@ -7,10 +7,10 @@ public class SingleFilledStrategyGenerator
     private static Random? _random;
     private readonly int _stagesCount;
 
-    public SingleFilledStrategyGenerator(int stagesCount)
+    public SingleFilledStrategyGenerator(int stagesCount,Random random)
     {
         _stagesCount = stagesCount;
-        _random = new Random();
+        _random = random;
     }
 
     public FilledStrategy Generate()

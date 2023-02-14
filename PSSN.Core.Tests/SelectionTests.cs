@@ -12,7 +12,7 @@ public class SelectionTests
     {
         // Given
         var random = new Random();
-        var sg = new SingleFilledStrategyGenerator(6);
+        var sg = new SingleFilledStrategyGenerator(6,new Random());
         var generator = new FilledStrategiesGenerator(10, sg);
         var population = generator.Generate();
         var tree = new TreeGameRunnerResult();
@@ -24,7 +24,7 @@ public class SelectionTests
             tree[s1, s2, r] = val;
         }
 
-        var op = new SelectionOperator(10, tree);
+        var op = new SelectionOperator(10, tree,random);
         // When
         var result = op.Operate(population);
         //Then

@@ -9,7 +9,7 @@ public class TreeTests
     {
         // Given
         var random = new Random();
-        var sg = new SingleFilledStrategyGenerator(6);
+        var sg = new SingleFilledStrategyGenerator(6,new Random());
         var generator = new FilledStrategiesGenerator(10, sg);
         var population = generator.Generate();
         var tree = new TreeGameRunnerResult();

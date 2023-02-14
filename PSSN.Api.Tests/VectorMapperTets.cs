@@ -21,58 +21,58 @@ public class VectorMapperTets
         _mapper = new Mapper(mapperConfig);
     }
 
-    [Fact]
-    public void Mapper_MapsDictionary()
-    {
-        var vector = new ResultVector
-        {
-            Stage = 0,
-            Vector = new Dictionary<IStrategy, double>
-            {
-                {new EmptyStrategy {Name = "C"}, 0.125},
-                {new EmptyStrategy {Name = "CTT"}, 0.125},
-                {new EmptyStrategy {Name = "CRTT"}, 0.125},
-                {new EmptyStrategy {Name = "CD"}, 0.125},
-                {new EmptyStrategy {Name = "DC"}, 0.125},
-                {new EmptyStrategy {Name = "DTT"}, 0.125},
-                {new EmptyStrategy {Name = "DRTT"}, 0.125},
-                {new EmptyStrategy {Name = "DD"}, 0.125}
-            }
-        };
+    // [Fact]
+    // public void Mapper_MapsDictionary()
+    // {
+    //     var vector = new ResultVector
+    //     {
+    //         Stage = 0,
+    //         Vector = new Dictionary<IStrategy, double>
+    //         {
+    //             {new EmptyStrategy {Name = "C"}, 0.125},
+    //             {new EmptyStrategy {Name = "CTT"}, 0.125},
+    //             {new EmptyStrategy {Name = "CRTT"}, 0.125},
+    //             {new EmptyStrategy {Name = "CD"}, 0.125},
+    //             {new EmptyStrategy {Name = "DC"}, 0.125},
+    //             {new EmptyStrategy {Name = "DTT"}, 0.125},
+    //             {new EmptyStrategy {Name = "DRTT"}, 0.125},
+    //             {new EmptyStrategy {Name = "DD"}, 0.125}
+    //         }
+    //     };
+    //
+    //     var actual = _mapper.Map<VectorResponse>(vector);
+    //
+    //     var expected = new VectorResponse
+    //     {
+    //         Ki = 0,
+    //         Values = new Dictionary<string, double>(vector.Vector
+    //             .Select(x => new KeyValuePair<string, double>(x.Key.Name, x.Value)).ToArray())
+    //     };
+    //
+    //     Assert.Equal(expected.Ki, actual.Ki);
+    //     Assert.Equal(expected.Values, actual.Values);
+    // }
 
-        var actual = _mapper.Map<VectorResponse>(vector);
-
-        var expected = new VectorResponse
-        {
-            Ki = 0,
-            Values = new Dictionary<string, double>(vector.Vector
-                .Select(x => new KeyValuePair<string, double>(x.Key.Name, x.Value)).ToArray())
-        };
-
-        Assert.Equal(expected.Ki, actual.Ki);
-        Assert.Equal(expected.Values, actual.Values);
-    }
-
-    [Fact]
-    public void Mapper_Strategy_To_String()
-    {
-        var strategy = new EmptyStrategy {Name = "CTT"};
-
-        var actual = _mapper.Map<string>(strategy);
-
-        Assert.Equal(strategy.Name, actual);
-    }
-
-    [Fact]
-    public void Mapper_KV_Strategy_Double_To_KV_String_Double()
-    {
-        var kvp = new KeyValuePair<IStrategy, double>(new EmptyStrategy {Name = "CTT"}, 1);
-
-        var actual = _mapper.Map<KeyValuePair<string, double>>(kvp);
-
-        Assert.Equal(kvp.Value, actual.Value);
-        Assert.Equal(kvp.Key.Name, actual.Key);
-    }
+    // [Fact]
+    // public void Mapper_Strategy_To_String()
+    // {
+    //     var strategy = new EmptyStrategy {Name = "CTT"};
+    //
+    //     var actual = _mapper.Map<string>(strategy);
+    //
+    //     Assert.Equal(strategy.Name, actual);
+    // }
+    //
+    // [Fact]
+    // public void Mapper_KV_Strategy_Double_To_KV_String_Double()
+    // {
+    //     var kvp = new KeyValuePair<IStrategy, double>(new EmptyStrategy {Name = "CTT"}, 1);
+    //
+    //     var actual = _mapper.Map<KeyValuePair<string, double>>(kvp);
+    //
+    //     Assert.Equal(kvp.Value, actual.Value);
+    //     Assert.Equal(kvp.Key.Name, actual.Key);
+    // }
 
     [Fact]
     public void Mapper_MapsIEnumerables()

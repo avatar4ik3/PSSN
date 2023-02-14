@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Combinatorics.Collections;
 
 using PSSN.Core.States;
@@ -32,5 +33,10 @@ public class ParallelGameRunner : IGameRunner
                 results[s2, s1] = game.P2Scores();
             });
         return results;
+    }
+
+    public void Dispose()
+    {
+        
     }
 }

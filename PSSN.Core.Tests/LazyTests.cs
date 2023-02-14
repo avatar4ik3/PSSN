@@ -10,7 +10,7 @@ public class LazyTests
     {
         // Given
         var random = new Random();
-        var population = new FilledStrategiesGenerator(10, new SingleFilledStrategyGenerator(6)).Generate();
+        var population = new FilledStrategiesGenerator(10, new SingleFilledStrategyGenerator(6,new Random())).Generate();
         var gameRunner = new SimpleGameRunner();
         // When
         var results = gameRunner.Play(
@@ -21,7 +21,7 @@ public class LazyTests
                 new double[] {6, 1}
             }, 6);
         // Then
-        var selectionOpeerator = new SelectionOperator(4, results);
+        var selectionOpeerator = new SelectionOperator(4, results,random);
         var selected1 = selectionOpeerator.Operate(population);
         var selected2 = selectionOpeerator.Operate(population);
 
