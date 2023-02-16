@@ -41,5 +41,9 @@ public class VectorProfile : Profile
         CreateMap<FilledStrategy, FilledStrategyModel>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))
             .ForMember(x => x.Behaviors, m => m.MapFrom(y => y.behaviours));
+
+        CreateMap<FilledStrategyModel, FilledStrategy>()
+            .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))
+            .ForMember(x => x.behaviours, m => m.MapFrom(y => y.Behaviors));
     }
 }

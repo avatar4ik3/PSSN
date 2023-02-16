@@ -124,12 +124,12 @@ public class ResearchController : ControllerBase
         return Ok(_mapper.Map<List<FilledStrategyModel>>(strats));
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("split")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SingleGenerationResponse))]
-    public ActionResult<SingleGenerationResponse> ResearchSingleGeneration([FromQuery] SingleGenerationRequest request)
+    public ActionResult<SingleGenerationResponse> ResearchSingleGeneration(SingleGenerationRequest request)
     {
-        var strats = _mapper.Map<List<FilledStrategy>>(request.Strats);
+        var strats = _mapper.Map<List<FilledStrategy>>(request.Strats).Copy().ToList();
         var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
         var newPopulation = new List<FilledStrategy>();
@@ -158,7 +158,11 @@ public class ResearchController : ControllerBase
                 _mapper.Map<List<FilledStrategyModel>>(strats),
                 _mapper.Map<ResultTree>(tree)
             ),
-            NewStrats = _mapper.Map<List<FilledStrategyModel>>(newPopulation)
+            NewStrats = _mapper.Map<List<FilledStrategyModel>>(newPopulation.Zip(Enumerable.Range(0, newPopulation.Count)).Select(x =>
+            {
+                x.First.Name = x.Second.ToString();
+                return x.First;
+            }))
         };
 
         return Ok(response);
