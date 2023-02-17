@@ -1,13 +1,10 @@
-import React, { Component, useState, useEffect, useRef } from "react"
-import * as JSC from "jscharting"
+import React, { useState } from "react"
 import axios from "axios"
 import * as qs from "qs"
 import UnDetGraph from "./UnDetGraph"
-import LoadedComponent from "./LoadedComponent"
 
 const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
-	const genStratsRequest = useRef({})
-	const singleResearchRequest = useRef({})
+	const [chartData, setChartData] = useState(null)
 
 	const [commonRequestData, setcommonRequestData] = useState({
 		population: 100,
@@ -22,31 +19,16 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		],
 	})
 
-	useEffect(() => {
-		singleResearchRequest.current.genCount = commonRequestData.genCount
-		singleResearchRequest.current.swapChance = commonRequestData.swapChance
-		singleResearchRequest.current.crossingCount =
-			commonRequestData.crossingCount
-		singleResearchRequest.current.selectionGoupSize =
-			commonRequestData.selectionGoupSize
-
-		singleResearchRequest.current.ro = commonRequestData.ro
-
-		genStratsRequest.current.Count = commonRequestData.count
-		genStratsRequest.current.GenCount = commonRequestData.genCount
-
-		console.log("common request data changed", commonRequestData)
-	}, [commonRequestData])
-
-	const [chartData, setChartData] = useState(null)
-
 	//переписать так, что не использовались рефы
 	async function requestInitialStrategies() {
 		return axios
 			.get(
 				apiHost +
 					"/api/v1/research/generate?" +
-					qs.stringify(genStratsRequest.current)
+					qs.stringify({
+						count: commonRequestData.count,
+						genCount: commonRequestData.genCount,
+					})
 			)
 			.then((r) => r.data)
 	}
@@ -55,7 +37,11 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		console.log("request split started")
 		return axios
 			.post(apiHost + "/api/v1/research/split", {
-				...singleResearchRequest.current,
+				genCount: commonRequestData.genCount,
+				swapChance: commonRequestData.swapChance,
+				crossingCount: commonRequestData.crossingCount,
+				selectionGoupSize: commonRequestData.selectionGoupSize,
+				ro: commonRequestData.ro,
 				strats: payload,
 			})
 			.then((r) => ({
@@ -105,11 +91,11 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 							<label>{k}</label>
 							<input
 								type="number"
-								defaultValue={v}
+								value={v}
 								onChange={(e) => {
-									setcommonRequestData((prev) => {
-										prev[[k]] = e.target.value
-										return prev
+									setcommonRequestData({
+										...commonRequestData,
+										[k]: e.target.value,
 									})
 								}}
 							/>
@@ -132,7 +118,6 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 						console.log(gameResult, newStrats)
 						payload = newStrats
 						resultData.push(gameResult)
-						console.log(singleResearchRequest.current.strats)
 					}
 
 					drawGraph(resultData)
