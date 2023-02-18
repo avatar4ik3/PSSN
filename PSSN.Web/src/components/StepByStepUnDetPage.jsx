@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import axios from "axios"
 import * as qs from "qs"
-import UnDetGraph from "./UnDetGraph"
+import Graph from "./Graph"
 
 const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 	const [chartData, setChartData] = useState(null)
@@ -128,7 +128,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 				Process
 			</button>
 
-			{chartData ? <UnDetGraph series={chartData} /> : null}
+			{chartData ? <Graph series={chartData} /> : null}
 		</div>
 	)
 }

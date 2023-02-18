@@ -1,18 +1,50 @@
 import { React, StrictMode } from "react"
 import DetPage from "./components/DetPage"
-import SamplePage from "./components/SamplePage"
 import StepByStepUnDetPage from "./components/StepByStepUnDetPage"
-import UnDetPage from "./components/UnDetPage"
+
+import SamplePage from "./components/SamplePage"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import Root from "./components/Root"
+
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Root />,
+		errorElement: <div>Page not Found</div>,
+	},
+	{
+		path: "/sample",
+		element: <SamplePage />,
+	},
+	{
+		path: "/det",
+		element: (
+			<DetPage
+				apiHost={
+					"http://" +
+					process.env.REACT_APP_SERVER_NAME +
+					":" +
+					process.env.REACT_APP_SERVER_PORT
+				}
+			/>
+		),
+	},
+	{
+		path: "/undet",
+		element: (
+			<StepByStepUnDetPage
+				apiHost={
+					"http://" +
+					process.env.REACT_APP_SERVER_NAME +
+					":" +
+					process.env.REACT_APP_SERVER_PORT
+				}
+			/>
+		),
+	},
+])
 function App() {
-	return (
-		<StrictMode>
-			<div className="App">
-				<StepByStepUnDetPage
-					apiHost={"http://localhost:8080"}
-				></StepByStepUnDetPage>
-			</div>
-		</StrictMode>
-	)
+	return <RouterProvider router={router}></RouterProvider>
 }
 
 export default App

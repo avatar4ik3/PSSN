@@ -42,7 +42,7 @@ public class ResearchController : ControllerBase
     public ActionResult<IEnumerable<VectorResponse>> Research([FromQuery] SimpleResearchRequest request)
     {
         var strategies = request.Strats.Select(s => _container[s]).ToArray();
-        var innerResult = _researcher.Research(request.K, 6, strategies, request.A).Vectors;
+        var innerResult = _researcher.Research(request.K, request.R, strategies, request.Po).Vectors;
         var response = new List<VectorResponse>();
         for (var i = 0; i < request.K; ++i)
         {

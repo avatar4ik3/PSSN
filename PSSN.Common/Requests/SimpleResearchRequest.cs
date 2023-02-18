@@ -6,6 +6,6 @@ namespace PSSN.Common.Requests;
     Strats - выбранные стратегии
     A - матрица выйгришей
 */
-public record SimpleResearchRequest(int K, int R, IEnumerable<string> Strats, double[][] A)
+public record SimpleResearchRequest(int K, int R, IEnumerable<string> Strats, double[][] Po)
 {
 }
