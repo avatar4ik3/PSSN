@@ -1,11 +1,4 @@
-const Array2DInput = ({
-	index1,
-	index2,
-	v,
-	setrequest: set,
-	data,
-	...rest
-}) => {
+const Array2DInput = ({ index1, index2, v, set, data, ...rest }) => {
 	return (
 		<div>
 			<label>
