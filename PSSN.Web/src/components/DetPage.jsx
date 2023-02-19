@@ -2,18 +2,19 @@ import { React, useState } from "react"
 import axios from "axios"
 import * as qs from "qs"
 import Graph from "./Graph"
+import Array2DInput from "./Array2DInput"
 const DetPage = ({ apiHost, ...rest }) => {
 	console.log(apiHost)
 	const [data, setdata] = useState(null)
 
 	const [request, setrequest] = useState({
-		k: 1000,
-		strats: ["CTT", "CD", "D", "CTT3D", "CTT4D", "CTT5D", "CTT6D"],
-		ro: [
-			[6, 0],
-			[4, 1],
+		CycleCount: 1000,
+		Strategies: ["CTT", "CD", "D", "CTT3D", "CTT4D", "CTT5D", "CTT6D"],
+		A: [
+			[4, 0],
+			[6, 1],
 		],
-		r: 6,
+		NTimesRepeatedGame: 6,
 	})
 
 	async function sendRequest() {
@@ -23,10 +24,10 @@ const DetPage = ({ apiHost, ...rest }) => {
 					"/api/v1/research/simple/?" +
 					qs.stringify(
 						{
-							k: request.k,
-							strats: request.strats,
-							po: request.ro,
-							r: request.r,
+							k: request.CycleCount,
+							strats: request.Strategies,
+							po: request.A,
+							r: request.NTimesRepeatedGame,
 						},
 						{ arrayFormat: "indices" }
 					)
@@ -57,47 +58,52 @@ const DetPage = ({ apiHost, ...rest }) => {
 		return result
 	}
 
-	const Array2DInput = ({ index1, index2, v, ...rest }) => {
-		return (
-			<div>
-				<label>
-					[{index1}][{index2}]
-				</label>
-				<input
-					type="number"
-					value={v[index1][index2]}
-					onChange={(e) => {
-						const inro = request.ro
-						inro[index1][index2] = e.target.value
-						setrequest({ ...request, ro: inro })
-					}}
-				/>
-			</div>
-		)
-	}
-
 	return (
 		<div>
 			<label>Det request</label>
 			<div>
 				{Object.entries(request).map(([k, v]) => {
-					if (k == "ro") {
+					if (k == "A") {
 						return (
 							<div key={k}>
-								<label>Ro</label>
-								<Array2DInput index1={0} index2={0} v={v} />
-								<Array2DInput index1={0} index2={1} v={v} />
-								<Array2DInput index1={1} index2={0} v={v} />
-								<Array2DInput index1={1} index2={1} v={v} />
+								<label>{k}</label>
+								<Array2DInput
+									index1={0}
+									index2={0}
+									v={v}
+									set={setrequest}
+									data={request}
+								/>
+								<Array2DInput
+									index1={0}
+									index2={1}
+									v={v}
+									set={setrequest}
+									data={request}
+								/>
+								<Array2DInput
+									index1={1}
+									index2={0}
+									v={v}
+									set={setrequest}
+									data={request}
+								/>
+								<Array2DInput
+									index1={1}
+									index2={1}
+									v={v}
+									set={setrequest}
+									data={request}
+								/>
 							</div>
 						)
-					} else if (k == "strats") {
+					} else if (k == "Strategies") {
 						return (
 							<div key={k}>
 								<label>{k}</label>
 								<input
 									type="text"
-									defaultValue={request.strats}
+									defaultValue={request.Strategies}
 									onChange={(e) => {
 										if (e.target.value.endsWith(",") === false) {
 											console.log("editing!")
@@ -137,7 +143,7 @@ const DetPage = ({ apiHost, ...rest }) => {
 					setdata(GetSeries(response))
 				}}
 			>
-				submit
+				Process
 			</button>
 			{data ? <Graph series={data} /> : null}
 		</div>

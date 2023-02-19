@@ -2,20 +2,21 @@ import React, { useState } from "react"
 import axios from "axios"
 import * as qs from "qs"
 import Graph from "./Graph"
+import Array2DInput from "./Array2DInput"
 
 const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 	const [chartData, setChartData] = useState(null)
 
 	const [commonRequestData, setcommonRequestData] = useState({
-		population: 100,
-		count: 10,
-		genCount: 5,
-		swapChance: 0.3,
-		crossingCount: 5,
-		selectionGoupSize: 5,
-		ro: [
-			[6, 1],
+		GenerationsCount: 100,
+		PopulationSize: 10,
+		GenotypeSize: 5,
+		GeneMutationChance: 0.3,
+		MaxGenLengthForCrossingover: 5,
+		K_TournamentSelection: 5,
+		A: [
 			[4, 0],
+			[6, 1],
 		],
 	})
 
@@ -26,8 +27,8 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 				apiHost +
 					"/api/v1/research/generate?" +
 					qs.stringify({
-						count: commonRequestData.count,
-						genCount: commonRequestData.genCount,
+						count: commonRequestData.PopulationSize,
+						genCount: commonRequestData.GenotypeSize,
 					})
 			)
 			.then((r) => r.data)
@@ -37,11 +38,11 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		console.log("request split started")
 		return axios
 			.post(apiHost + "/api/v1/research/split", {
-				genCount: commonRequestData.genCount,
-				swapChance: commonRequestData.swapChance,
-				crossingCount: commonRequestData.crossingCount,
-				selectionGoupSize: commonRequestData.selectionGoupSize,
-				ro: commonRequestData.ro,
+				genCount: commonRequestData.GenotypeSize,
+				swapChance: commonRequestData.GeneMutationChance,
+				crossingCount: commonRequestData.MaxGenLengthForCrossingover,
+				selectionGroupSize: commonRequestData.K_TournamentSelection,
+				ro: commonRequestData.A,
 				strats: payload,
 			})
 			.then((r) => ({
@@ -84,9 +85,12 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 	return (
 		<div>
 			<div>
-				<label>Initial Strats</label>
+				<label>
+					Эволюционные алгоритмы в дилемме заключенного. <br />
+					Где гены — это конкретное решение (C/D) на каждом этапе игры.
+				</label>
 				{Object.entries(commonRequestData).map(([k, v]) => {
-					return k != "ro" ? (
+					return k != "A" ? (
 						<div key={k}>
 							<label>{k}</label>
 							<input
@@ -101,7 +105,37 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 							/>
 						</div>
 					) : (
-						""
+						<div key={k}>
+							<label>{k}</label>
+							<Array2DInput
+								index1={0}
+								index2={0}
+								v={v}
+								set={setcommonRequestData}
+								data={commonRequestData}
+							/>
+							<Array2DInput
+								index1={0}
+								index2={1}
+								v={v}
+								set={setcommonRequestData}
+								data={commonRequestData}
+							/>
+							<Array2DInput
+								index1={1}
+								index2={0}
+								v={v}
+								set={setcommonRequestData}
+								data={commonRequestData}
+							/>
+							<Array2DInput
+								index1={1}
+								index2={1}
+								v={v}
+								set={setcommonRequestData}
+								data={commonRequestData}
+							/>
+						</div>
 					)
 				})}
 			</div>
@@ -113,7 +147,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					let payload = await requestInitialStrategies()
 
 					console.log(payload)
-					for (let i = 0; i < commonRequestData.population; ++i) {
+					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await getOneGeneration(payload)
 						console.log(gameResult, newStrats)
 						payload = newStrats

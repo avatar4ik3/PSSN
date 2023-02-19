@@ -7,7 +7,7 @@ const SamplePage = () => {
 	useEffect(() => {
 		async function get() {
 			const response = await axios.get("http://localhost:5146/api/v1/test/")
-			var data = response.data
+			const data = response.data
 			setlines(data)
 		}
 		get()

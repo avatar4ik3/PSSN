@@ -134,7 +134,7 @@ public class ResearchController : ControllerBase
 
         var newPopulation = new List<FilledStrategy>();
 
-        var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, _random);
+        var selectionOperator = new SelectionOperator(request.SelectionGroupSize, tree, _random);
         var crossingOverOperator =
             new BestScorePickerCrossingOverOperator(
                 request.CrossingCount, strats, tree);
