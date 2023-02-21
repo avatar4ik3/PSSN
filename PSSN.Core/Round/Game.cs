@@ -3,7 +3,7 @@ using PSSN.Core.States;
 
 namespace PSSN.Core.Round;
 
-public class Game : IDisposable
+public class Game
 {
     private readonly double[][] _payoffs;
 
@@ -42,8 +42,4 @@ public class Game : IDisposable
         return State.ps2.Scores;
     }
 
-    public void Dispose()
-    {
-        State.Dispose();
-    }
 }

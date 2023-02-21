@@ -3,7 +3,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.States;
 
-public class PlayerState
+public class PlayerState : IPlayerState
 {
     public PlayerState(Player p, IStrategy strategy)
     {

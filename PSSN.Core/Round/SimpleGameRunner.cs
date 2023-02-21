@@ -28,11 +28,8 @@ public class SimpleGameRunner : IGameRunner
             results[s1, s2] = game.P1Scores();
             results[s2, s1] = game.P2Scores();
         }
-        
+
         return results;
     }
 
-    public void Dispose()
-    {
-    }
 }
