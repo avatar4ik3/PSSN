@@ -23,7 +23,7 @@ public class BestScorePickerCrossingOverOperator
     public IEnumerable<FilledStrategy> Operate(FilledStrategy s1, FilledStrategy s2)
     {
         //берем все стратегии, кроме переданых
-        var rest = _all;
+        var rest = _all.Where(s => s != s1 && s != s2).ToList();
         //индексы которые будем свапать
         List<int> indexiesToSwapIntoS1 = new();
         List<int> indexiesToSwapIntoS2 = new();
@@ -33,8 +33,8 @@ public class BestScorePickerCrossingOverOperator
 
         foreach (var round in s1.behaviours.Keys)
         {
-            s1Sums[round] = rest.Where(s => s != s1).Select(s => _results[s1, s, round]).Sum();
-            s2Sums[round] = rest.Where(s => s != s1).Select(s => _results[s2, s, round]).Sum();
+            s1Sums[round] = rest.Select(s => _results[s1, s, round]).Sum();
+            s2Sums[round] = rest.Select(s => _results[s2, s, round]).Sum();
         }
 
         //разница в очках. абсолютное значение
