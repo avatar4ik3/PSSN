@@ -3,7 +3,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.States;
 
-public interface IPlayerState : IDisposable
+public interface IPlayerState
 {
     public Player p { get; init; }
     public IStrategy strategy { get; set; }

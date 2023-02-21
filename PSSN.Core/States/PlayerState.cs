@@ -3,7 +3,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.States;
 
-public class PlayerState : IPlayerState
+public class PlayerState
 {
     public PlayerState(Player p, IStrategy strategy)
     {
@@ -33,8 +33,5 @@ public class PlayerState : IPlayerState
         return true;
     }
 
-    public void Dispose()
-    {
-        
-    }
+
 }
