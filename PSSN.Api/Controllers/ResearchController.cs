@@ -4,6 +4,8 @@ using PSSN.Common.Model;
 using PSSN.Common.Requests;
 using PSSN.Common.Responses;
 using PSSN.Core;
+using PSSN.Core.Containers;
+using PSSN.Core.Generators;
 using PSSN.Core.Matricies;
 using PSSN.Core.Operators;
 using PSSN.Core.Round;
@@ -21,15 +23,17 @@ namespace PSSN.Api.Controllers;
 public class ResearchController : ControllerBase
 {
     private readonly StrategiesContainer _container;
+    private readonly PatternsContainer _patternsContainer;
     private readonly IGameRunner _gameRunner;
     private readonly IMapper _mapper;
     private readonly Random _random;
     private readonly PopulationFrequency _researcher;
 
-    public ResearchController(StrategiesContainer container, PopulationFrequency researcher,
+    public ResearchController(StrategiesContainer container, PatternsContainer patternsContainer, PopulationFrequency researcher,
         IGameRunner gameRunner, IMapper mapper, Random random)
     {
         _container = container;
+        this._patternsContainer = patternsContainer;
         _researcher = researcher;
         _gameRunner = gameRunner;
         _mapper = mapper;
@@ -81,7 +85,7 @@ public class ResearchController : ControllerBase
 
             var newPopulation = new List<FilledStrategy>();
 
-            var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, _random);
+            var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, _random);
             var crossingOverOperator =
                 new BestScorePickerCrossingOverOperator(
                     request.CrossingCount, strats, tree);
@@ -134,7 +138,7 @@ public class ResearchController : ControllerBase
 
         var newPopulation = new List<FilledStrategy>();
 
-        var selectionOperator = new SelectionOperator(request.SelectionGroupSize, tree, _random);
+        var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, _random);
         var crossingOverOperator =
             new BestScorePickerCrossingOverOperator(
                 request.CrossingCount, strats, tree);
@@ -167,4 +171,53 @@ public class ResearchController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpGet]
+    [Route("conditional")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponse))]
+    public ActionResult<GenerationResponse> TestConditional([FromQuery] GenerationRequest param)
+    {
+        var gen = new ConditionalStrategyGenerator(
+            param.Population,
+            new SingleConditionalStrategyGenerator(1, 1, param.GenCount, _random, _patternsContainer));
+
+        var strats = gen.Generate().ToList();
+
+        var res = new GenerationResponse();
+
+        foreach (var _ in ..param.Population)
+        {
+            var tree = _gameRunner.Play(strats, param.Ro!, param.GenCount);
+            res.Items.Add(new GenerationResponseItem(
+                null!,
+                _mapper.Map<ResultTree>(tree)
+            ));
+
+            var newPopulation = new List<ConditionalStrategy>();
+
+            var mutationOperator = new ConditionalMutationOperator(_random, param.SwapChance, param.GenCount, 0);
+            var selectionOperator = new SelectionOperator<ConditionalStrategy>(param.SelectionGroupSize, tree, _random);
+            //INNER_C = Population / 2 + 1 если Populations нечетное
+            foreach (var __ in ..(strats.Count / 2 + strats.Count % 2))
+            {
+                //INNER_C 
+                var s1 = selectionOperator.Operate(strats);
+                var s2 = selectionOperator.Operate(strats);
+
+                var crossovers = new[] { s1, s2 };
+
+                //INNER_C * Population
+                var mutated = mutationOperator.Operate(crossovers);
+
+                newPopulation.AddRange(mutated);
+            }
+
+            strats = newPopulation.Copy()
+                .Zip(Enumerable.Range(0, newPopulation.Count()))
+                .Select(x => new ConditionalStrategy(x.First.Patterns, x.Second.ToString()))
+                .ToList();
+        }
+        return Ok(res);
+    }
+
 }

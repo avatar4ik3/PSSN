@@ -2,14 +2,13 @@ using PSSN.Core.Round;
 
 namespace PSSN.Core.Strategies;
 
-public sealed class CD : StrategyBase
+public sealed class CD : IStrategy
 {
-    public override Behavior StartBehaviour { get; init; } = Behavior.C;
-    public override string Name { get; set; } = "CD";
+    public string Name { get; set; } = "CD";
 
-    public override Behavior GetNextBehaviour(Game g, Player p)
+    public Behavior GetNextBehaviour(Game g, Player p)
     {
-        if (g.State.currentStage == 0) return StartBehaviour;
+        if (g.State.currentStage == 0) return Behavior.C;
         return Behavior.D;
     }
 }

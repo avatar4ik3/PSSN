@@ -5,7 +5,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.Operators;
 
-public class SelectionOperator
+public class SelectionOperator<T> where T : IStrategy
 {
     private readonly Random _random;
     private readonly int _k;
@@ -18,7 +18,7 @@ public class SelectionOperator
         _result = result;
     }
 
-    public FilledStrategy Operate(IEnumerable<FilledStrategy> strategies)
+    public T Operate(IEnumerable<T> strategies)
     {
         var selected = strategies.SelectCombination(_k, _random).ToList();
         return selected.MaxBy(s => GetTotalScore(s, _result))

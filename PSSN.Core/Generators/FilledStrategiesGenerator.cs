@@ -1,6 +1,6 @@
 using PSSN.Core.Strategies;
 
-namespace PSSN.Core;
+namespace PSSN.Core.Generators;
 
 public class FilledStrategiesGenerator
 {

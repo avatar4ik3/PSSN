@@ -1,5 +1,5 @@
 using FluentAssertions;
-
+using PSSN.Core.Generators;
 using PSSN.Core.Operators;
 using PSSN.Core.Strategies;
 
@@ -13,11 +13,11 @@ public class MutationsTests
         // Given
         var random = new Random();
         var dicLength = 10;
-        var g = new SingleFilledStrategyGenerator(dicLength,new Random());
+        var g = new SingleFilledStrategyGenerator(dicLength, new Random());
         var prev = g.Generate();
-        var mutator = new MutationOperator(1,random);
+        var mutator = new MutationOperator(1, random);
         // When
-        var actual = (FilledStrategy) mutator.Operate(prev);
+        var actual = (FilledStrategy)mutator.Operate(prev);
         // Then
         actual.behaviours.Should().AllSatisfy(kvp =>
             kvp.Value.Should().Be(prev.behaviours[kvp.Key].Other())

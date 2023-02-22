@@ -8,6 +8,7 @@ using PSSN.Api.Extensions.SerilogEnricher;
 using PSSN.Api.ServiceInterfaces;
 using PSSN.Api.Services;
 using PSSN.Core;
+using PSSN.Core.Containers;
 using PSSN.Core.Matricies;
 using PSSN.Core.Round;
 
@@ -69,6 +70,8 @@ public static class Startup
         });
 
         builder.Services.AddSingleton<StrategiesContainer>();
+        builder.Services.AddSingleton<PatternsContainer>();
+
 
         builder.Services.AddScoped<IParserService, ParserService>();
 

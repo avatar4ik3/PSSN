@@ -9,7 +9,6 @@ public class PlayerState : IPlayerState
     {
         this.p = p;
         this.strategy = strategy;
-        currentBehaviour = strategy.StartBehaviour;
     }
 
     public Player p { get; init; }

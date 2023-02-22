@@ -28,6 +28,12 @@ public static class Extensions
     {
         return strats.Select(x => new FilledStrategy(x.behaviours, x.Name));
     }
+
+    public static IEnumerable<ConditionalStrategy> Copy(this IEnumerable<ConditionalStrategy> strats)
+    {
+        return strats.Select(x => new ConditionalStrategy(x.Patterns, x.Behaviours, x.Name));
+    }
+
 }
 
 public class RangeEnumerator : IEnumerator<int>

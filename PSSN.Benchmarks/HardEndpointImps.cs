@@ -3,6 +3,7 @@ using PSSN.Common.Model;
 using PSSN.Common.Requests;
 using PSSN.Common.Responses;
 using PSSN.Core;
+using PSSN.Core.Generators;
 using PSSN.Core.Operators;
 using PSSN.Core.Round;
 using PSSN.Core.Strategies;
@@ -18,7 +19,7 @@ public static class HardEndpointImps
     {
         var gen = new FilledStrategiesGenerator(
             request.Population,
-            new SingleFilledStrategyGenerator(request.GenCount,random));
+            new SingleFilledStrategyGenerator(request.GenCount, random));
 
         var strats = gen
             .Generate()
@@ -37,7 +38,7 @@ public static class HardEndpointImps
 
             var newPopulation = new List<FilledStrategy>();
 
-            var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, random);
+            var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, random);
             var crossingOverOperator =
                 new BestScorePickerCrossingOverOperator(
                     request.CrossingCount, strats, tree);
@@ -65,7 +66,7 @@ public static class HardEndpointImps
 
         return result;
     }
-    
+
     //| 825.4 ms | 149.13 ms | 218.59 ms |    2 | 54000.0000 | 16000.0000 | 3000.0000 | 310.08 MB |
 
     public static GenerationResponse Solution_NoCopy_NoToList_NoBadAlloc(GenerationRequest request, Mapper mapper, IGameRunner gameRunner,
@@ -73,7 +74,7 @@ public static class HardEndpointImps
     {
         var gen = new FilledStrategiesGenerator(
             request.Population,
-            new SingleFilledStrategyGenerator(request.GenCount,random));
+            new SingleFilledStrategyGenerator(request.GenCount, random));
 
         var strats = gen
             .Generate()
@@ -92,7 +93,7 @@ public static class HardEndpointImps
 
             var newPopulation = new List<FilledStrategy>(strats.Count());
 
-            var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, random);
+            var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, random);
             var crossingOverOperator =
                 new BestScorePickerCrossingOverOperator(
                     request.CrossingCount, strats, tree);
@@ -123,13 +124,13 @@ public static class HardEndpointImps
 
         return result;
     }
-    
+
     public static GenerationResponse Solution_NoMapping(GenerationRequest request, IGameRunner gameRunner,
         Random random)
     {
         var gen = new FilledStrategiesGenerator(
             request.Population,
-            new SingleFilledStrategyGenerator(request.GenCount,random));
+            new SingleFilledStrategyGenerator(request.GenCount, random));
 
         var strats = gen
             .Generate()
@@ -141,10 +142,10 @@ public static class HardEndpointImps
         {
             //C_Count_2_Population * GenCount ::::: <- GenCount это GPR 
             var tree = gameRunner.Play(strats, request.Ro!, request.GenCount);
-            
+
             var newPopulation = new List<FilledStrategy>(strats.Count());
 
-            var selectionOperator = new SelectionOperator(request.SelectionGoupSize, tree, random);
+            var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, random);
             var crossingOverOperator =
                 new BestScorePickerCrossingOverOperator(
                     request.CrossingCount, strats, tree);
@@ -175,5 +176,5 @@ public static class HardEndpointImps
 
         return result;
     }
-    
+
 }

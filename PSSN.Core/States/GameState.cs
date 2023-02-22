@@ -15,22 +15,22 @@ public class GameState
     public IPlayerState ps1 { get; init; }
     public IPlayerState ps2 { get; init; }
 
-    public int currentStage { get; private set; }
+    public int currentStage { get; private set; } = 0;
 
     public int maxCountOfStages { get; init; }
 
-    public IPlayerState? GetPlayerStateByPlayer(Player p)
+    public IPlayerState GetPlayerStateByPlayer(Player p)
     {
         if (ps1.p.Equals(p)) return ps1;
         if (ps2.p.Equals(p)) return ps2;
-        return null;
+        throw new ArgumentException();
     }
 
-    public IPlayerState? GetOpponentPlayerState(Player p)
+    public IPlayerState GetOpponentPlayerState(Player p)
     {
         if (ps1.p.Equals(p)) return ps2;
         if (ps2.p.Equals(p)) return ps1;
-        return null;
+        throw new ArgumentException();
     }
 
     public bool IsOver()
@@ -51,15 +51,16 @@ public class GameState
 
     public void Next(Game g)
     {
-        currentStage++;
+
         if (IsOver() == false)
         {
-            ps1.previousBehaviours.Add(ps1.currentBehaviour);
-            ps2.previousBehaviours.Add(ps2.currentBehaviour);
-
             ps1.Next(g);
             ps2.Next(g);
+
+            ps1.previousBehaviours.Add(ps1.currentBehaviour);
+            ps2.previousBehaviours.Add(ps2.currentBehaviour);
         }
+        currentStage++;
     }
 
 }

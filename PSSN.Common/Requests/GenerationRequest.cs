@@ -7,5 +7,5 @@ public class GenerationRequest
     public int Population { get; set; }
     public double SwapChance { get; set; }
     public int CrossingCount { get; set; }
-    public int SelectionGoupSize { get; set; }
+    public int SelectionGroupSize { get; set; }
 }

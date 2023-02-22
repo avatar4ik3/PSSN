@@ -1,4 +1,5 @@
 using FluentAssertions;
+using PSSN.Core.Generators;
 
 namespace PSSN.Core.Tests;
 
@@ -8,7 +9,7 @@ public class FilledGeneratorTests
     public void TestName()
     {
         // Given
-        var generator = new SingleFilledStrategyGenerator(10,new Random());
+        var generator = new SingleFilledStrategyGenerator(10, new Random());
 
         var multiGenerator = new FilledStrategiesGenerator(20, generator);
         // When

@@ -2,13 +2,12 @@ using PSSN.Core.Round;
 
 namespace PSSN.Core.Strategies;
 
-public sealed class AlwaysC : StrategyBase
+public sealed class AlwaysC : IStrategy
 {
-    public override Behavior StartBehaviour { get; init; } = Behavior.C;
-    public override string Name { get; set; } = "C";
+    public string Name { get; set; } = "C";
 
-    public override Behavior GetNextBehaviour(Game g, Player p)
+    public Behavior GetNextBehaviour(Game g, Player p)
     {
-        return StartBehaviour;
+        return Behavior.C;
     }
 }

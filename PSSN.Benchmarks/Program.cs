@@ -19,7 +19,7 @@ public class Program
             },
             GenCount = 6,
             Population = 100,
-            SelectionGoupSize = 10,
+            SelectionGroupSize = 10,
             CrossingCount = 3,
             SwapChance = 0.4
         };
@@ -27,8 +27,8 @@ public class Program
         Random _random = new Random();
         IGameRunner _runner = new SimpleGameRunner();
         Mapper _mapper = new Mapper(new MapperConfiguration(options => options.AddProfile<VectorProfile>()));
-        
-        
+
+
         var data = HardEndpointImps.Solution_Default(_req, _mapper, _runner, _random);
 
         var a = 2;

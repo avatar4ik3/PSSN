@@ -6,10 +6,12 @@ import SamplePage from "./components/SamplePage"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Root from "./components/Root"
 
+import ConditionalPage from "./components/ConditionalPage"
+
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <Root />,
+		element: <ConditionalPage></ConditionalPage>,
 		errorElement: <div>Page not Found</div>,
 	},
 	{

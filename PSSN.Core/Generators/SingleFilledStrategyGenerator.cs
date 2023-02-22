@@ -1,13 +1,13 @@
 using PSSN.Core.Strategies;
 
-namespace PSSN.Core;
+namespace PSSN.Core.Generators;
 
 public class SingleFilledStrategyGenerator
 {
     private static Random? _random;
     private readonly int _stagesCount;
 
-    public SingleFilledStrategyGenerator(int stagesCount,Random random)
+    public SingleFilledStrategyGenerator(int stagesCount, Random random)
     {
         _stagesCount = stagesCount;
         _random = random;

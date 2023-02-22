@@ -22,7 +22,7 @@ public class HardEndpointBenchmark
         },
         GenCount = 6,
         Population = 50,
-        SelectionGoupSize = 4,
+        SelectionGroupSize = 4,
         CrossingCount = 3,
         SwapChance = 0.4
     };
@@ -36,7 +36,7 @@ public class HardEndpointBenchmark
     {
         var data = HardEndpointImps.Solution_Default(_req, _mapper, _runner, _random);
     }
-    
+
     [Benchmark]
     public void NoToList()
     {
