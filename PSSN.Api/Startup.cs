@@ -69,7 +69,6 @@ public static class Startup
             });
         });
 
-        builder.Services.AddSingleton<StrategiesContainer>();
         builder.Services.AddSingleton<PatternsContainer>();
 
 

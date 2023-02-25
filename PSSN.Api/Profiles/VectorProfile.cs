@@ -6,6 +6,7 @@ using PSSN.Common.Model;
 using PSSN.Common.Responses;
 using PSSN.Core.Round;
 using PSSN.Core.Strategies;
+using PSSN.Core.Strategies.BehabiourPatterns;
 
 namespace PSSN.Api.Profiles;
 
@@ -38,12 +39,20 @@ public class VectorProfile : Profile
         CreateMap<TreeGameRunnerResult, ResultTree>()
             .ForMember(x => x.Map, m => m.MapFrom(y => y.map));
 
-        CreateMap<FilledStrategy, FilledStrategyModel>()
+        CreateMap<ConditionalStrategy, ConditionalStrategyModel>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))
-            .ForMember(x => x.Behaviors, m => m.MapFrom(y => y.behaviours));
+            .ForMember(x => x.Behaviors, m => m.MapFrom(y => y.Behaviours))
+            .ForMember(x => x.Patterns, m => m.MapFrom(y => y.Patterns));
 
-        CreateMap<FilledStrategyModel, FilledStrategy>()
+        CreateMap<IBehaviourPattern, PatternModel>()
+            .ForMember(x => x.Name, m => m.MapFrom(y => y.GetType().Name))
+            .ForMember(x => x.Coeffs, m => m.MapFrom(y => y.Coeffs));
+
+        //TODO возможно придется убрать эту мапу, потому что поведения тут не мапятся
+        CreateMap<ConditionalStrategyModel, ConditionalStrategy>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))
-            .ForMember(x => x.behaviours, m => m.MapFrom(y => y.Behaviors));
+            .ForMember(x => x.Behaviours, m => m.MapFrom(y => y.Behaviors))
+            .ForMember(x => x.Patterns, m => m.Ignore());
+
     }
 }

@@ -32,7 +32,7 @@ public class ConditionalMutationOperator
                 }
             }
         }
-        return new ConditionalStrategy(strategy.Patterns, strategy.Name);
+        return new ConditionalStrategy() { Patterns = strategy.Patterns, Behaviours = strategy.Behaviours, Name = strategy.Name };
     }
 
     public IEnumerable<ConditionalStrategy> Operate(IEnumerable<ConditionalStrategy> strategies)

@@ -44,8 +44,9 @@ public class GameState
     {
         while (IsOver() == false)
         {
+            Next(g);
             yield return new ValueTuple<IPlayerState, IPlayerState, int>(ps1, ps2, currentStage);
-            if (IsOver() == false) Next(g);
+            currentStage++;
         }
     }
 
@@ -60,7 +61,7 @@ public class GameState
             ps1.previousBehaviours.Add(ps1.currentBehaviour);
             ps2.previousBehaviours.Add(ps2.currentBehaviour);
         }
-        currentStage++;
+
     }
 
 }

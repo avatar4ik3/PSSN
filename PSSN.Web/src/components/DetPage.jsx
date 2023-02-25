@@ -9,7 +9,7 @@ const DetPage = ({ apiHost, ...rest }) => {
 
 	const [request, setrequest] = useState({
 		CycleCount: 1000,
-		Strategies: ["CTT", "CD", "D", "CTT3D", "CTT4D", "CTT5D", "CTT6D"],
+		Strategies: ["CTT", "CTT1D", "DTT1D", "CTT3D", "CTT4D", "CTT5D", "CTT6D"],
 		A: [
 			[4, 0],
 			[6, 1],
@@ -19,19 +19,40 @@ const DetPage = ({ apiHost, ...rest }) => {
 
 	async function sendRequest() {
 		return axios
-			.get(
-				apiHost +
-					"/api/v1/research/simple/?" +
-					qs.stringify(
-						{
-							k: request.CycleCount,
-							strats: request.Strategies,
-							po: request.A,
-							r: request.NTimesRepeatedGame,
-						},
-						{ arrayFormat: "indices" }
-					)
-			)
+			.post(apiHost + "/api/v1/research/simple/", {
+				k: request.CycleCount,
+				strats: request.Strategies.map((x) => {
+					let coefs = [0, 0, 0, 0, 0]
+					let [left, right] = x.split("TT")
+					if (left.startsWith("R")) {
+						coefs[4] = 1
+						left = left.substring(1, left.length)
+					}
+					if (left === "D") {
+						coefs[1] = 1
+					}
+					if (right.endsWith("C") || right.endsWith("D")) {
+						const num = Number.parseInt(right.substring(0, right.length - 1))
+						coefs[0] = num
+						coefs[3] = 1
+						coefs[2] = right[right.length - 1] == "C" ? 0 : 1
+					}
+
+					console.log(coefs)
+
+					return {
+						Name: x,
+						Patterns: [
+							{
+								Name: "CttPattern",
+								Coeffs: coefs,
+							},
+						],
+					}
+				}),
+				po: request.A,
+				r: request.NTimesRepeatedGame,
+			})
 			.then((r) => r.data)
 	}
 

@@ -22,17 +22,15 @@ namespace PSSN.Api.Controllers;
 [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
 public class ResearchController : ControllerBase
 {
-    private readonly StrategiesContainer _container;
     private readonly PatternsContainer _patternsContainer;
     private readonly IGameRunner _gameRunner;
     private readonly IMapper _mapper;
     private readonly Random _random;
     private readonly PopulationFrequency _researcher;
 
-    public ResearchController(StrategiesContainer container, PatternsContainer patternsContainer, PopulationFrequency researcher,
+    public ResearchController(PatternsContainer patternsContainer, PopulationFrequency researcher,
         IGameRunner gameRunner, IMapper mapper, Random random)
     {
-        _container = container;
         this._patternsContainer = patternsContainer;
         _researcher = researcher;
         _gameRunner = gameRunner;
@@ -40,13 +38,18 @@ public class ResearchController : ControllerBase
         this._random = random;
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("simple")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<VectorResponse>))]
-    public ActionResult<IEnumerable<VectorResponse>> Research([FromQuery] SimpleResearchRequest request)
+    public ActionResult<IEnumerable<VectorResponse>> Research(SimpleResearchRequest request)
     {
-        var strategies = request.Strats.Select(s => _container[s]).ToArray();
-        var innerResult = _researcher.Research(request.K, request.R, strategies, request.Po).Vectors;
+        var strategies = _mapper.Map<List<ConditionalStrategy>>(request.Strats).Zip(request.Strats).Select(x =>
+        {
+            x.First.Patterns = x.Second.Patterns.Select(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!)).ToList();
+            return x.First;
+        }).ToArray();
+
+        var innerResult = _researcher.Research(request.K, request.R, strategies, request.Po!).Vectors;
         var response = new List<VectorResponse>();
         for (var i = 0; i < request.K; ++i)
         {
@@ -58,74 +61,24 @@ public class ResearchController : ControllerBase
         return Ok(response);
     }
 
-    //примерная сложность p^3 
-    [HttpGet]
-    [Route("hard")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponse))]
-    public ActionResult<GenerationResponse> ResearchGeneration([FromQuery] GenerationRequest request)
-    {
-        var gen = new FilledStrategiesGenerator(
-            request.Population,
-            new SingleFilledStrategyGenerator(request.GenCount, _random));
-
-        var strats = gen
-            .Generate()
-            .ToList();
-
-        var result = new GenerationResponse();
-
-        foreach (var _ in ..request.Population)
-        {
-            //C_Count_2_Population * GenCount ::::: <- GenCount это GPR 
-            var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
-
-            result.Items.Add(new(
-                _mapper.Map<List<FilledStrategyModel>>(strats.Copy().ToList()),
-                _mapper.Map<ResultTree>(tree)));
-
-            var newPopulation = new List<FilledStrategy>();
-
-            var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, _random);
-            var crossingOverOperator =
-                new BestScorePickerCrossingOverOperator(
-                    request.CrossingCount, strats, tree);
-            var mutationOperator = new MutationOperator(request.SwapChance, _random);
-            //INNER_C = Population / 2 + 1 если Populations нечетное
-            foreach (var __ in ..(strats.Count / 2 + strats.Count % 2))
-            {
-                //INNER_C 
-                var s1 = selectionOperator.Operate(strats);
-                var s2 = selectionOperator.Operate(strats);
-
-                var crossovers = crossingOverOperator.Operate(s1, s2);
-
-                //INNER_C * Population
-                var mutated = mutationOperator.Operate(crossovers);
-
-                newPopulation.AddRange(mutated);
-            }
-
-            strats = newPopulation.Copy()
-                .Zip(Enumerable.Range(0, newPopulation.Count()))
-                .Select(x => new FilledStrategy(x.First.behaviours, x.Second.ToString()))
-                .ToList();
-        }
-
-        return Ok(result);
-    }
-
     [HttpGet]
     [Route("generate")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<FilledStrategyModel>))]
-    public ActionResult<IEnumerable<FilledStrategyModel>> GenerateStrategies([FromQuery] GenerateStrategiesRequest request)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ConditionalStrategyModel>))]
+    public ActionResult<IEnumerable<ConditionalStrategyModel>> GenerateStrategies([FromQuery] GenerateStrategiesRequest request)
     {
-        var gen = new FilledStrategiesGenerator(
-           request.Count,
-           new SingleFilledStrategyGenerator(request.GenCount, _random));
+        var builder = new ConditionalStrategyBuilder(_random);
+        var strats = new List<ConditionalStrategy>(request.Count);
 
-        var strats = gen.Generate();
+        foreach (var i in ..request.Count)
+        {
+            strats.Add(
+                builder
+                .WithName(i.ToString())
+                .WithRandomBehaviours(request.GenCount, 0.5)
+                .Build());
+        }
 
-        return Ok(_mapper.Map<List<FilledStrategyModel>>(strats));
+        return Ok(_mapper.Map<List<ConditionalStrategyModel>>(strats));
     }
 
     [HttpPost]
@@ -133,12 +86,12 @@ public class ResearchController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SingleGenerationResponse))]
     public ActionResult<SingleGenerationResponse> ResearchSingleGeneration(SingleGenerationRequest request)
     {
-        var strats = _mapper.Map<List<FilledStrategy>>(request.Strats).Copy().ToList();
+        var strats = _mapper.Map<List<ConditionalStrategy>>(request.Strats).Copy().ToList();
         var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
-        var newPopulation = new List<FilledStrategy>();
+        var newPopulation = new List<ConditionalStrategy>();
 
-        var selectionOperator = new SelectionOperator<FilledStrategy>(request.SelectionGroupSize, tree, _random);
+        var selectionOperator = new SelectionOperator<ConditionalStrategy>(request.SelectionGroupSize, tree, _random);
         var crossingOverOperator =
             new BestScorePickerCrossingOverOperator(
                 request.CrossingCount, strats, tree);
@@ -159,10 +112,10 @@ public class ResearchController : ControllerBase
         var response = new SingleGenerationResponse()
         {
             GameResult = new GenerationResponseItem(
-                _mapper.Map<List<FilledStrategyModel>>(strats),
+                _mapper.Map<List<ConditionalStrategyModel>>(strats),
                 _mapper.Map<ResultTree>(tree)
             ),
-            NewStrats = _mapper.Map<List<FilledStrategyModel>>(newPopulation.Zip(Enumerable.Range(0, newPopulation.Count)).Select(x =>
+            NewStrats = _mapper.Map<List<ConditionalStrategyModel>>(newPopulation.Zip(Enumerable.Range(0, newPopulation.Count)).Select(x =>
             {
                 x.First.Name = x.Second.ToString();
                 return x.First;
@@ -172,52 +125,32 @@ public class ResearchController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet]
-    [Route("conditional")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponse))]
-    public ActionResult<GenerationResponse> TestConditional([FromQuery] GenerationRequest param)
+
+    public record AgainsR(List<ConditionalStrategy> strats, int k_repeated, double[][] A);
+    [HttpPost]
+    [Route("against")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponseItem))]
+    public ActionResult<GenerationResponseItem> PlayAgainst(AgainsR param)
     {
-        var gen = new ConditionalStrategyGenerator(
-            param.Population,
-            new SingleConditionalStrategyGenerator(1, 1, param.GenCount, _random, _patternsContainer));
-
-        var strats = gen.Generate().ToList();
-
-        var res = new GenerationResponse();
-
-        foreach (var _ in ..param.Population)
-        {
-            var tree = _gameRunner.Play(strats, param.Ro!, param.GenCount);
-            res.Items.Add(new GenerationResponseItem(
-                null!,
-                _mapper.Map<ResultTree>(tree)
-            ));
-
-            var newPopulation = new List<ConditionalStrategy>();
-
-            var mutationOperator = new ConditionalMutationOperator(_random, param.SwapChance, param.GenCount, 0);
-            var selectionOperator = new SelectionOperator<ConditionalStrategy>(param.SelectionGroupSize, tree, _random);
-            //INNER_C = Population / 2 + 1 если Populations нечетное
-            foreach (var __ in ..(strats.Count / 2 + strats.Count % 2))
-            {
-                //INNER_C 
-                var s1 = selectionOperator.Operate(strats);
-                var s2 = selectionOperator.Operate(strats);
-
-                var crossovers = new[] { s1, s2 };
-
-                //INNER_C * Population
-                var mutated = mutationOperator.Operate(crossovers);
-
-                newPopulation.AddRange(mutated);
-            }
-
-            strats = newPopulation.Copy()
-                .Zip(Enumerable.Range(0, newPopulation.Count()))
-                .Select(x => new ConditionalStrategy(x.First.Patterns, x.Second.ToString()))
-                .ToList();
-        }
-        return Ok(res);
+        /*
+            [
+                //1
+                {
+                    strats: [] + CTT,
+                    tree : result
+                }
+                //2
+                {
+                    strats: [],
+                    tree : result
+                }
+            ]
+        */
+        var tree = _gameRunner.Play(param.strats, param.A, param.k_repeated);
+        return Ok(new GenerationResponseItem(
+            null!,
+            _mapper.Map<ResultTree>(tree)
+        ));
     }
 
 }

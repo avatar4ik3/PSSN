@@ -11,7 +11,7 @@ import ConditionalPage from "./components/ConditionalPage"
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <ConditionalPage></ConditionalPage>,
+		element: <Root />,
 		errorElement: <div>Page not Found</div>,
 	},
 	{

@@ -9,7 +9,7 @@ public class GenerationResponse
 
 public class GenerationResponseItem
 {
-    public GenerationResponseItem(List<FilledStrategyModel> strats, ResultTree result)
+    public GenerationResponseItem(List<ConditionalStrategyModel> strats, ResultTree result)
     {
         Strats = strats;
         Result = result;
@@ -19,7 +19,7 @@ public class GenerationResponseItem
     {
     }
 
-    public List<FilledStrategyModel> Strats { get; set; } = new();
+    public List<ConditionalStrategyModel> Strats { get; set; } = new();
 
     public ResultTree Result { get; set; } = new();
 }

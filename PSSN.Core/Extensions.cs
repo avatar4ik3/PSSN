@@ -24,14 +24,10 @@ public static class Extensions
         return random.NextDouble() <= chance;
     }
 
-    public static IEnumerable<FilledStrategy> Copy(this IEnumerable<FilledStrategy> strats)
-    {
-        return strats.Select(x => new FilledStrategy(x.behaviours, x.Name));
-    }
 
     public static IEnumerable<ConditionalStrategy> Copy(this IEnumerable<ConditionalStrategy> strats)
     {
-        return strats.Select(x => new ConditionalStrategy(x.Patterns, x.Behaviours, x.Name));
+        return strats.Select(x => new ConditionalStrategy() { Patterns = x.Patterns, Behaviours = x.Behaviours, Name = x.Name });
     }
 
 }

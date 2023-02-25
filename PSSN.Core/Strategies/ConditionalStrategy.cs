@@ -6,20 +6,14 @@ public class ConditionalStrategy : IStrategy
 {
     public Dictionary<int, Behavior> Behaviours { get; set; } = new();
 
-    public List<IBehaviourPattern> Patterns { get; set; }
+    public List<IBehaviourPattern> Patterns { get; set; } = new();
 
-    public ConditionalStrategy(List<IBehaviourPattern> patterns, string name)
-    {
-        Patterns = patterns;
-        Name = name;
-    }
-    public ConditionalStrategy(List<IBehaviourPattern> patterns, Dictionary<int, Behavior> behaviours, string name)
-    {
-        Behaviours = behaviours;
-        Patterns = patterns;
-        Name = name;
-    }
     public string Name { get; set; } = "ConditionalStrategy";
+
+    public ConditionalStrategy()
+    {
+
+    }
 
     public Behavior GetNextBehaviour(Game g, Player p)
     {

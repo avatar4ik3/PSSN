@@ -20,7 +20,7 @@ public class BestScorePickerCrossingOverOperator
         _results = results;
     }
 
-    public IEnumerable<FilledStrategy> Operate(FilledStrategy s1, FilledStrategy s2)
+    public IEnumerable<ConditionalStrategy> Operate(ConditionalStrategy s1, ConditionalStrategy s2)
     {
         //берем все стратегии, кроме переданых
         var rest = _all.Where(s => s != s1 && s != s2).ToList();
@@ -31,7 +31,7 @@ public class BestScorePickerCrossingOverOperator
         Dictionary<int, double> s1Sums = new();
         Dictionary<int, double> s2Sums = new();
 
-        foreach (var round in s1.behaviours.Keys)
+        foreach (var round in s1.Behaviours.Keys)
         {
             s1Sums[round] = rest.Select(s => _results[s1, s, round]).Sum();
             s2Sums[round] = rest.Select(s => _results[s2, s, round]).Sum();
@@ -39,7 +39,7 @@ public class BestScorePickerCrossingOverOperator
 
         //разница в очках. абсолютное значение
         Dictionary<int, double> increment = new();
-        foreach (var round in s1.behaviours.Keys) increment[round] = Math.Abs(s1Sums[round] - s2Sums[round]);
+        foreach (var round in s1.Behaviours.Keys) increment[round] = Math.Abs(s1Sums[round] - s2Sums[round]);
 
         //сортируем инкримент по разнице в очках по убыванию
 
@@ -62,17 +62,17 @@ public class BestScorePickerCrossingOverOperator
         //создаем новые индексы
         var newS1dic = new Dictionary<int, Behavior>();
         var newS2dic = new Dictionary<int, Behavior>();
-        foreach (var index in s1.behaviours.Keys)
+        foreach (var index in s1.Behaviours.Keys)
         {
-            newS1dic[index] = s1.behaviours[index];
-            newS2dic[index] = s2.behaviours[index];
+            newS1dic[index] = s1.Behaviours[index];
+            newS2dic[index] = s2.Behaviours[index];
         }
 
-        foreach (var index in s1Take) newS2dic[index] = s1.behaviours[index];
-        foreach (var index in s2Take) newS1dic[index] = s2.behaviours[index];
+        foreach (var index in s1Take) newS2dic[index] = s1.Behaviours[index];
+        foreach (var index in s2Take) newS1dic[index] = s2.Behaviours[index];
 
-        var newS1 = new FilledStrategy(newS1dic, s1.Name);
-        var newS2 = new FilledStrategy(newS2dic, s2.Name);
+        var newS1 = new ConditionalStrategy() { Patterns = s1.Patterns, Behaviours = newS1dic, Name = s1.Name };
+        var newS2 = new ConditionalStrategy() { Patterns = s1.Patterns, Behaviours = newS2dic, Name = s2.Name };
         return new[] { newS1, newS2 };
     }
 }

@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSN.Api.Tests", "PSSN.Api.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSN.Core.Tests", "PSSN.Core.Tests\PSSN.Core.Tests.csproj", "{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSN.Benchmarks", "PSSN.Benchmarks\PSSN.Benchmarks.csproj", "{28EB763F-4E18-46C3-BC8C-A74140AC9BCB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,9 +37,5 @@ Global
 		{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28EB763F-4E18-46C3-BC8C-A74140AC9BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28EB763F-4E18-46C3-BC8C-A74140AC9BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28EB763F-4E18-46C3-BC8C-A74140AC9BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28EB763F-4E18-46C3-BC8C-A74140AC9BCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

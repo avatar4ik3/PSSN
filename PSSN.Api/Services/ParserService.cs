@@ -16,40 +16,40 @@ public sealed class ParserService : IParserService
     public async Task<IEnumerable<ResultVector>> GetVectors()
     {
         var lines = await ReadAllLines("vectors.txt");
-        
+
         var strategies = lines[0].Split()
             .Where(str => string.IsNullOrWhiteSpace(str) is false && string.IsNullOrWhiteSpace(str) is false)
-            .Select(x => new FilledStrategy(null!) {Name = x}).ToList();
-        
-        _logger.LogInformation("Method {MethodName} started",nameof(GetVectors));
-        
+            .Select(x => new ConditionalStrategy() { Name = x }).ToList();
+
+        _logger.LogInformation("Method {MethodName} started", nameof(GetVectors));
+
         var result = new List<ResultVector>();
 
         try
         {
-            for (var i = 1; i < lines.Length-1; i++)
+            for (var i = 1; i < lines.Length - 1; i++)
             {
                 var vector = new ResultVector
                 {
-                    Stage = i, 
+                    Stage = i,
                     Vector = new Dictionary<IStrategy, double>()
                 };
-            
+
                 var values = lines[i]
                     .Split()
                     .Skip(1)
                     .Select(double.Parse)
                     .ToList();
-                
+
                 for (var column = 0; column < strategies.Count; ++column)
                     vector.Vector.Add(strategies[column], values[column]);
-            
+
                 result.Add(vector);
             }
         }
         catch (Exception e)
         {
-            _logger.LogError("An error was occured {Message}",e.Message);
+            _logger.LogError("An error was occured {Message}", e.Message);
         }
 
         return result;

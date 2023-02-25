@@ -22,9 +22,9 @@ public class PatternContainerTests
         // Given
         var container = new PatternsContainer();
 
-        var generator = new SingleConditionalStrategyGenerator(1, 2, 6, new Random(), container);
+        var generator = ConditionalStrategyBuilder.Random(new Random(), 1, 1, 2, 6, container);
         // When
-        var res = generator.Generate("1");
+        var res = generator.First();
         res.Patterns.Should().HaveCount(1);
         res.Patterns[0].Coeffs.Should().HaveCount(2);
         // Then

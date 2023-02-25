@@ -6,6 +6,6 @@ public class SingleGenerationResponse
 {
     public GenerationResponseItem? GameResult { get; set; }
 
-    public IEnumerable<FilledStrategyModel>? NewStrats { get; set; }
+    public IEnumerable<ConditionalStrategyModel>? NewStrats { get; set; }
 }
 

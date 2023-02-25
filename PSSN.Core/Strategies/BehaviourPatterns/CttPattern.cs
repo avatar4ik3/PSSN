@@ -14,19 +14,24 @@ public class CttPattern : IBehaviourPattern
 
     public void Apply(Game g, Player p, ConditionalStrategy s)
     {
+        if (Coeffs is null || Coeffs.Length != 5)
+        {
+            throw new ArgumentException();
+        }
         if (g.State.currentStage == 0)
         {
-            s.Behaviours[g.State.currentStage] = Behavior.C;
+            s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[1];
             return;
         }
-        if (Coeffs is null || Coeffs.Length == 0 || Coeffs[0] < g.State.currentStage)
+        if (Coeffs[3] == 0 || g.State.currentStage + 1 < Coeffs[0])
         {
-            s.Behaviours[g.State.currentStage] = g.State.GetOpponentPlayerState(p).previousBehaviours.Last();
+            var beh = g.State.GetOpponentPlayerState(p).previousBehaviours.Last();
+            s.Behaviours[g.State.currentStage] = Coeffs[4] == 1 ? beh.Other() : beh;
             return;
         }
-        else if (Coeffs[0] >= g.State.currentStage)
+        else if (Coeffs[3] == 1 && g.State.currentStage + 1 >= Coeffs[0])
         {
-            s.Behaviours[g.State.currentStage] = Behavior.D;
+            s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[2];
             return;
         }
     }

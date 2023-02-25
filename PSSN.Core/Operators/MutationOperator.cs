@@ -13,19 +13,19 @@ public class MutationOperator
         _random = random;
     }
 
-    public FilledStrategy Operate(FilledStrategy strategy)
+    public ConditionalStrategy Operate(ConditionalStrategy strategy)
     {
         var behs = new Dictionary<int, Behavior>();
 
-        foreach (var key in strategy.behaviours.Keys)
+        foreach (var key in strategy.Behaviours.Keys)
             if (_random.Proc(_chance))
-                behs[key] = strategy.behaviours[key].Other();
+                behs[key] = strategy.Behaviours[key].Other();
             else
-                behs[key] = strategy.behaviours[key];
-        return new FilledStrategy(behs, strategy.Name);
+                behs[key] = strategy.Behaviours[key];
+        return new ConditionalStrategy() { Patterns = strategy.Patterns, Behaviours = behs, Name = strategy.Name };
     }
 
-    public IEnumerable<FilledStrategy> Operate(IEnumerable<FilledStrategy> strategies)
+    public IEnumerable<ConditionalStrategy> Operate(IEnumerable<ConditionalStrategy> strategies)
     {
         return strategies.Select(Operate);
     }

@@ -4,7 +4,7 @@ namespace PSSN.Common.Requests;
 
 public class SingleGenerationRequest
 {
-    public List<FilledStrategyModel> Strats { get; set; } = new();
+    public List<ConditionalStrategyModel> Strats { get; set; } = new();
     public double[][]? Ro { get; set; }
     public int GenCount { get; set; }
     public double SwapChance { get; set; }
