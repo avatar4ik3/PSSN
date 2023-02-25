@@ -74,7 +74,7 @@ public class ResearchController : ControllerBase
             strats.Add(
                 builder
                 .WithName(i.ToString())
-                .WithRandomBehaviours(request.GenCount, 0.5)
+                .WithRandomBehaviours(request.GenCount, request.DistributionChance)
                 .Build());
         }
 

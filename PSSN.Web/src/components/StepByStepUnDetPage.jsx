@@ -14,6 +14,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		GeneMutationChance: 0.3,
 		MaxGenLengthForCrossingover: 5,
 		K_TournamentSelection: 5,
+		DistributionChance: 0.5,
 		A: [
 			[4, 0],
 			[6, 1],
@@ -29,6 +30,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					qs.stringify({
 						count: commonRequestData.PopulationSize,
 						genCount: commonRequestData.GenotypeSize,
+						DistributionChance: commonRequestData.DistributionChance,
 					})
 			)
 			.then((r) => r.data)
