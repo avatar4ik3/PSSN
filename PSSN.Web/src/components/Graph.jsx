@@ -1,22 +1,18 @@
 import { React, useEffect } from "react"
-import * as JSC from "jscharting"
+import { JSCharting } from "jscharting-react"
+
+const divStyle = {
+	maxWidth: "700px",
+	height: "500px",
+	margin: "0px auto",
+}
 
 const Graph = ({ series }) => {
-	useEffect(() => {
-		DrawGraph(series)
-	}, [series])
-	const style1 = {
-		height: "500px",
-	}
-	return <div id="g" style={style1}></div>
+	return (
+		<div style={divStyle}>
+			<JSCharting options={{ series: series }} />
+		</div>
+	)
 }
 
-function DrawGraph(series) {
-	JSC.defaults({
-		debug: true,
-	})
-	JSC.Chart("g", {
-		series: series,
-	})
-}
 export default Graph

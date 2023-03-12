@@ -126,31 +126,21 @@ public class ResearchController : ControllerBase
     }
 
 
-    public record AgainsR(List<ConditionalStrategy> strats, int k_repeated, double[][] A);
+    public record AgainsR(List<ConditionalStrategyModel> Strats, int K_repeated, double[][] A);
     [HttpPost]
     [Route("against")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponseItem))]
     public ActionResult<GenerationResponseItem> PlayAgainst(AgainsR param)
     {
-        /*
-            [
-                //1
-                {
-                    strats: [] + CTT,
-                    tree : result
-                }
-                //2
-                {
-                    strats: [],
-                    tree : result
-                }
-            ]
-        */
-        var tree = _gameRunner.Play(param.strats, param.A, param.k_repeated);
+        var strategies = _mapper.Map<List<ConditionalStrategy>>(param.Strats).Zip(param.Strats).Select(x =>
+        {
+            x.First.Patterns = x.Second.Patterns.ConvertAll(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!));
+            return x.First;
+        }).ToArray();
+        var tree = _gameRunner.Play(strategies, param.A, param.K_repeated);
         return Ok(new GenerationResponseItem(
             null!,
             _mapper.Map<ResultTree>(tree)
         ));
     }
-
 }

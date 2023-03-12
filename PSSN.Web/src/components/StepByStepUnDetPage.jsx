@@ -3,9 +3,11 @@ import axios from "axios"
 import * as qs from "qs"
 import Graph from "./Graph"
 import Array2DInput from "./Array2DInput"
+import { encodeStrategy } from "./DetPage"
 
 const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 	const [chartData, setChartData] = useState(null)
+	const [cttChartData, setcttChartData] = useState(null)
 
 	const [commonRequestData, setcommonRequestData] = useState({
 		GenerationsCount: 100,
@@ -20,6 +22,18 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 			[6, 1],
 		],
 	})
+
+	async function playAgainsCtt(strats) {
+		let stratsWithCtt = Array.from(strats)
+		stratsWithCtt.push(encodeStrategy("Ctt"))
+		return axios
+			.post(apiHost + "/api/v1/research/against", {
+				Strats: stratsWithCtt,
+				K_repeated: commonRequestData.GenotypeSize,
+				A: commonRequestData.A,
+			})
+			.then((r) => r.data.result)
+	}
 
 	//переписать так, что не использовались рефы
 	async function requestInitialStrategies() {
@@ -37,7 +51,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 	}
 
 	async function getOneGeneration(payload) {
-		console.log("request split started")
+		// console.log("request split started")
 		return axios
 			.post(apiHost + "/api/v1/research/split", {
 				genCount: commonRequestData.GenotypeSize,
@@ -84,6 +98,34 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		setChartData(series)
 	}
 
+	async function drawCttResultSeries(data) {
+		let series = []
+		series.push({
+			name: "Очки Ctt",
+			points: data.map((tree, index) => {
+				return {
+					x: index,
+					y: Object.entries(tree.map["Ctt"])
+						.map(([otherStrat, scoresByRound]) => {
+							// console.log(
+							// 	Object.entries(scoresByRound)
+							// 		.map(([round, score]) => score)
+							// 		.reduce((sum, a) => sum + a, 0.0)
+							// )
+
+							if (otherStrat !== "Ctt") {
+								return Object.entries(scoresByRound)
+									.map(([round, score]) => score)
+									.reduce((sum, a) => sum + a, 0.0)
+							} else return 0.0
+						})
+						.reduce((sum, a) => sum + a, 0.0),
+				}
+			}),
+		})
+		console.log(series)
+		setcttChartData(series)
+	}
 	return (
 		<div>
 			<div>
@@ -145,26 +187,31 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 				onClick={async (e) => {
 					e.preventDefault()
 					setChartData(null)
+					setcttChartData(null)
 					let resultData = []
+					let againstCttData = []
 					let payload = await requestInitialStrategies()
 
 					console.log(payload)
 					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await getOneGeneration(payload)
-						console.log(gameResult, newStrats)
+						const againstCttResult = await playAgainsCtt(payload)
+						console.log(againstCttResult)
 						payload = newStrats
 						resultData.push(gameResult)
+						againstCttData.push(againstCttResult)
 					}
-
+					drawCttResultSeries(againstCttData)
 					drawGraph(resultData)
 
-					console.log(chartData)
+					// console.log(chartData)
 				}}
 			>
 				Process
 			</button>
 
 			{chartData ? <Graph series={chartData} /> : null}
+			{cttChartData ? <Graph series={cttChartData} /> : null}
 		</div>
 	)
 }

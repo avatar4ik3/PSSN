@@ -1,6 +1,5 @@
 import { React, useState } from "react"
 import axios from "axios"
-import * as qs from "qs"
 import Graph from "./Graph"
 import Array2DInput from "./Array2DInput"
 const DetPage = ({ apiHost, ...rest }) => {
@@ -22,33 +21,7 @@ const DetPage = ({ apiHost, ...rest }) => {
 			.post(apiHost + "/api/v1/research/simple/", {
 				k: request.CycleCount,
 				strats: request.Strategies.map((x) => {
-					let coefs = [0, 0, 0, 0, 0]
-					let [left, right] = x.split("TT")
-					if (left.startsWith("R")) {
-						coefs[4] = 1
-						left = left.substring(1, left.length)
-					}
-					if (left === "D") {
-						coefs[1] = 1
-					}
-					if (right.endsWith("C") || right.endsWith("D")) {
-						const num = Number.parseInt(right.substring(0, right.length - 1))
-						coefs[0] = num
-						coefs[3] = 1
-						coefs[2] = right[right.length - 1] == "C" ? 0 : 1
-					}
-
-					console.log(coefs)
-
-					return {
-						Name: x,
-						Patterns: [
-							{
-								Name: "CttPattern",
-								Coeffs: coefs,
-							},
-						],
-					}
+					return encodeStrategy(x)
 				}),
 				po: request.A,
 				r: request.NTimesRepeatedGame,
@@ -169,6 +142,40 @@ const DetPage = ({ apiHost, ...rest }) => {
 			{data ? <Graph series={data} /> : null}
 		</div>
 	)
+}
+
+export function encodeStrategy(x) {
+	let coefs = [0, 0, 0, 0, 0]
+	let [left, right] = x.split("TT")
+
+	if (left.startsWith("R")) {
+		coefs[4] = 1
+		left = left.substring(1, left.length)
+	}
+
+	if (left === "D") {
+		coefs[1] = 1
+	}
+
+	// console.log(right)
+	if (right !== undefined) {
+		if (right.endsWith("C") || right.endsWith("D")) {
+			const num = Number.parseInt(right.substring(0, right.length - 1))
+			coefs[0] = num
+			coefs[3] = 1
+			coefs[2] = right[right.length - 1] == "C" ? 0 : 1
+		}
+	}
+
+	return {
+		Name: x,
+		Patterns: [
+			{
+				Name: "CttPattern",
+				Coeffs: coefs,
+			},
+		],
+	}
 }
 
 export default DetPage

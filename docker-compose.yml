@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: /PSSN.Api/Dockerfile
+      dockerfile: PSSN.Api/Dockerfile
     env_file : .env
     networks:
       - default
@@ -12,7 +12,7 @@ services:
   client:
     build: 
       context: .
-      dockerfile: /PSSN.Web/Dockerfile
+      dockerfile: PSSN.Web/Dockerfile
     networks:
       - default
     env_file: .env
