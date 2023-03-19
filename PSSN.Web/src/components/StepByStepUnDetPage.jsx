@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import axios from "axios"
+import axios, { all } from "axios"
 import * as qs from "qs"
 import Graph from "./Graph"
 import Array2DInput from "./Array2DInput"
@@ -17,15 +17,19 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		MaxGenLengthForCrossingover: 5,
 		K_TournamentSelection: 5,
 		DistributionChance: 0.5,
+		DeterminatedStrategies: [["CTT"], ["D"]],
 		A: [
 			[4, 0],
 			[6, 1],
 		],
 	})
 
-	async function playAgainsCtt(strats) {
+	async function playAgainstDeterminatedStrategies(strats, additionalStrats) {
 		let stratsWithCtt = Array.from(strats)
-		stratsWithCtt.push(encodeStrategy("Ctt"))
+		for (const x of additionalStrats) {
+			console.log(x)
+			stratsWithCtt.push(encodeStrategy(x))
+		}
 		return axios
 			.post(apiHost + "/api/v1/research/against", {
 				Strats: stratsWithCtt,
@@ -97,34 +101,39 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 
 		setChartData(series)
 	}
+	function* enumerate(iterable) {
+		let i = 0
+		for (const item of iterable) {
+			yield [i, item]
+			i++
+		}
+	}
 
-	async function drawCttResultSeries(data) {
+	async function drawResultSeries(data, additionalStratsNames) {
 		let series = []
-		series.push({
-			name: "Очки Ctt",
-			points: data.map((tree, index) => {
-				return {
-					x: index,
-					y: Object.entries(tree.map["Ctt"])
-						.map(([otherStrat, scoresByRound]) => {
-							// console.log(
-							// 	Object.entries(scoresByRound)
-							// 		.map(([round, score]) => score)
-							// 		.reduce((sum, a) => sum + a, 0.0)
-							// )
-
-							if (otherStrat !== "Ctt") {
-								return Object.entries(scoresByRound)
-									.map(([round, score]) => score)
-									.reduce((sum, a) => sum + a, 0.0)
-							} else return 0.0
-						})
-						.reduce((sum, a) => sum + a, 0.0),
-				}
-			}),
+		additionalStratsNames.forEach((stratName) => {
+			series.push({
+				name: stratName,
+				points: data.map((tree, index) => {
+					console.log(tree)
+					return {
+						x: index,
+						y: Object.entries(tree.map[stratName])
+							.map(([otherStrat, scoresByRound]) => {
+								if (otherStrat !== stratName) {
+									return Object.entries(scoresByRound)
+										.map(([round, score]) => score)
+										.reduce((sum, a) => sum + a, 0.0)
+								} else return 0.0
+							})
+							.reduce((sum, a) => sum + a, 0.0),
+					}
+				}),
+			})
 		})
+
 		console.log(series)
-		setcttChartData(series)
+		return series
 	}
 	return (
 		<div>
@@ -134,53 +143,105 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					Где гены — это конкретное решение (C/D) на каждом этапе игры.
 				</label>
 				{Object.entries(commonRequestData).map(([k, v]) => {
-					return k != "A" ? (
-						<div key={k}>
-							<label>{k}</label>
-							<input
-								type="number"
-								value={v}
-								onChange={(e) => {
-									setcommonRequestData({
-										...commonRequestData,
-										[k]: e.target.value,
-									})
-								}}
-							/>
-						</div>
-					) : (
-						<div key={k}>
-							<label>{k}</label>
-							<Array2DInput
-								index1={0}
-								index2={0}
-								v={v}
-								set={setcommonRequestData}
-								data={commonRequestData}
-							/>
-							<Array2DInput
-								index1={0}
-								index2={1}
-								v={v}
-								set={setcommonRequestData}
-								data={commonRequestData}
-							/>
-							<Array2DInput
-								index1={1}
-								index2={0}
-								v={v}
-								set={setcommonRequestData}
-								data={commonRequestData}
-							/>
-							<Array2DInput
-								index1={1}
-								index2={1}
-								v={v}
-								set={setcommonRequestData}
-								data={commonRequestData}
-							/>
-						</div>
-					)
+					if (k == "A") {
+						return (
+							<div key={k}>
+								<label>{k}</label>
+								<Array2DInput
+									index1={0}
+									index2={0}
+									v={v}
+									set={setcommonRequestData}
+									data={commonRequestData}
+								/>
+								<Array2DInput
+									index1={0}
+									index2={1}
+									v={v}
+									set={setcommonRequestData}
+									data={commonRequestData}
+								/>
+								<Array2DInput
+									index1={1}
+									index2={0}
+									v={v}
+									set={setcommonRequestData}
+									data={commonRequestData}
+								/>
+								<Array2DInput
+									index1={1}
+									index2={1}
+									v={v}
+									set={setcommonRequestData}
+									data={commonRequestData}
+								/>
+							</div>
+						)
+					} else if (k == "DeterminatedStrategies") {
+						return (
+							<div key={k}>
+								<label>{k}</label>
+								{commonRequestData.DeterminatedStrategies.map((arr, idx) => {
+									return (
+										<input
+											key={idx}
+											type="text"
+											defaultValue={arr}
+											onChange={(e) => {
+												console.log("started event")
+												console.log(e.target.value)
+												if (e.target.value.endsWith(",") == false) {
+													console.log(arr, idx)
+													console.log("editing!")
+													const strats = e.target.value
+														.split(",")
+														.filter((s) => s && s != "" && s != " ")
+														.map((s) => s.replace(/\s/g, ""))
+
+													console.log(strats)
+													let allArs = commonRequestData.DeterminatedStrategies
+													allArs[idx] = strats
+													console.log(allArs)
+													setcommonRequestData({
+														...commonRequestData,
+														[k]: allArs,
+													})
+												}
+											}}
+										/>
+									)
+								})}
+								<button
+									onClick={(e) => {
+										let allArs = commonRequestData.DeterminatedStrategies
+										allArs.push(["CTT"])
+										setcommonRequestData({
+											...commonRequestData,
+											DeterminatedStrategies: allArs,
+										})
+									}}
+								>
+									+
+								</button>
+							</div>
+						)
+					} else {
+						return (
+							<div key={k}>
+								<label>{k}</label>
+								<input
+									type="number"
+									value={v}
+									onChange={(e) => {
+										setcommonRequestData({
+											...commonRequestData,
+											[k]: e.target.value,
+										})
+									}}
+								/>
+							</div>
+						)
+					}
 				})}
 			</div>
 			<button
@@ -190,18 +251,55 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					setcttChartData(null)
 					let resultData = []
 					let againstCttData = []
+					for (const names in commonRequestData.DeterminatedStrategies) {
+						againstCttData.push([])
+					}
 					let payload = await requestInitialStrategies()
-
 					console.log(payload)
 					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await getOneGeneration(payload)
-						const againstCttResult = await playAgainsCtt(payload)
-						console.log(againstCttResult)
+						console.log(commonRequestData.DeterminatedStrategies)
+						for (const [idx, names] of enumerate(
+							commonRequestData.DeterminatedStrategies
+						)) {
+							console.log(names)
+							const againstCttResult = await playAgainstDeterminatedStrategies(
+								payload,
+								names
+							)
+							console.log(againstCttResult)
+							againstCttData[idx].push(againstCttResult)
+							console.log(againstCttData[idx])
+						}
+						// await commonRequestData.DeterminatedStrategies.forEach(
+						// 	async (names, idx) => {
+						// 		console.log(names)
+						// 		const againstCttResult =
+						// 			await playAgainstDeterminatedStrategies(payload, names)
+						// 		console.log(againstCttResult)
+						// 		againstCttData[idx].push(againstCttResult)
+						// 		console.log(againstCttData[idx])
+						// 	}
+						// )
+
 						payload = newStrats
 						resultData.push(gameResult)
-						againstCttData.push(againstCttResult)
 					}
-					drawCttResultSeries(againstCttData)
+
+					let series = []
+					for (const [idx, names] of enumerate(
+						commonRequestData.DeterminatedStrategies
+					)) {
+						console.log(againstCttData[idx])
+						series.push(
+							await drawResultSeries(
+								againstCttData[idx],
+								commonRequestData.DeterminatedStrategies[idx]
+							)
+						)
+					}
+					console.log(series)
+					setcttChartData(series)
 					drawGraph(resultData)
 
 					// console.log(chartData)
@@ -209,9 +307,29 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 			>
 				Process
 			</button>
+			{chartData ? (
+				<>
+					{" "}
+					<label>
+						Количества генов типа C и генам типа D в популяции по поколениям
+					</label>
+					<Graph series={chartData} />
+				</>
+			) : null}
 
-			{chartData ? <Graph series={chartData} /> : null}
-			{cttChartData ? <Graph series={cttChartData} /> : null}
+			{cttChartData ? (
+				<div>
+					{cttChartData.map((s, idx) => (
+						<>
+							<label>
+								Количество очков, набранное детерминированными стратегиями при
+								подселение в популяцию по поколениям
+							</label>
+							<Graph series={s} key={idx} />
+						</>
+					))}
+				</div>
+			) : null}
 		</div>
 	)
 }

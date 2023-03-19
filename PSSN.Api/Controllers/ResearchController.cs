@@ -125,7 +125,6 @@ public class ResearchController : ControllerBase
         return Ok(response);
     }
 
-
     public record AgainsR(List<ConditionalStrategyModel> Strats, int K_repeated, double[][] A);
     [HttpPost]
     [Route("against")]
