@@ -258,29 +258,15 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					console.log(payload)
 					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await getOneGeneration(payload)
-						console.log(commonRequestData.DeterminatedStrategies)
 						for (const [idx, names] of enumerate(
 							commonRequestData.DeterminatedStrategies
 						)) {
-							console.log(names)
 							const againstCttResult = await playAgainstDeterminatedStrategies(
 								payload,
 								names
 							)
-							console.log(againstCttResult)
 							againstCttData[idx].push(againstCttResult)
-							console.log(againstCttData[idx])
 						}
-						// await commonRequestData.DeterminatedStrategies.forEach(
-						// 	async (names, idx) => {
-						// 		console.log(names)
-						// 		const againstCttResult =
-						// 			await playAgainstDeterminatedStrategies(payload, names)
-						// 		console.log(againstCttResult)
-						// 		againstCttData[idx].push(againstCttResult)
-						// 		console.log(againstCttData[idx])
-						// 	}
-						// )
 
 						payload = newStrats
 						resultData.push(gameResult)
@@ -294,7 +280,9 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 						series.push(
 							await drawResultSeries(
 								againstCttData[idx],
-								commonRequestData.DeterminatedStrategies[idx]
+								commonRequestData.DeterminatedStrategies[idx].concat(
+									payload.map((x) => x.name)
+								)
 							)
 						)
 					}
