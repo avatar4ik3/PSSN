@@ -168,8 +168,8 @@ export function encodeStrategy(x) {
 	}
 
 	return {
-		Name: x,
-		Patterns: [
+		name: x,
+		patterns: [
 			{
 				Name: "CttPattern",
 				Coeffs: coefs,
