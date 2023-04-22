@@ -86,14 +86,8 @@ public class ResearchController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SingleGenerationResponse))]
     public ActionResult<SingleGenerationResponse> ResearchSingleGeneration(SingleGenerationRequest request)
     {
-        var strats = _mapper.Map<List<ConditionalStrategy>>(request.Strats).Zip(request.Strats).Select(x =>
-       {
-           if (x.Second.Patterns is not null)
-           {
-               x.First.Patterns = x.Second.Patterns.ConvertAll(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!));
-           }
-           return x.First;
-       }).ToArray();
+        
+        var strats = Map(request.Strats).ToArray();
         var tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
         var newPopulation = new List<ConditionalStrategy>();
@@ -122,20 +116,9 @@ public class ResearchController : ControllerBase
                 _mapper.Map<List<ConditionalStrategyModel>>(strats),
                 _mapper.Map<ResultTree>(tree)
             ),
-            NewStrats = _mapper.Map<List<ConditionalStrategyModel>>(newPopulation.Zip(Enumerable.Range(0, newPopulation.Count)).Select(x =>
-            {
-                // if(x.First.Name[0] is 'C' or 'D' or 'R'){
-                    // var l = x.First.Name.IndexOfAny(new[]{'0','1','2','3','4','5','6','7','8','9'});
-                    // x.First.Name = x.First.Name.Substring(0,l);
-                    // x.First.Name += x.Second.ToString();
-                // }
-                // else{
-                    x.First.Name = x.Second.ToString();
-                // }
-                return x.First;
-            }))
+            NewStrats = _mapper.Map<List<ConditionalStrategyModel>>(newPopulation)
         };
-
+        //перепиши этот код с использованием GeneticSharp 
         return Ok(response);
     }
 
@@ -145,15 +128,30 @@ public class ResearchController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GenerationResponseItem))]
     public ActionResult<GenerationResponseItem> PlayAgainst(AgainsR param)
     {
-        var strategies = _mapper.Map<List<ConditionalStrategy>>(param.Strats).Zip(param.Strats).Select(x =>
-        {
-            x.First.Patterns = x.Second.Patterns.ConvertAll(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!));
-            return x.First;
-        }).ToArray();
+        var strategies = Map(param.Strats).ToArray();
         var tree = _gameRunner.Play(strategies, param.A, param.K_repeated);
         return Ok(new GenerationResponseItem(
             null!,
             _mapper.Map<ResultTree>(tree)
         ));
+    }
+
+
+
+    private IEnumerable<ConditionalStrategy> Map(IEnumerable<ConditionalStrategyModel> models)
+    {
+        return _mapper.Map<List<ConditionalStrategy>>(models).Zip(models).Select(x =>
+        {
+            if (x.Second.Patterns is not null)
+            {
+                x.First.Patterns = x.Second.Patterns.ConvertAll(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!));
+            }
+            return x.First;
+        })
+        .Zip(Enumerable.Range(0, models.Count())).Select(x =>
+        {
+            x.First.Id = x.Second;
+            return x.First;
+        });
     }
 }

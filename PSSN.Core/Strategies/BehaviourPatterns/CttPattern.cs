@@ -16,7 +16,7 @@ public class CttPattern : IBehaviourPattern
     {
         if (Coeffs is null || Coeffs.Length != 5)
         {
-            throw new ArgumentException();
+            throw new ArgumentException(nameof(Coeffs));
         }
         if (g.State.currentStage == 0)
         {

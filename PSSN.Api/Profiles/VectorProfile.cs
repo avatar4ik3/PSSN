@@ -17,12 +17,21 @@ public class VectorProfile : Profile
         //strat -> string
         CreateMap<IStrategy, string>().ConvertUsing(strat => strat.Name);
 
+        CreateMap<IStrategy, TreeId>()
+            .ForMember(x => x.Id, m => m.MapFrom(y => y.Id))
+            .ForMember(x => x.Name, m => m.MapFrom(y => y.Name));
         // <strat,double> -> {string,double}
         CreateMap<
                 KeyValuePair<IStrategy, double>,
                 KeyValuePair<string, double>>()
             .ConstructUsing((source, context) => new KeyValuePair<string, double>(
                 context.Mapper.Map<string>(source.Key), source.Value
+            ));
+        CreateMap<
+                KeyValuePair<IStrategy, double>,
+                KeyValuePair<TreeId, double>>()
+            .ConstructUsing((source, context) => new KeyValuePair<TreeId, double>(
+                context.Mapper.Map<TreeId>(source.Key), source.Value
             ));
 
         // inner answer -> outer answer

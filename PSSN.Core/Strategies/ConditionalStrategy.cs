@@ -9,6 +9,7 @@ public class ConditionalStrategy : IStrategy
     public List<IBehaviourPattern> Patterns { get; set; } = new();
 
     public string Name { get; set; } = "ConditionalStrategy";
+    public int Id { get; set; }
 
     public ConditionalStrategy()
     {

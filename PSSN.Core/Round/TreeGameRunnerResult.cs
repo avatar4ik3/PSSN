@@ -37,11 +37,11 @@ public class StrategyComparer : IEqualityComparer<IStrategy>
 {
     public bool Equals(IStrategy? x, IStrategy? y)
     {
-        return x?.Name == y?.Name;
+        return x?.Id == y?.Id;
     }
 
     public int GetHashCode([DisallowNull] IStrategy obj)
     {
-        return obj.Name.GetHashCode();
+        return obj.Id.GetHashCode();
     }
 }

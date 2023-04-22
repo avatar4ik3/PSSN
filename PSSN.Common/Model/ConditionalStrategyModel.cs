@@ -6,6 +6,7 @@ public class ConditionalStrategyModel
 
     public Dictionary<int, string>? Behaviors { get; set; } = new();
     public string? Name { get; set; }
+    public int Id { get; set; }
 }
 
 public class PatternModel
