@@ -27,7 +27,7 @@ public class ConditionalMutationOperator
                 {
                     if (_random.Proc(_chance))
                     {
-                        pattern.Coeffs[i] = _random.Next(_min, _max);
+                        pattern.Coeffs[i].Value = _random.Next(_min, _max);
                     }
                 }
             }

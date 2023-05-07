@@ -15,6 +15,44 @@ public class ConditionalStrategyBuilder
         this._random = random;
         _strategy = new();
     }
+
+    public static int[] buildRandomCoefs(Random random, string type, int gameLength)
+    {
+        if (type == "MemePattern")
+        {
+            var res_0 = new[] { random.Next(1, gameLength) };
+            var res_1_2 = new[] { random.Next(0, 2), random.Next(0, 2) };
+            var res_3 = new[] { random.Next(1, res_0[0] + 1) };
+            var res_4_5 = new[] { random.Next(0, 2), random.Next(0, 2) };
+            return res_0.Concat(res_1_2).Concat(res_3).Concat(res_4_5).ToArray();
+        }
+        else
+        {
+            return new[]{0,0,0,0,0};
+            var res = new[] { random.Next(0, gameLength) };
+            return res.Concat(Enumerable.Range(0, 4).Select(x => random.Proc(0.5) ? 1 : 0)).ToArray();
+        }
+    }
+
+    public static IEnumerable<ConditionalStrategy> RandomMemes(Random random, double distr, int count, int gameLength, PatternsContainer container)
+    {
+        var types = container.PattenrsConstructor.Keys.ToList();
+        for (int i = 0; i < count; ++i)
+        {
+            var type = random.Proc(distr) is true ? types[0] : types[1];
+
+            var coeffs = buildRandomCoefs(random, type, gameLength);
+
+            var pattern = container.CreatePattern(type, coeffs);
+            yield return new ConditionalStrategy()
+            {
+                Patterns = new() { pattern },
+                Id = i,
+                Name = i.ToString()
+            };
+        }
+    }
+
     public static IEnumerable<ConditionalStrategy> Random(Random random, int count, int patternsCount, int parametersCount, int maxRandomNumber, PatternsContainer container)
     {
         for (int i = 0; i < count; ++i)
@@ -34,6 +72,7 @@ public class ConditionalStrategyBuilder
                 .ToList();
             yield return new ConditionalStrategy()
             {
+                Id = i,
                 Patterns = selected,
                 Name = i.ToString()
             };
