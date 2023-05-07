@@ -118,9 +118,9 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		}
 	}
 
-	async function drawResultSeries(data, additionalStratsNames) {
+	async function drawResultSeries(data, additionalStratsIds) {
 		let series = []
-		additionalStratsNames.forEach((stratName) => {
+		additionalStratsIds.forEach((stratName) => {
 			series.push({
 				name: stratName,
 				points: data.map((tree, index) => {
@@ -128,14 +128,15 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					console.log({
 						name : stratName,
 						tree: tree,
-						allNames : additionalStratsNames
+						allNames : additionalStratsIds
 					})
+					let a = tree.map.find(xx => xx.key.name == stratName)
 					return {
 						x: index,
-						y: Object.entries(tree.map[stratName])
+						y: Object.entries(a.value)
 							.map(([otherStrat, scoresByRound]) => {
-								if (otherStrat !== stratName) {
-									return Object.entries(scoresByRound)
+								if (scoresByRound.key.name !== stratName) {
+									return Object.entries(scoresByRound.value)
 										.map(([round, score]) => score)
 										.reduce((sum, a) => sum + a, 0.0)
 								} else return 0.0
@@ -165,8 +166,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		  //TODO переделать в for обычный, чтобы можно было доабвлять оффсеты в записимости от уже добавленных стратегий
 		const stratsLists =  commonRequestData.SettledDeterminatedStrategies.map(x => {
 			return range(0,x.count).map(number => {
-				let strat = encodeStrategy(StratsShortNameToFullNames(x.name))
-				strat.name = String(strats.length + number)
+				let strat = encodeStrategy(StratsShortNameToFullNames(x.strategy))
 				return strat
 			})
 		})
@@ -393,7 +393,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 							await drawResultSeries(
 								againstCttData[idx],
 								commonRequestData.DeterminatedStrategies[idx].concat(
-									payload.map((x) => x.name)
+									payload.map((x) => x.id)
 								)
 							)
 						)
