@@ -1,5 +1,5 @@
 using AutoMapper;
-
+using PSSN.Api.Controllers;
 using PSSN.Api.Model;
 using PSSN.Common;
 using PSSN.Common.Model;
@@ -50,8 +50,10 @@ public class VectorProfile : Profile
 
         CreateMap<ConditionalStrategy, ConditionalStrategyModel>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))
+            .ForMember(x => x.Id,m=>m.MapFrom(y => y.Id))
             .ForMember(x => x.Behaviors, m => m.MapFrom(y => y.Behaviours))
-            .ForMember(x => x.Patterns, m => m.MapFrom(y => y.Patterns));
+            .ForMember(x => x.Pattern, m => m.MapFrom(y => y.Pattern));
+
 
         CreateMap<IBehaviourPattern, PatternModel>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.GetType().Name))
@@ -61,7 +63,8 @@ public class VectorProfile : Profile
         CreateMap<ConditionalStrategyModel, ConditionalStrategy>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))
             .ForMember(x => x.Behaviours, m => m.MapFrom(y => y.Behaviors))
-            .ForMember(x => x.Patterns, m => m.Ignore());
+            .ForMember(x => x.Pattern, m => m.Ignore());
 
+        CreateMap<IntWrapper,int>().ConstructUsing((val,ctx) => val.Value);
     }
 }

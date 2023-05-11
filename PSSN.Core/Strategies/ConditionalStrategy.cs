@@ -6,7 +6,7 @@ public class ConditionalStrategy : IStrategy
 {
     public Dictionary<int, Behavior> Behaviours { get; set; } = new();
 
-    public List<IBehaviourPattern> Patterns { get; set; } = new();
+    public IBehaviourPattern Pattern { get; set; }
 
     public string Name { get; set; } = "ConditionalStrategy";
     public int Id { get; set; }
@@ -18,10 +18,7 @@ public class ConditionalStrategy : IStrategy
 
     public Behavior GetNextBehaviour(Game g, Player p)
     {
-        foreach (var pattern in Patterns)
-        {
-            pattern.Apply(g, p, this);
-        }
+        Pattern.Apply(g, p, this);
         return Behaviours[g.State.currentStage];
     }
 }

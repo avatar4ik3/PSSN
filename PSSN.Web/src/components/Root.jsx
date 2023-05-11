@@ -12,6 +12,9 @@ const Root = () => {
 				<li>
 					<a href="undet">UnDet</a>
 				</li>
+				<li>
+					<a href="memes">Memes</a>
+				</li>
 			</ul>
 		</nav>
 	)

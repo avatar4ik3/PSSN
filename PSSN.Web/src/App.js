@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Root from "./components/Root"
 
 import ConditionalPage from "./components/ConditionalPage"
+import MemesPage from "./components/MemesPage"
 
 const router = createBrowserRouter([
 	{
@@ -17,6 +18,19 @@ const router = createBrowserRouter([
 	{
 		path: "/sample",
 		element: <SamplePage />,
+	},
+	{
+		path: "/memes",
+		element: (
+			<MemesPage
+				apiHost={
+					"http://" +
+					process.env.REACT_APP_SERVER_NAME +
+					":" +
+					process.env.REACT_APP_SERVER_PORT
+				}
+			/>
+		),
 	},
 	{
 		path: "/det",

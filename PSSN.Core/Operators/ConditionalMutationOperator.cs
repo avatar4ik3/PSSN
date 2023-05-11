@@ -19,20 +19,17 @@ public class ConditionalMutationOperator
 
     public ConditionalStrategy Operate(ConditionalStrategy strategy)
     {
-        foreach (var pattern in strategy.Patterns)
+        if (strategy.Pattern.Coeffs != null)
         {
-            if (pattern.Coeffs != null)
+            for (int i = 0; i < strategy.Pattern.Coeffs.Length; ++i)
             {
-                for (int i = 0; i < pattern.Coeffs.Length; ++i)
+                if (_random.Proc(_chance))
                 {
-                    if (_random.Proc(_chance))
-                    {
-                        pattern.Coeffs[i].Value = _random.Next(_min, _max);
-                    }
+                    strategy.Pattern.Coeffs[i].Value = _random.Next(_min, _max);
                 }
             }
         }
-        return new ConditionalStrategy() { Patterns = strategy.Patterns, Behaviours = strategy.Behaviours, Name = strategy.Name };
+        return new ConditionalStrategy() { Pattern = strategy.Pattern, Behaviours = strategy.Behaviours, Name = strategy.Name };
     }
 
     public IEnumerable<ConditionalStrategy> Operate(IEnumerable<ConditionalStrategy> strategies)

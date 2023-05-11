@@ -28,8 +28,8 @@ public class DefaultCrossingOverOperator
             dic2[i] = s1.Behaviours[i];
         }
 
-        var ns1 = new ConditionalStrategy() { Patterns = s1.Patterns, Behaviours = dic1, Name = s1.Name };
-        var ns2 = new ConditionalStrategy() { Patterns = s2.Patterns, Behaviours = dic2, Name = s2.Name };
+        var ns1 = new ConditionalStrategy() { Pattern = s1.Pattern, Behaviours = dic1, Name = s1.Name };
+        var ns2 = new ConditionalStrategy() { Pattern = s2.Pattern, Behaviours = dic2, Name = s2.Name };
 
         return new[] { ns1, ns2 };
     }

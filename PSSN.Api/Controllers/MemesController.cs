@@ -31,11 +31,11 @@ public class MemesController : ControllerBase
         this._gameRunner = gameRunner;
         this._random = random;
     }
-    
 
-    [HttpPost]
+
+    [HttpGet]
     [Route("generate")]
-    public ActionResult GenerateRandom(GenerateMemeRequestModel model)
+    public ActionResult GenerateRandom([FromQuery] GenerateMemeRequestModel model)
     {
         Random random;
         if (model.RandomSeed is not null)
@@ -46,25 +46,26 @@ public class MemesController : ControllerBase
         {
             random = new Random();
         }
-        var res = ConditionalStrategyBuilder.RandomMemes(random,model.Distr,model.Count,model.GenotypeSize,_patternsContainer).ToList();
-        return Ok(_mapper.Map<List<MemeStrategyModel>>(res));
+        var res = ConditionalStrategyBuilder.RandomMemes(random, model.Distr, model.Count, model.GenotypeSize, _patternsContainer).ToList();
+        return Ok(_mapper.Map<List<ConditionalStrategyModel>>(res));
     }
 
     [HttpPost]
     [Route("research-single")]
-    public ActionResult ResearchSingleGeneration(MemeSingleGeneratinoRequestModel model){
-        var strats = _mapper.Map<List<ConditionalStrategy>>(model.Models,opt => opt.AfterMap((a,b) => {
-            foreach(var (dest, src) in b.Zip(model.Models)){
-                dest.Patterns = new(){
-                    _patternsContainer.CreatePattern(src.Type,src.Coefs)
-                };
+    public ActionResult ResearchSingleGeneration([FromBody] MemeSingleGeneratinoRequestModel model)
+    {
+        var strats = _mapper.Map<List<ConditionalStrategy>>(model.Models, opts => opts.AfterMap(afterFunction: (a, b) =>
+        {
+            foreach (var (dest, src) in b.Zip(model.Models))
+            {
+                dest.Pattern = _patternsContainer.CreatePattern(src.Pattern.Name!, src.Pattern.Coeffs!);
             }
         })).ToArray();
-        var tree = _gameRunner.Play(strats,model.Payofss,model.GenCount);
+        var tree = _gameRunner.Play(strats, model.Payofss, model.GenCount);
 
         var selectionOperator = new SelectionOperator<ConditionalStrategy>(model.SelectionGroupSize, tree, _random);
-        var crossingOverOperator = new MemeCrossingOverOperator(strats,tree);
-        var mutationOperator = new MemeMutationOperator(model.SwapChance,_random);
+        var crossingOverOperator = new MemeCrossingOverOperator(strats, tree);
+        var mutationOperator = new MemeMutationOperator(model.SwapChance, _random);
 
 
         var newPopulation = new List<ConditionalStrategy>();
@@ -83,40 +84,44 @@ public class MemesController : ControllerBase
 
         var response = new MemeSingleGenerationResponseModel()
         {
-            GameResult = new MemeGenerationResponseModel(){
-                Strats = _mapper.Map<List<MemeStrategyModel>>(strats),
+            GameResult = new MemeGenerationResponseModel()
+            {
+                Strats = _mapper.Map<List<ConditionalStrategyModel>>(strats.Zip(Enumerable.Range(0, strats.Count())).Select(x =>
+                {
+                    x.First.Id = x.Second;
+                    return x.First;
+                })),
                 Result = _mapper.Map<ResultTree>(tree)
             },
-            NewStrats = _mapper.Map<List<MemeStrategyModel>>(newPopulation)
+            NewStrats = _mapper.Map<List<ConditionalStrategyModel>>(newPopulation.Zip(Enumerable.Range(0, strats.Count())).Select(x =>
+            {
+                x.First.Id = x.Second;
+                return x.First;
+            }))
         };
         return Ok(response);
     }
 }
 
 
-public class MemeSingleGenerationResponseModel{
-    public List<MemeStrategyModel> NewStrats { get; set; }
+public class MemeSingleGenerationResponseModel
+{
+    public List<ConditionalStrategyModel> NewStrats { get; set; }
     public MemeGenerationResponseModel GameResult { get; set; }
 }
-public class MemeGenerationResponseModel {
-    public List<MemeStrategyModel> Strats { get; set; }
-    public ResultTree Result {get;set;} 
-    
+public class MemeGenerationResponseModel
+{
+    public List<ConditionalStrategyModel> Strats { get; set; }
+    public ResultTree Result { get; set; }
+
 }
-public class MemeSingleGeneratinoRequestModel{
-    public List<MemeStrategyModel> Models { get; set; }
-    public double[][] Payofss {get;set;}
-    public int GenCount {get;set;}
+public class MemeSingleGeneratinoRequestModel
+{
+    public List<ConditionalStrategyModel> Models { get; set; }
+    public double[][] Payofss { get; set; }
+    public int GenCount { get; set; }
     public int SelectionGroupSize { get; set; }
     public double SwapChance { get; set; }
-}
-
-public class MemeStrategyModel{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public List<Behavior>? Behaviors { get; set; }
-    public string Type {get;set;}
-    public int[] Coefs {get;set;}
 }
 
 public class GenerateMemeRequestModel

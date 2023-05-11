@@ -45,7 +45,10 @@ public class ResearchController : ControllerBase
     {
         var strategies = _mapper.Map<List<ConditionalStrategy>>(request.Strats).Zip(request.Strats).Select(x =>
         {
-            x.First.Patterns = x.Second.Patterns.Select(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!)).ToList();
+            if (x.Second.Pattern is not null)
+            {
+                x.First.Pattern = _patternsContainer.CreatePattern(x.Second.Pattern.Name!, x.Second.Pattern.Coeffs!);
+            }
             return x.First;
         }).ToArray();
 
@@ -142,9 +145,9 @@ public class ResearchController : ControllerBase
     {
         return _mapper.Map<List<ConditionalStrategy>>(models).Zip(models).Select(x =>
         {
-            if (x.Second.Patterns is not null)
+            if (x.Second.Pattern is not null)
             {
-                x.First.Patterns = x.Second.Patterns.ConvertAll(y => _patternsContainer.CreatePattern(y.Name!, y.Coeffs!));
+                x.First.Pattern = _patternsContainer.CreatePattern(x.Second.Pattern.Name!, x.Second.Pattern.Coeffs!);
             }
             return x.First;
         })

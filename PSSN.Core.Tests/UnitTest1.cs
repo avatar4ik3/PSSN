@@ -14,15 +14,15 @@ public class UnitTest1
         var strats = new List<ConditionalStrategy>(){
             new ConditionalStrategy(){
                 Name = "CTT",
-                Patterns = new(){
+                Pattern =
                     new CttPattern(new int[]{0,0,0,0,0})
-                }
+
             },
             new ConditionalStrategy(){
                 Name = "CD",
-                Patterns = new(){
+                Pattern =
                     new CttPattern(new int[]{1,0,1,1,0})
-                }
+
             },
         };
 

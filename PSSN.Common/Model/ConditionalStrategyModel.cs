@@ -2,7 +2,7 @@ namespace PSSN.Common.Model;
 
 public class ConditionalStrategyModel
 {
-    public List<PatternModel> Patterns { get; set; } = new();
+    public PatternModel Pattern { get; set; } = new();
 
     public Dictionary<int, string>? Behaviors { get; set; } = new();
     public string? Name { get; set; }

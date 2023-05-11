@@ -10,7 +10,7 @@ public class MemeTests
     public void CTT_Conversion()
     {
         // Given
-        var c = new int[]{0,1,0,0,1};
+        var c = new int[] { 0, 1, 0, 0, 1 };
         var cttBeh = new CttPattern(c);
         // When
         var a = cttBeh.CrossingOverPresentation;
@@ -26,7 +26,7 @@ public class MemeTests
     public void Meme_Conversion()
     {
         // Given
-        var c = new int[]{0,1,0,1,1,1};
+        var c = new int[] { 0, 1, 0, 1, 1, 1 };
         var meme = new MemePattern(c);
         // When
         var a = meme.CrossingOverPresentation;
@@ -40,15 +40,16 @@ public class MemeTests
     public void Meme_mutation()
     {
         // Given
-        var c = new int[]{0,1,0,1,1,1};
+        var c = new int[] { 0, 1, 0, 1, 1, 1 };
         var meme = new MemePattern(c);
-        var strat = new ConditionalStrategy(){
-            Patterns = new List<IBehaviourPattern>(){
+        var strat = new ConditionalStrategy()
+        {
+            Pattern =
                 meme
-            },
+            ,
             Name = ":1",
         };
-        var mutationOperator = new MemeMutationOperator(1,new Random());
+        var mutationOperator = new MemeMutationOperator(1, new Random());
         // When
         var mutated = mutationOperator.Operate(strat);
         // Then
@@ -59,22 +60,24 @@ public class MemeTests
     public void Meme_crossingover()
     {
         // Given
-        var s1 = new ConditionalStrategy(){
-            Patterns = new(){
-                new MemePattern(new int[]{3,1,1,1,1,1})
-            },
+        var s1 = new ConditionalStrategy()
+        {
+            Pattern =
+                new MemePattern(new int[] { 3, 1, 1, 1, 1, 1 })
+      ,
             Name = "1"
         };
-        var s2 = new ConditionalStrategy(){
-            Patterns = new(){
-                new CttPattern(new int[]{0,0,0,0,0})
-            },
+        var s2 = new ConditionalStrategy()
+        {
+            Pattern =
+                new CttPattern(new int[] { 0, 0, 0, 0, 0 })
+            ,
             Name = "2"
         };
 
-        var crossingOverOperator = new MemeCrossingOverOperator(null,null);
+        var crossingOverOperator = new MemeCrossingOverOperator(null, null);
         // When
-        var res = crossingOverOperator.Operate(s1,s2);
+        var res = crossingOverOperator.Operate(s1, s2);
         // Then
     }
 }

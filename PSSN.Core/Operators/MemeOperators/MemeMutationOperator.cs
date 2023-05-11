@@ -17,15 +17,13 @@ public class MemeMutationOperator
     public ConditionalStrategy Operate(ConditionalStrategy strategy)
     {
         var res = new ConditionalStrategy(){
-            Patterns = strategy.Patterns.Select(x => x.Copy()).ToList(),
+            Pattern = strategy.Pattern.Copy(),
             Behaviours = strategy.Behaviours,
             Name = strategy.Name
         };
-        foreach (var pattern in res.Patterns)
-        {
-            if (pattern.Coeffs != null)
+            if (res.Pattern.Coeffs != null)
             {
-                var pres = pattern.MutationPresentation;
+                var pres = res.Pattern.MutationPresentation;
                 for (int i = 0; i < pres.Indexies.Length; ++i)
                 {
                     if (_random.Proc(_chance))
@@ -34,7 +32,6 @@ public class MemeMutationOperator
                     }
                 }
             }
-        }
         return res;
     }
 

@@ -46,7 +46,7 @@ public class ConditionalStrategyBuilder
             var pattern = container.CreatePattern(type, coeffs);
             yield return new ConditionalStrategy()
             {
-                Patterns = new() { pattern },
+                Pattern = pattern,
                 Id = i,
                 Name = i.ToString()
             };
@@ -73,7 +73,7 @@ public class ConditionalStrategyBuilder
             yield return new ConditionalStrategy()
             {
                 Id = i,
-                Patterns = selected,
+                Pattern = selected.First(),
                 Name = i.ToString()
             };
         }
@@ -81,7 +81,7 @@ public class ConditionalStrategyBuilder
 
     public ConditionalStrategyBuilder WithPattern(IBehaviourPattern pattern)
     {
-        _strategy.Patterns.Add(pattern);
+        _strategy.Pattern = pattern;
         return this;
     }
 

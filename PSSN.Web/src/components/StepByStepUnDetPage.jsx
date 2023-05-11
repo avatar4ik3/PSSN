@@ -17,15 +17,14 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		MaxGenLengthForCrossingover: 5,
 		K_TournamentSelection: 5,
 		DistributionChance: 0.5,
-		SettledDeterminatedStrategies:
-		[
+		SettledDeterminatedStrategies: [
 			{
-				strategy:"CTT",
+				strategy: "CTT",
 				count: 1,
-				name : ""
+				name: "",
 			},
 		],
-		
+
 		DeterminatedStrategies: [["CTT"], ["DTT1D"]],
 		A: [
 			[4, 0],
@@ -126,11 +125,11 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 				points: data.map((tree, index) => {
 					// console.log(tree)
 					console.log({
-						name : stratName,
+						name: stratName,
 						tree: tree,
-						allNames : additionalStratsIds
+						allNames: additionalStratsIds,
 					})
-					let a = tree.map.find(xx => xx.key.name == stratName)
+					let a = tree.map.find((xx) => xx.key.name == stratName)
 					return {
 						x: index,
 						y: Object.entries(a.value)
@@ -151,42 +150,45 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		return series
 	}
 
-
-	function getStrategiesFromSettled(strats){
-
-		function range(start, end, step=1) {
-			let arr = [];
+	function getStrategiesFromSettled(strats) {
+		function range(start, end, step = 1) {
+			let arr = []
 			for (let i = start; i < end; i += step) {
-			  arr.push(i);
+				arr.push(i)
 			}
-			return arr;
-		  }
+			return arr
+		}
 
-		  
-		  //TODO переделать в for обычный, чтобы можно было доабвлять оффсеты в записимости от уже добавленных стратегий
-		const stratsLists =  commonRequestData.SettledDeterminatedStrategies.map(x => {
-			return range(0,x.count).map(number => {
-				let strat = encodeStrategy(StratsShortNameToFullNames(x.strategy))
-				return strat
-			})
-		})
-		const flattenedStrats = [].concat.apply([], stratsLists);
+		//TODO переделать в for обычный, чтобы можно было доабвлять оффсеты в записимости от уже добавленных стратегий
+		const stratsLists = commonRequestData.SettledDeterminatedStrategies.map(
+			(x) => {
+				return range(0, x.count).map((number) => {
+					let strat = encodeStrategy(StratsShortNameToFullNames(x.strategy))
+					return strat
+				})
+			}
+		)
+		const flattenedStrats = [].concat.apply([], stratsLists)
 		console.log(flattenedStrats)
-		return flattenedStrats;
+		return flattenedStrats
 	}
 
 	function StratsShortNameToFullNames(name) {
-		if(name == "C") return "CTT1C"
-		if(name == "D") return "DTT1D"
+		if (name == "C") return "CTT1C"
+		if (name == "D") return "DTT1D"
 		return name
 	}
 
 	return (
 		<div>
-			<button onClick={async _ => getStrategiesFromSettled(await requestInitialStrategies())}></button>
+			<button
+				onClick={async (_) =>
+					getStrategiesFromSettled(await requestInitialStrategies())
+				}
+			></button>
 			<div>
 				<label>
-					Эволюционные алгоритмы в дилемме заключенного. <br/>
+					Эволюционные алгоритмы в дилемме заключенного. <br />
 					Где гены — это конкретное решение (C/D) на каждом этапе игры.
 				</label>
 				{Object.entries(commonRequestData).map(([k, v]) => {
@@ -272,72 +274,80 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 								</button>
 							</div>
 						)
-					} 
-					else if(k == "SettledDeterminatedStrategies"){
-						return (<div key={k}>
-							<label>{k}</label>
-							{commonRequestData.SettledDeterminatedStrategies.map((value, idx) => {
-								return (
-									<div key={idx}>
-										<input
-											key={idx + "strat"}
-											type="text"
-											defaultValue={value.strategy}
-											onChange={(e) => {
-												value.name = e.target.value
-												value.strategy = e.target.value
-												setcommonRequestData({
-													...commonRequestData,
-													[k]: commonRequestData.SettledDeterminatedStrategies,
-												})
-											}}
-										/>
-								
-										<input
-										key={idx + "count"}
-										type="number"
-										min="1"
-										defaultValue={value.count}
-										onChange={(e) => {
-											value.count = Number(e.target.value)
-											setcommonRequestData({
-												...commonRequestData,
-												[k]: commonRequestData.SettledDeterminatedStrategies,
-											})
-										}}
-										/>
-										<button
-											onClick={(e) => {
-												commonRequestData.SettledDeterminatedStrategies.splice(idx,1) 
-												setcommonRequestData({
-													...commonRequestData,
-													[k]: commonRequestData.SettledDeterminatedStrategies,
-												})
-											}}
-										>
-											-
-										</button>
-									</div>
-								)
-							})}
-							<button 
-							onClick={(e) => {
-								console.log("clicked!")
-								console.log(commonRequestData.SettledDeterminatedStrategies)
+					} else if (k == "SettledDeterminatedStrategies") {
+						return (
+							<div key={k}>
+								<label>{k}</label>
+								{commonRequestData.SettledDeterminatedStrategies.map(
+									(value, idx) => {
+										return (
+											<div key={idx}>
+												<input
+													key={idx + "strat"}
+													type="text"
+													defaultValue={value.strategy}
+													onChange={(e) => {
+														value.name = e.target.value
+														value.strategy = e.target.value
+														setcommonRequestData({
+															...commonRequestData,
+															[k]: commonRequestData.SettledDeterminatedStrategies,
+														})
+													}}
+												/>
 
-								commonRequestData.SettledDeterminatedStrategies.push({
-									strategy:"",
-									name:"",
-									count: 1
-								})
-								setcommonRequestData({
-									...commonRequestData,
-									[k]: commonRequestData.SettledDeterminatedStrategies,
-								})
-							}}>+</button>
-						</div>)
-					}
-					else {
+												<input
+													key={idx + "count"}
+													type="number"
+													min="1"
+													defaultValue={value.count}
+													onChange={(e) => {
+														value.count = Number(e.target.value)
+														setcommonRequestData({
+															...commonRequestData,
+															[k]: commonRequestData.SettledDeterminatedStrategies,
+														})
+													}}
+												/>
+												<button
+													onClick={(e) => {
+														commonRequestData.SettledDeterminatedStrategies.splice(
+															idx,
+															1
+														)
+														setcommonRequestData({
+															...commonRequestData,
+															[k]: commonRequestData.SettledDeterminatedStrategies,
+														})
+													}}
+												>
+													-
+												</button>
+											</div>
+										)
+									}
+								)}
+								<button
+									onClick={(e) => {
+										console.log("clicked!")
+										console.log(commonRequestData.SettledDeterminatedStrategies)
+
+										commonRequestData.SettledDeterminatedStrategies.push({
+											strategy: "",
+											name: "",
+											count: 1,
+										})
+										setcommonRequestData({
+											...commonRequestData,
+											[k]: commonRequestData.SettledDeterminatedStrategies,
+										})
+									}}
+								>
+									+
+								</button>
+							</div>
+						)
+					} else {
 						return (
 							<div key={k}>
 								<label>{k}</label>
@@ -367,12 +377,14 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 						againstCttData.push([])
 					}
 					let payload = await requestInitialStrategies()
-					let detStrats = getStrategiesFromSettled(payload);
-					payload = payload.concat(detStrats);
+					let detStrats = getStrategiesFromSettled(payload)
+					payload = payload.concat(detStrats)
 					console.log(payload)
 					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await getOneGeneration(payload)
-						for (const [idx, names] of enumerate(commonRequestData.DeterminatedStrategies)) {
+						for (const [idx, names] of enumerate(
+							commonRequestData.DeterminatedStrategies
+						)) {
 							const againstCttResult = await playAgainstDeterminatedStrategies(
 								payload,
 								names
@@ -411,7 +423,8 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 				<>
 					{" "}
 					<label>
-						Количества генов типа C и генам типа D в популяции по поколениям <br/>
+						Количества генов типа C и генам типа D в популяции по поколениям{" "}
+						<br />
 						Работает не корректно если подселены детерминированные стратегии
 					</label>
 					<Graph series={chartData} />

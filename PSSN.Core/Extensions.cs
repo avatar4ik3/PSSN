@@ -27,7 +27,7 @@ public static class Extensions
 
     public static IEnumerable<ConditionalStrategy> Copy(this IEnumerable<ConditionalStrategy> strats)
     {
-        return strats.Select(x => new ConditionalStrategy() { Patterns = x.Patterns, Behaviours = x.Behaviours, Name = x.Name });
+        return strats.Select(x => new ConditionalStrategy() { Pattern = x.Pattern, Behaviours = x.Behaviours, Name = x.Name });
     }
 
 }

@@ -38,7 +38,7 @@ public class MemePattern : IBehaviourPattern
     */
     public void Apply(Game g, Player p, ConditionalStrategy s)
     {
-        if (Coeffs is null || Coeffs.Length != 5)
+        if (Coeffs is null || Coeffs.Length != 6)
         {
             throw new ArgumentException(nameof(Coeffs));
         }

@@ -22,7 +22,7 @@ public class MutationOperator
                 behs[key] = strategy.Behaviours[key].Other();
             else
                 behs[key] = strategy.Behaviours[key];
-        return new ConditionalStrategy() { Patterns = strategy.Patterns, Behaviours = behs, Name = strategy.Name };
+        return new ConditionalStrategy() { Pattern = strategy.Pattern, Behaviours = behs, Name = strategy.Name };
     }
 
     public IEnumerable<ConditionalStrategy> Operate(IEnumerable<ConditionalStrategy> strategies)

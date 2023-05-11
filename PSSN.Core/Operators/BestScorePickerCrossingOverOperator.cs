@@ -71,8 +71,8 @@ public class BestScorePickerCrossingOverOperator
         foreach (var index in s1Take) newS2dic[index] = s1.Behaviours[index];
         foreach (var index in s2Take) newS1dic[index] = s2.Behaviours[index];
 
-        var newS1 = new ConditionalStrategy() { Patterns = s1.Patterns, Behaviours = newS1dic, Name = s1.Name };
-        var newS2 = new ConditionalStrategy() { Patterns = s1.Patterns, Behaviours = newS2dic, Name = s2.Name };
+        var newS1 = new ConditionalStrategy() { Pattern = s1.Pattern, Behaviours = newS1dic, Name = s1.Name };
+        var newS2 = new ConditionalStrategy() { Pattern = s1.Pattern, Behaviours = newS2dic, Name = s2.Name };
         return new[] { newS1, newS2 };
     }
 }
