@@ -28,7 +28,7 @@ public class MemeMutationOperator
                 {
                     if (_random.Proc(_chance))
                     {
-                        pres.Source[pres.Indexies[i].Value] = pres.Source[pres.Indexies[i].Value].Value == 0 ? new IntWrapper(1) : new IntWrapper(0); 
+                        pres.Source[pres.Indexies[i].Value].Value = pres.Source[pres.Indexies[i].Value].Value == 0 ? 1 : 0; 
                     }
                 }
             }

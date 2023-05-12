@@ -101,14 +101,14 @@ public class MemeCrossingOverOperator
             {
                 for (int i = 2; i < 6; ++i)
                 {
-                    r2.Indexies[i] = cs_1.Indexies[i];
+                    r2.Indexies[i].Value = cs_1.Indexies[i].Value;
                 }
             }
             else
             {
                 for (int i = 2; i < 6; ++i)
                 {
-                    r1.Indexies[i] = cs_2.Indexies[i];
+                    r1.Indexies[i].Value = cs_2.Indexies[i].Value;
                 }
             }
         }
@@ -119,14 +119,14 @@ public class MemeCrossingOverOperator
             {
                 for (int i = 0; i < 2; ++i)
                 {
-                    r2.Indexies[i] = cs_1.Indexies[i];
+                    r2.Indexies[i].Value = cs_1.Indexies[i].Value;
                 }
             }
             else
             {
                 for (int i = 0; i < 2; ++i)
                 {
-                    r1.Indexies[i] = cs_2.Indexies[i];
+                    r1.Indexies[i].Value = cs_2.Indexies[i].Value;
                 }
             }
         }

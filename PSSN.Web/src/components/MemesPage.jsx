@@ -7,6 +7,8 @@ import PatternTypeGraph from "./Graphs/PatternTypeGraph"
 import CtoDinResultGraph from "./Graphs/CtoDinResultGraph"
 import StratsByNameGraph from "./Graphs/StratsByNameGraph"
 import StratsByPatternGraph from "./Graphs/StratsByPattern"
+import MemesScoresGraph from "./Graphs/MemesScoresGraph"
+import PatternRationGraph from "./Graphs/PatternRationGraph"
 const MemesPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
 		GenerationsCount: 100,
@@ -121,7 +123,7 @@ const MemesPage = ({ apiHost, ...rest }) => {
 					let strategies = []
 					let payload = await GetInitialStrategies()
 
-					for (let i = 0; i < commonRequestData.PopulationSize; ++i) {
+					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await GetOneGeneration(payload)
 						gameResults.push(gameResult.result.map)
 						strategies.push(gameResult.strats)
@@ -138,6 +140,8 @@ const MemesPage = ({ apiHost, ...rest }) => {
 			<PatternTypeGraph strats={ctd}></PatternTypeGraph>
             <StratsByNameGraph strats={ctd}></StratsByNameGraph>
             <StratsByPatternGraph strats={ctd}></StratsByPatternGraph>
+			<MemesScoresGraph maps={rs} strats={ctd}></MemesScoresGraph>
+			<PatternRationGraph strats={ctd} count={commonRequestData.PopulationSize}></PatternRationGraph>
 		</div>
 	)
 }
