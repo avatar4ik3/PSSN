@@ -138,8 +138,8 @@ const MemesPage = ({ apiHost, ...rest }) => {
 			</button>
 			<CtoDinResultGraph maps={rs}></CtoDinResultGraph>
 			<PatternTypeGraph strats={ctd}></PatternTypeGraph>
-            <StratsByNameGraph strats={ctd}></StratsByNameGraph>
-            <StratsByPatternGraph strats={ctd}></StratsByPatternGraph>
+            {/* <StratsByNameGraph strats={ctd}></StratsByNameGraph> */}
+            {/* <StratsByPatternGraph strats={ctd}></StratsByPatternGraph> */}
 			<MemesScoresGraph maps={rs} strats={ctd}></MemesScoresGraph>
 			<PatternRationGraph strats={ctd} count={commonRequestData.PopulationSize}></PatternRationGraph>
 		</div>

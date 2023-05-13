@@ -61,7 +61,7 @@ const MemesScoresGraph = ({ maps, strats, ...rest }) => {
 		return series
 	}
 
-	return <div>{maps && strats ? <Graph series={Prepare()}></Graph> : ""}</div>
+	return <div>{maps && strats ? <Graph series={Prepare()} xLabel={"Номер поколения"} yLabel={"Количество очков"}></Graph> : ""}</div>
 }
 
 export default MemesScoresGraph

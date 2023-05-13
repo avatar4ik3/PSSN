@@ -7,7 +7,7 @@ services:
     networks:
       - default
     ports:
-      - "${REACT_APP_SERVER_PORT}:8080"
+      - "${REACT_APP_SERVER_PORT}:8081"
     container_name: "${REACT_APP_SERVER_NAME}"
   client:
     build: 

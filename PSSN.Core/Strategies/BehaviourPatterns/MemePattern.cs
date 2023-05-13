@@ -54,7 +54,10 @@ public class MemePattern : IBehaviourPattern
         var lessOrGreater = Coeffs[2].Value is 0;
 
         //сколько раз противник за выбранный промежуток [3] сыграл [4]
-        var a = g.State.GetOpponentPlayerState(p).previousBehaviours.Skip(g.State.currentStage - Coeffs[0].Value).Where(x => (int)x == Coeffs[4].Value).Count();
+        var a = g.State.GetOpponentPlayerState(p).previousBehaviours
+            .Skip(g.State.currentStage - Coeffs[0].Value)
+            .Where(x => (int)x == Coeffs[4].Value)
+            .Count();
         if (
             (a >= Coeffs[3].Value) == lessOrGreater
         )

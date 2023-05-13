@@ -7,10 +7,19 @@ const divStyle = {
 	margin: "0px auto",
 }
 
-const Graph = ({ series }) => {
+const Graph = ({ series,xLabel,yLabel,title }) => {
 	return (
 		<div style={divStyle}>
-			<JSCharting options={{ series: series }} />
+			<JSCharting
+				options={{
+					series: series,
+					title_label_text: title,
+					legend_visible: true,
+					legend_template: "%average %sum %icon %name",
+					xAxis_label_text: xLabel,
+					yAxis_label_text: yLabel,
+				}}
+			/>
 		</div>
 	)
 }

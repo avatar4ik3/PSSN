@@ -24,7 +24,7 @@ const PatternRationGraph = ({strats,count,...rest}) => {
 		return series
 	}
 
-	return <div>{count && strats ? <Graph series={Prepare()}></Graph> : ""}</div>
+	return <div>{count && strats ? <Graph series={Prepare()} xLabel={"Номер поколения"} yLabel={"Доля стратегии в популяции"} title={""}></Graph> : ""}</div>
 }
 
 export default PatternRationGraph

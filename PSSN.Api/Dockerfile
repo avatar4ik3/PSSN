@@ -9,13 +9,13 @@ COPY PSSN.Api/PSSN.Api.csproj PSSN.Api/
 RUN dotnet restore PSSN.Api/PSSN.Api.csproj
 COPY . .
 WORKDIR /src/PSSN.Api
-RUN dotnet build PSSN.Api.csproj -c Release -o /app
+RUN dotnet build PSSN.Api.csproj -o /app
 
 COPY PSSN.Api/Properties/launchSettings.json /app
 COPY PSSN.Api/appsettings.json /app
 
 FROM build AS publish
-RUN dotnet publish PSSN.Api.csproj -c Release -o /app
+RUN dotnet publish PSSN.Api.csproj -o /app
 
 
 
