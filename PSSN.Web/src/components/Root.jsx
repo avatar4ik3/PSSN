@@ -15,6 +15,9 @@ const Root = () => {
 				<li>
 					<a href="memes">Memes</a>
 				</li>
+				<li>
+					<a href="memes-statistic">Memes statistic</a>
+				</li>
 			</ul>
 		</nav>
 	)

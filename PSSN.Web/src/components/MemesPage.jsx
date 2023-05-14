@@ -19,6 +19,7 @@ const MemesPage = ({ apiHost, ...rest }) => {
 		K_TournamentSelection: 5,
 		StrategyTypeDistributionChance: 0.5,
 		DistributionChance: 0.5,
+		UseCrossingOver: 1,
 		A: [
 			[4, 0],
 			[6, 1],
@@ -52,6 +53,8 @@ const MemesPage = ({ apiHost, ...rest }) => {
 				selectionGroupSize: commonRequestData.K_TournamentSelection,
 				payofss: commonRequestData.A,
 				models: payload,
+				useCrossingOver : commonRequestData.UseCrossingOver === 1 ? true : false,
+				RandomSeed : null
 			})
 			.then((r) => ({
 				gameResult: r.data.gameResult,
@@ -130,7 +133,7 @@ const MemesPage = ({ apiHost, ...rest }) => {
 						payload = newStrats
 					}
 					setctd(strategies)
-                    setrs(gameResults)
+					setrs(gameResults)
 					let a = 2
 				}}
 			>
@@ -138,10 +141,13 @@ const MemesPage = ({ apiHost, ...rest }) => {
 			</button>
 			<CtoDinResultGraph maps={rs}></CtoDinResultGraph>
 			<PatternTypeGraph strats={ctd}></PatternTypeGraph>
-            {/* <StratsByNameGraph strats={ctd}></StratsByNameGraph> */}
-            {/* <StratsByPatternGraph strats={ctd}></StratsByPatternGraph> */}
+			{/* <StratsByNameGraph strats={ctd}></StratsByNameGraph> */}
+			{/* <StratsByPatternGraph strats={ctd}></StratsByPatternGraph> */}
 			<MemesScoresGraph maps={rs} strats={ctd}></MemesScoresGraph>
-			<PatternRationGraph strats={ctd} count={commonRequestData.PopulationSize}></PatternRationGraph>
+			<PatternRationGraph
+				strats={ctd}
+				count={commonRequestData.PopulationSize}
+			></PatternRationGraph>
 		</div>
 	)
 }

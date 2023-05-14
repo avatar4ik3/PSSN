@@ -8,7 +8,7 @@ import Root from "./components/Root"
 
 import ConditionalPage from "./components/ConditionalPage"
 import MemesPage from "./components/MemesPage"
-
+import MemeStatisticPage from "./components/MemeStatisticPage"
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -23,6 +23,19 @@ const router = createBrowserRouter([
 		path: "/memes",
 		element: (
 			<MemesPage
+				apiHost={
+					"http://" +
+					process.env.REACT_APP_SERVER_NAME +
+					":" +
+					process.env.REACT_APP_SERVER_PORT
+				}
+			/>
+		),
+	},
+	{
+		path: "/memes-statistic",
+		element: (
+			<MemeStatisticPage
 				apiHost={
 					"http://" +
 					process.env.REACT_APP_SERVER_NAME +

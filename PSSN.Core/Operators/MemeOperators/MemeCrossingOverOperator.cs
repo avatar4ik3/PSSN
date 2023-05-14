@@ -23,7 +23,7 @@ public class MemeCrossingOverOperator
         Dictionary<int, double> s1Sums = new();
         Dictionary<int, double> s2Sums = new();
 
-// #if !DEBUG
+        // #if !DEBUG
         //берем все стратегии, кроме переданых
         var rest = _all.Where(s => s != s1 && s != s2).ToList();
         foreach (var round in s1.Behaviours.Keys)
@@ -31,22 +31,22 @@ public class MemeCrossingOverOperator
             s1Sums[round] = rest.Select(s => _results[s1, s, round]).Sum();
             s2Sums[round] = rest.Select(s => _results[s2, s, round]).Sum();
         }
-// #endif
+        // #endif
 
-//         //для дебага
-// #if DEBUG
-//     s1Sums = new(){
-//         {1,5},
-//         {2,5},
-//         {3,5}
-//     };
+        //         //для дебага
+        // #if DEBUG
+        //     s1Sums = new(){
+        //         {1,5},
+        //         {2,5},
+        //         {3,5}
+        //     };
 
-//     s2Sums = new(){
-//         {1,1},
-//         {2,1},
-//         {3,1}
-//     };
-// #endif
+        //     s2Sums = new(){
+        //         {1,1},
+        //         {2,1},
+        //         {3,1}
+        //     };
+        // #endif
         //сплитим 
         //костыль, мы сейчас думаем что у нас только один паттерн
         var cs_1 = s1.Pattern.CrossingOverPresentation;
@@ -62,7 +62,7 @@ public class MemeCrossingOverOperator
 
         //разница между полученными очками в сетапе
         var sum_setup_dif = Math.Abs(sum_setup_s_1 - sum_setup_s_2);
-        
+
         //сколько раундов было после сетапа
         var len_after_s_1 = s1Sums.Values.Skip(cs_1.Indexies[0].Value).Count();
         var len_after_s_2 = s2Sums.Values.Skip(cs_2.Indexies[0].Value).Count();
@@ -93,43 +93,43 @@ public class MemeCrossingOverOperator
         var r2 = res2.Pattern.CrossingOverPresentation;
 
         //свапаем только ту часть, в которой разница по очкам максимальна
-        if (sum_after_dif > sum_setup_dif)
-        {
-            //если нужно свапать часть после сетапа
+        // if (sum_after_dif > sum_setup_dif)
+        // {
+        //если нужно свапать часть после сетапа
 
-            if (sum_after_s_1 > sum_after_s_2)
+        if (sum_after_s_1 > sum_after_s_2)
+        {
+            for (int i = 2; i < 6; ++i)
             {
-                for (int i = 2; i < 6; ++i)
-                {
-                    r2.Indexies[i].Value = cs_1.Indexies[i].Value;
-                }
-            }
-            else
-            {
-                for (int i = 2; i < 6; ++i)
-                {
-                    r1.Indexies[i].Value = cs_2.Indexies[i].Value;
-                }
+                r2.Indexies[i].Value = cs_1.Indexies[i].Value;
             }
         }
         else
         {
-            //если нужно свапать сетап
-            if (sum_setup_s_1 > sum_setup_s_2)
+            for (int i = 2; i < 6; ++i)
             {
-                for (int i = 0; i < 2; ++i)
-                {
-                    r2.Indexies[i].Value = cs_1.Indexies[i].Value;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < 2; ++i)
-                {
-                    r1.Indexies[i].Value = cs_2.Indexies[i].Value;
-                }
+                r1.Indexies[i].Value = cs_2.Indexies[i].Value;
             }
         }
+        // }
+        // else
+        // {
+        //если нужно свапать сетап
+        if (sum_setup_s_1 > sum_setup_s_2)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                r2.Indexies[i].Value = cs_1.Indexies[i].Value;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                r1.Indexies[i].Value = cs_2.Indexies[i].Value;
+            }
+        }
+        // }
         return new[] { res1, res2 };
     }
 }

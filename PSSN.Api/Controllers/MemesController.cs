@@ -19,17 +19,20 @@ public class MemesController : ControllerBase
     private readonly PatternsContainer _patternsContainer;
     private readonly IGameRunner _gameRunner;
     private readonly Random _random;
+    private readonly ILogger<MemesController> _logger;
 
     public MemesController(
         IMapper mapper,
         PatternsContainer patternsContainer,
         IGameRunner gameRunner,
-        Random random)
+        Random random,
+        ILogger<MemesController> logger)
     {
         this._mapper = mapper;
         this._patternsContainer = patternsContainer;
         this._gameRunner = gameRunner;
         this._random = random;
+        this._logger = logger;
     }
 
 
@@ -54,6 +57,16 @@ public class MemesController : ControllerBase
     [Route("research-single")]
     public ActionResult ResearchSingleGeneration([FromBody] MemeSingleGeneratinoRequestModel model)
     {
+        _logger.LogDebug("use crossing over ? {value}",model.UseCrossingOver);
+        Random random;
+        if (model.RandomSeed is not null)
+        {
+            random = new Random(model.RandomSeed.Value);
+        }
+        else
+        {
+            random = new Random();
+        }
         var strats = _mapper.Map<List<ConditionalStrategy>>(model.Models, opts => opts.AfterMap(afterFunction: (a, b) =>
         {
             foreach (var (dest, src) in b.Zip(model.Models))
@@ -63,9 +76,9 @@ public class MemesController : ControllerBase
         })).ToArray();
         var tree = _gameRunner.Play(strats, model.Payofss, model.GenCount);
 
-        var selectionOperator = new SelectionOperator<ConditionalStrategy>(model.SelectionGroupSize, tree, _random);
+        var selectionOperator = new SelectionOperator<ConditionalStrategy>(model.SelectionGroupSize, tree, random);
         var crossingOverOperator = new MemeCrossingOverOperator(strats, tree);
-        var mutationOperator = new MemeMutationOperator(model.SwapChance, _random);
+        var mutationOperator = new MemeMutationOperator(model.SwapChance, random);
 
 
         var newPopulation = new List<ConditionalStrategy>();
@@ -74,12 +87,14 @@ public class MemesController : ControllerBase
         {
             var s1 = selectionOperator.Operate(strats);
             var s2 = selectionOperator.Operate(strats);
-
-            var crossovers = crossingOverOperator.Operate(s1, s2);
-
-            var mutated = mutationOperator.Operate(crossovers);
-
+            var toMutate = new[] { s1, s2 };
+            if (model.UseCrossingOver is true)
+            {
+                toMutate = crossingOverOperator.Operate(s1, s2).ToArray();
+            }
+            var mutated = mutationOperator.Operate(toMutate);
             newPopulation.AddRange(mutated);
+
         }
 
         var response = new MemeSingleGenerationResponseModel()
@@ -122,6 +137,9 @@ public class MemeSingleGeneratinoRequestModel
     public int GenCount { get; set; }
     public int SelectionGroupSize { get; set; }
     public double SwapChance { get; set; }
+
+    public bool UseCrossingOver { get; set; }
+    public int? RandomSeed { get; set; }
 }
 
 public class GenerateMemeRequestModel

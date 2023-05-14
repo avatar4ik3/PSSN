@@ -26,7 +26,7 @@ const CtoDinResultGraph = ({ maps, ...rest }) => {
         })
         return series
     }
-    return <div>{maps ? <Graph series={Prepare()}></Graph> : ""}</div>
+    return <div>{maps ? <Graph series={Prepare()} xLabel={"Номер поколения"} yLabel={"Количество коопераций и предательств в популяции"}/> : ""}</div>
 }
 
 export default CtoDinResultGraph
