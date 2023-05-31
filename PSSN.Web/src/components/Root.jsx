@@ -18,6 +18,9 @@ const Root = () => {
 				<li>
 					<a href="memes-statistic">Memes statistic</a>
 				</li>
+				<li>
+					<a href="memes-statistic-ctt">CTT ratio</a>
+				</li>
 			</ul>
 		</nav>
 	)

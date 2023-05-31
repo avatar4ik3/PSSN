@@ -6,28 +6,23 @@ import AverageScoresByExperimentGraph from "./Graphs/AverageScoresByExperimentGr
 import CToDGraph from "./Graphs/CToDGraph"
 import PatternRation from "./Graphs/CTTPatternRation"
 
-const MemeStatisticPage = ({ apiHost, ...rest }) => {
+const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
 		GenerationsCount: 50,
 		PopulationSize: 10,
 		GenotypeSize: 8,
 		GeneMutationChance: 0.05,
 		K_TournamentSelection: 4,
-		StrategyTypeDistributionChance: 0,
+		StrategyTypeDistributionChanceStep: 0.2,
 		CountOfExperiments: 50,
-		RandomSeed : 15,
 		A: [
 			[4, 0],
 			[6, 1],
 		],
 	})
-
-	const [allmapsCO, setallmapsCO] = useState(null)
-	const [allmapsNCO, setallmapsNCO] = useState(null)
 	const [allstratsCO, setallstratsCO] = useState(null)
-	const [allstratsNCO, setallstratsNCO] = useState(null)
 
-	function GetInitialStrategies(seed) {
+	function GetInitialStrategies(distr) {
 		console.log(apiHost)
 		return axios
 			.get(
@@ -36,8 +31,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 					qs.stringify({
 						Count: commonRequestData.PopulationSize,
 						GenotypeSize: commonRequestData.GenotypeSize,
-						Distr: commonRequestData.StrategyTypeDistributionChance,
-						RandomSeed: seed,
+						Distr: distr,
 					})
 			)
 			.then((response, err) => {
@@ -45,7 +39,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				return response.data
 			})
 	}
-	function GetOneGeneration(payload,co,seed) {
+	function GetOneGeneration(payload, co) {
 		return axios
 			.post(apiHost + "/api/v1/memes/research-single", {
 				genCount: commonRequestData.GenotypeSize,
@@ -53,8 +47,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				selectionGroupSize: commonRequestData.K_TournamentSelection,
 				payofss: commonRequestData.A,
 				models: payload,
-				UseCrossingOver : co,
-				RandomSeed : seed
+				UseCrossingOver: co,
 			})
 			.then((r) => ({
 				gameResult: r.data.gameResult,
@@ -123,53 +116,40 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				onClick={async (e) => {
 					e.preventDefault()
 					//CO
-					let localmapsCO = []
 					let localstratsCO = []
-					for (let expIndex = 0; expIndex < commonRequestData.CountOfExperiments; ++expIndex) {
-						let gameResults = []
-						let strategies = []
-						let payload = await GetInitialStrategies(commonRequestData.RandomSeed + expIndex)
+                    let step = Number(commonRequestData.StrategyTypeDistributionChanceStep)
+					for (
+						let distr = 0.0;
+						distr <= 1;
+						distr += step
+					) {
+                        let currentLastStrat = [];
+						for (
+							let expIndex = 0;
+							expIndex < commonRequestData.CountOfExperiments;
+							++expIndex
+						) {
+							let payload = await GetInitialStrategies(distr)
 
-						for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-							const { gameResult, newStrats } = await GetOneGeneration(payload,true,commonRequestData.RandomSeed + i + expIndex)
-							gameResults.push(gameResult.result.map)
-							strategies.push(gameResult.strats)
-							payload = newStrats
+							for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
+								const { newStrats } = await GetOneGeneration(
+									payload,
+									true
+								)
+								payload = newStrats
+							}
+                            currentLastStrat.push(payload)
 						}
-						localmapsCO.push(gameResults)
-						localstratsCO.push(strategies)
+						localstratsCO.push({strats:currentLastStrat,ds: distr})
 					}
-					setallmapsCO(localmapsCO)
 					setallstratsCO(localstratsCO)
-					//NCO
-					let localmapsNCO = []
-					let localstratsNCO = []
-					for (let expIndex = 0; expIndex < commonRequestData.CountOfExperiments; ++expIndex) {
-						let gameResults = []
-						let strategies = []
-						let payload = await GetInitialStrategies(commonRequestData.RandomSeed + expIndex)
-
-						for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-							const { gameResult, newStrats } = await GetOneGeneration(payload,false,commonRequestData.RandomSeed + i + expIndex)
-							gameResults.push(gameResult.result.map)
-							strategies.push(gameResult.strats)
-							payload = newStrats
-						}
-						localmapsNCO.push(gameResults)
-						localstratsNCO.push(strategies)
-					}
-					setallmapsNCO(localmapsNCO)
-					setallstratsNCO(localstratsNCO)
 				}}
 			>
 				Run
 			</button>
-            <AverageScoresByExperimentGraph allMaps={allmapsCO} title={"С применением оператора кроссинговера"}/>
-            <AverageScoresByExperimentGraph allMaps={allmapsNCO} title={"Без применения оператора кроссинговера"}/>
-			{/* <PatternRation allStrats={allstratsCO} title={"Доля CTT паттерна в последней популяции"} patternName={"CttPattern"}></PatternRation> */}
-            {/* <CToDGraph stratsByRounds={allstrats[0]}></CToDGraph> */}
+            <PatternRation allStrats={allstratsCO} title={""} patternName={"CttPattern"}></PatternRation>
 		</div>
 	)
 }
 
-export default MemeStatisticPage
+export default PatternRationStatisticPage
