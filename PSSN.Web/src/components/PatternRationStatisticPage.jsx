@@ -5,6 +5,7 @@ import qs from "qs"
 import AverageScoresByExperimentGraph from "./Graphs/AverageScoresByExperimentGraph"
 import CToDGraph from "./Graphs/CToDGraph"
 import PatternRation from "./Graphs/CTTPatternRation"
+import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 
 const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
@@ -147,6 +148,12 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 			>
 				Run
 			</button>
+			<JsonSerializationComponent
+				data={[
+					{ commonRequestData, setcommonRequestData },
+					{ allstratsCO, setallstratsCO }
+				]}
+			/>
             <PatternRation allStrats={allstratsCO} title={""} patternName={"CttPattern"}></PatternRation>
 		</div>
 	)

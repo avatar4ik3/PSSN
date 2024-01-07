@@ -9,6 +9,7 @@ import StratsByNameGraph from "./Graphs/StratsByNameGraph"
 import StratsByPatternGraph from "./Graphs/StratsByPattern"
 import MemesScoresGraph from "./Graphs/MemesScoresGraph"
 import PatternRationGraph from "./Graphs/PatternRationGraph"
+import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 const MemesPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
 		GenerationsCount: 100,
@@ -139,6 +140,13 @@ const MemesPage = ({ apiHost, ...rest }) => {
 			>
 				Calculate
 			</button>
+			<JsonSerializationComponent
+				data={[
+					{ commonRequestData, setcommonRequestData },
+					{ ctd, setctd },
+					{ rs, setrs },
+				]}
+			/>
 			<CtoDinResultGraph maps={rs}></CtoDinResultGraph>
 			<PatternTypeGraph strats={ctd}></PatternTypeGraph>
 			{/* <StratsByNameGraph strats={ctd}></StratsByNameGraph> */}

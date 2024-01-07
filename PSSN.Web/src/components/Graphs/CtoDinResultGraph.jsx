@@ -18,10 +18,12 @@ const CtoDinResultGraph = ({ maps, ...rest }) => {
         let series = []
         series.push({
             name:"C",
+            type: 'marker',
             points: flattened.map(x => x.filter(xx => xx === "C").length)
         })
         series.push({
             name:"D",
+            type: 'marker',
             points: flattened.map(x => x.filter(xx => xx === "D").length)
         })
         return series

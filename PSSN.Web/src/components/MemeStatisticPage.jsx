@@ -5,6 +5,9 @@ import qs from "qs"
 import AverageScoresByExperimentGraph from "./Graphs/AverageScoresByExperimentGraph"
 import CToDGraph from "./Graphs/CToDGraph"
 import PatternRation from "./Graphs/CTTPatternRation"
+import JsonSaveComponent from "./Serialization/JsonSaveComponent"
+import JsonLoadComponent from "./Serialization/JsonLoadComponent"
+import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 
 const MemeStatisticPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
@@ -15,7 +18,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 		K_TournamentSelection: 4,
 		StrategyTypeDistributionChance: 0,
 		CountOfExperiments: 50,
-		RandomSeed : 15,
+		RandomSeed: 15,
 		A: [
 			[4, 0],
 			[6, 1],
@@ -45,7 +48,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				return response.data
 			})
 	}
-	function GetOneGeneration(payload,co,seed) {
+	function GetOneGeneration(payload, co, seed) {
 		return axios
 			.post(apiHost + "/api/v1/memes/research-single", {
 				genCount: commonRequestData.GenotypeSize,
@@ -53,8 +56,8 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				selectionGroupSize: commonRequestData.K_TournamentSelection,
 				payofss: commonRequestData.A,
 				models: payload,
-				UseCrossingOver : co,
-				RandomSeed : seed
+				UseCrossingOver: co,
+				RandomSeed: seed,
 			})
 			.then((r) => ({
 				gameResult: r.data.gameResult,
@@ -125,13 +128,23 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 					//CO
 					let localmapsCO = []
 					let localstratsCO = []
-					for (let expIndex = 0; expIndex < commonRequestData.CountOfExperiments; ++expIndex) {
+					for (
+						let expIndex = 0;
+						expIndex < commonRequestData.CountOfExperiments;
+						++expIndex
+					) {
 						let gameResults = []
 						let strategies = []
-						let payload = await GetInitialStrategies(commonRequestData.RandomSeed + expIndex)
+						let payload = await GetInitialStrategies(
+							commonRequestData.RandomSeed + expIndex
+						)
 
 						for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-							const { gameResult, newStrats } = await GetOneGeneration(payload,true,commonRequestData.RandomSeed + i + expIndex)
+							const { gameResult, newStrats } = await GetOneGeneration(
+								payload,
+								true,
+								commonRequestData.RandomSeed + i + expIndex
+							)
 							gameResults.push(gameResult.result.map)
 							strategies.push(gameResult.strats)
 							payload = newStrats
@@ -144,13 +157,23 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 					//NCO
 					let localmapsNCO = []
 					let localstratsNCO = []
-					for (let expIndex = 0; expIndex < commonRequestData.CountOfExperiments; ++expIndex) {
+					for (
+						let expIndex = 0;
+						expIndex < commonRequestData.CountOfExperiments;
+						++expIndex
+					) {
 						let gameResults = []
 						let strategies = []
-						let payload = await GetInitialStrategies(commonRequestData.RandomSeed + expIndex)
+						let payload = await GetInitialStrategies(
+							commonRequestData.RandomSeed + expIndex
+						)
 
 						for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-							const { gameResult, newStrats } = await GetOneGeneration(payload,false,commonRequestData.RandomSeed + i + expIndex)
+							const { gameResult, newStrats } = await GetOneGeneration(
+								payload,
+								false,
+								commonRequestData.RandomSeed + i + expIndex
+							)
 							gameResults.push(gameResult.result.map)
 							strategies.push(gameResult.strats)
 							payload = newStrats
@@ -164,10 +187,25 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 			>
 				Run
 			</button>
-            <AverageScoresByExperimentGraph allMaps={allmapsCO} title={"С применением оператора кроссинговера"}/>
-            <AverageScoresByExperimentGraph allMaps={allmapsNCO} title={"Без применения оператора кроссинговера"}/>
+			<JsonSerializationComponent
+				data={[
+					{ commonRequestData, setcommonRequestData },
+					{ allmapsCO, setallmapsCO },
+					{ allmapsNCO, setallmapsNCO },
+					{ allstratsCO, setallstratsCO },
+					{ allstratsNCO, setallstratsNCO },
+				]}
+			/>
+			<AverageScoresByExperimentGraph
+				allMaps={allmapsCO}
+				title={"С применением оператора кроссинговера"}
+			/>
+			<AverageScoresByExperimentGraph
+				allMaps={allmapsNCO}
+				title={"Без применения оператора кроссинговера"}
+			/>
 			{/* <PatternRation allStrats={allstratsCO} title={"Доля CTT паттерна в последней популяции"} patternName={"CttPattern"}></PatternRation> */}
-            {/* <CToDGraph stratsByRounds={allstrats[0]}></CToDGraph> */}
+			{/* <CToDGraph stratsByRounds={allstrats[0]}></CToDGraph> */}
 		</div>
 	)
 }

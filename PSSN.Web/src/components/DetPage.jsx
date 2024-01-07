@@ -2,6 +2,7 @@ import { React, useState } from "react"
 import axios from "axios"
 import Graph from "./Graph"
 import Array2DInput from "./Array2DInput"
+import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 const DetPage = ({ apiHost, ...rest }) => {
 	console.log(apiHost)
 	const [data, setdata] = useState(null)
@@ -129,7 +130,12 @@ const DetPage = ({ apiHost, ...rest }) => {
 					}
 				})}
 			</div>
-
+			<JsonSerializationComponent
+				data={[
+					{ request, setrequest },
+					{ data, setdata }
+				]}
+			/>
 			<button
 				onClick={async (e) => {
 					setdata(null)

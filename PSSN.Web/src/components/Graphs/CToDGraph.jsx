@@ -1,8 +1,7 @@
 import Graph from "../Graph"
 
-const CToDGraph = ({stratsByRounds,...rest}) => {
-    
-    function Prepare(){
+const CToDGraph = ({ stratsByRounds, ...rest }) => {
+	function Prepare() {
 		let items = stratsByRounds
 		let series = []
 
@@ -21,6 +20,7 @@ const CToDGraph = ({stratsByRounds,...rest}) => {
 		function toSeries(items, char) {
 			return {
 				name: char,
+				type: "marker",
 				points: Object.entries(countOf(items, char)).map(([k, v]) => {
 					return { x: Number.parseInt(k), y: Number.parseInt(v) }
 				}),
@@ -29,13 +29,14 @@ const CToDGraph = ({stratsByRounds,...rest}) => {
 		series.push(toSeries(items, "C"))
 		series.push(toSeries(items, "D"))
 
-        return series;
-    }
+		return series
+	}
 
-
-    return (<div>
-        {stratsByRounds ?  <Graph series={Prepare()} key={"2"}></Graph> : ""}
-    </div>)
+	return (
+		<div>
+			{stratsByRounds ? <Graph series={Prepare()} key={"2"}></Graph> : ""}
+		</div>
+	)
 }
 
-export default CToDGraph;
+export default CToDGraph

@@ -1,6 +1,8 @@
 import axios from "axios"
 import { useState } from "react"
 import * as qs from "qs"
+import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
+
 const ConditionalPage = () => {
 	const [request, setRequest] = useState({
 		PopulationSize: 10,
@@ -45,6 +47,12 @@ const ConditionalPage = () => {
 					)
 				}}
 			></button>
+			<JsonSerializationComponent
+				data={[
+					{ request, setRequest },
+					{ data, setdata }
+				]}
+			/>
 			{data ? JSON.stringify(data) : null}
 		</div>
 	)

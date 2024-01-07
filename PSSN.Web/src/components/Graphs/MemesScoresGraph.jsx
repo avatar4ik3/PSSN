@@ -43,16 +43,20 @@ const MemesScoresGraph = ({ maps, strats, ...rest }) => {
 				})
 			)
 
-		let alldata = realMap.flat(1).map(x => x.key)
+		let alldata = realMap.flat(1).map((x) => x.key)
 		let names = new Set(alldata)
 		console.log(names)
 		series = [...names].map((seriesName) => {
 			return {
 				name: seriesName,
+				type: "marker",
 				points: realMap.map((s, i) => {
 					return {
 						x: i,
-						y: s.filter(xx => xx.key === seriesName).map(xx => xx.scores).reduce((s1,s2) => s1+s2,0),
+						y: s
+							.filter((xx) => xx.key === seriesName)
+							.map((xx) => xx.scores)
+							.reduce((s1, s2) => s1 + s2, 0),
 					}
 				}),
 			}
@@ -61,7 +65,19 @@ const MemesScoresGraph = ({ maps, strats, ...rest }) => {
 		return series
 	}
 
-	return <div>{maps && strats ? <Graph series={Prepare()} xLabel={"Номер поколения"} yLabel={"Количество очков в популяции"}></Graph> : ""}</div>
+	return (
+		<div>
+			{maps && strats ? (
+				<Graph
+					series={Prepare()}
+					xLabel={"Номер поколения"}
+					yLabel={"Количество очков в популяции"}
+				></Graph>
+			) : (
+				""
+			)}
+		</div>
+	)
 }
 
 export default MemesScoresGraph

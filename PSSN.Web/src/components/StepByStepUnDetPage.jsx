@@ -4,6 +4,7 @@ import * as qs from "qs"
 import Graph from "./Graph"
 import Array2DInput from "./Array2DInput"
 import { encodeStrategy } from "./DetPage"
+import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 
 const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 	const [chartData, setChartData] = useState(null)
@@ -160,6 +161,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 		}
 
 		//TODO переделать в for обычный, чтобы можно было доабвлять оффсеты в записимости от уже добавленных стратегий
+		//никогда не будет сделано ахах )
 		const stratsLists = commonRequestData.SettledDeterminatedStrategies.map(
 			(x) => {
 				return range(0, x.count).map((number) => {
@@ -366,6 +368,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					}
 				})}
 			</div>
+
 			<button
 				onClick={async (e) => {
 					e.preventDefault()
@@ -419,6 +422,13 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 			>
 				Process
 			</button>
+			<JsonSerializationComponent
+				data={[
+					{ commonRequestData, setcommonRequestData },
+					{ chartData, setChartData },
+					{ cttChartData, setcttChartData },
+				]}
+			/>
 			{chartData ? (
 				<>
 					{" "}

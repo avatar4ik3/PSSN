@@ -26,6 +26,7 @@ const AverageScoresByExperimentGraph = ({ allMaps, title, ...rest }) => {
 		return [
 			{
 				name: "AverageScore",
+				type: 'marker',
 				points: allMaps.map((x, i) => {
 					return {
 						x: i,

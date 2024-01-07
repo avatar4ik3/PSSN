@@ -18,6 +18,7 @@ const Graph = ({ series,xLabel,yLabel,title }) => {
 					legend_template: "%average %icon %name",
 					xAxis_label_text: xLabel,
 					yAxis_label_text: yLabel,
+					type: 'scatter',
 				}}
 			/>
 		</div>
