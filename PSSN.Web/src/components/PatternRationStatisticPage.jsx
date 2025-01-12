@@ -22,7 +22,8 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 		],
 	})
 	const [allstratsCO, setallstratsCO] = useState(null)
-
+	const [allstratsWCO,setallstratsWCO] = useState(null)
+ 
 	function GetInitialStrategies(distr) {
 		console.log(apiHost)
 		return axios
@@ -118,32 +119,42 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 					e.preventDefault()
 					//CO
 					let localstratsCO = []
+					let localstratsWCO = []
                     let step = Number(commonRequestData.StrategyTypeDistributionChanceStep)
 					for (
 						let distr = 0.0;
 						distr <= 1;
 						distr += step
 					) {
-                        let currentLastStrat = [];
+                        let currentLastStratCO = [];
+						let currentLastStratWCO = [];
 						for (
 							let expIndex = 0;
 							expIndex < commonRequestData.CountOfExperiments;
 							++expIndex
 						) {
-							let payload = await GetInitialStrategies(distr)
-
+							let payloadCO = await GetInitialStrategies(distr)
+							let payloadWCO = [...payloadCO]
 							for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-								const { newStrats } = await GetOneGeneration(
-									payload,
+								const { newStrats: newStratsCO } = await GetOneGeneration(
+									payloadCO,
 									true
 								)
-								payload = newStrats
+								const {newStrats : newStratsWCO} = await GetOneGeneration(
+									payloadWCO,
+									false
+								)
+								payloadCO = newStratsCO
+								payloadWCO = newStratsWCO
 							}
-                            currentLastStrat.push(payload)
+                            currentLastStratCO.push(payloadCO)
+							currentLastStratWCO.push(payloadWCO)
 						}
-						localstratsCO.push({strats:currentLastStrat,ds: distr})
+						localstratsCO.push({strats:currentLastStratCO,ds: distr})
+						localstratsWCO.push({strats:currentLastStratWCO,ds: distr})
 					}
 					setallstratsCO(localstratsCO)
+					setallstratsWCO(localstratsWCO)
 				}}
 			>
 				Run
@@ -154,7 +165,8 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 					{ allstratsCO, setallstratsCO }
 				]}
 			/>
-            <PatternRation allStrats={allstratsCO} title={""} patternName={"CttPattern"}></PatternRation>
+            <PatternRation allStrats={allstratsCO} title={"С использованием кроссинг овера"} patternName={"CttPattern"}></PatternRation>
+			<PatternRation allStrats={allstratsWCO} title={"Без использования кроссинг овера"} patternName={"CttPattern"}></PatternRation>
 		</div>
 	)
 }

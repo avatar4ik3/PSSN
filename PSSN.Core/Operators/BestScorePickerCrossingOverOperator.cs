@@ -39,7 +39,10 @@ public class BestScorePickerCrossingOverOperator
 
         //разница в очках. абсолютное значение
         Dictionary<int, double> increment = new();
-        foreach (var round in s1.Behaviours.Keys) increment[round] = Math.Abs(s1Sums[round] - s2Sums[round]);
+        foreach (var round in s1.Behaviours.Keys)
+        {
+            increment[round] = Math.Abs(s1Sums[round] - s2Sums[round]);
+        }
 
         //сортируем инкримент по разнице в очках по убыванию
 
@@ -71,7 +74,11 @@ public class BestScorePickerCrossingOverOperator
         foreach (var index in s1Take) newS2dic[index] = s1.Behaviours[index];
         foreach (var index in s2Take) newS1dic[index] = s2.Behaviours[index];
 
+        //CTT [1,0,0,1,0,0] -> [1,0], ( [0,1,0] -> [0] )
+        //D   [0,*,0,0,*,1] -> [0,*], ( [0,0,*] -> [1] )
+        //D = [D] {1,N}
         var newS1 = new ConditionalStrategy() { Pattern = s1.Pattern, Behaviours = newS1dic, Name = s1.Name };
+        //TODO понять почему свапается поведение s1 в s2
         var newS2 = new ConditionalStrategy() { Pattern = s1.Pattern, Behaviours = newS2dic, Name = s2.Name };
         return new[] { newS1, newS2 };
     }

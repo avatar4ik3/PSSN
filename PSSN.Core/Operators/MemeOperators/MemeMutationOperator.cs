@@ -16,22 +16,23 @@ public class MemeMutationOperator
 
     public ConditionalStrategy Operate(ConditionalStrategy strategy)
     {
-        var res = new ConditionalStrategy(){
+        var res = new ConditionalStrategy()
+        {
             Pattern = strategy.Pattern.Copy(),
             Behaviours = strategy.Behaviours,
             Name = strategy.Name
         };
-            if (res.Pattern.Coeffs != null)
+        if (res.Pattern.Coeffs != null)
+        {
+            var pres = res.Pattern.MutationPresentation;
+            for (int i = 0; i < pres.Indexies.Length; ++i)
             {
-                var pres = res.Pattern.MutationPresentation;
-                for (int i = 0; i < pres.Indexies.Length; ++i)
+                if (_random.Proc(_chance))
                 {
-                    if (_random.Proc(_chance))
-                    {
-                        pres.Source[pres.Indexies[i].Value].Value = pres.Source[pres.Indexies[i].Value].Value == 0 ? 1 : 0; 
-                    }
+                    pres.Source[pres.Indexies[i].Value].Value = pres.Source[pres.Indexies[i].Value].Value == 0 ? 1 : 0;
                 }
             }
+        }
         return res;
     }
 

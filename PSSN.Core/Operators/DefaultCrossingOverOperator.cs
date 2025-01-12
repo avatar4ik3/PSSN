@@ -2,6 +2,7 @@ using PSSN.Core.Strategies;
 
 namespace PSSN.Core.Operators;
 
+[Obsolete]
 public class DefaultCrossingOverOperator
 {
     private readonly int _crossingSelector;

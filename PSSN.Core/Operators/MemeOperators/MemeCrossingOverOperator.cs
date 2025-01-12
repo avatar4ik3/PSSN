@@ -19,6 +19,8 @@ public class MemeCrossingOverOperator
 
     public IEnumerable<ConditionalStrategy> Operate(ConditionalStrategy s1, ConditionalStrategy s2)
     {
+
+        //CTT [1,0,0,1,0,0] -> [1,0] {Сетап}, ( [0,1,0] -> [0] ) {Условность\После сетапа}
         //суммы очков за раунд у стратегий s1 s2
         Dictionary<int, double> s1Sums = new();
         Dictionary<int, double> s2Sums = new();
@@ -48,6 +50,9 @@ public class MemeCrossingOverOperator
         //     };
         // #endif
         //сплитим 
+
+        //CTT [1,0,0,1,0,0] -> [1,0] {Сетап}, ( [0,1,0] -> [0] ) {Условность\После сетапа}
+
         //костыль, мы сейчас думаем что у нас только один паттерн
         var cs_1 = s1.Pattern.CrossingOverPresentation;
         var cs_2 = s2.Pattern.CrossingOverPresentation;
