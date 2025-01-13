@@ -6,17 +6,17 @@ public static class GameRunnerResultExtensions
 {
     public static double[,] ToArray(this TreeGameRunnerResult result)
     {
-        var array = new double[result.map.Count, result.map.Count];
+        var array = new double[result.RawMap.Count, result.RawMap.Count];
         List<(IStrategy s1, IStrategy s2, double Total)> shrimped = new();
-        foreach (var key1 in result.map.Select(x => x.Key))
+        foreach (var key1 in result.RawMap.Select(x => x.Key))
         {
-            foreach (var key2 in result.map[key1].Select(x => x.Key))
+            foreach (var key2 in result.RawMap[key1].Select(x => x.Key))
             {
                 shrimped.Add(new ValueTuple<IStrategy, IStrategy, double>(key1, key2,
                     result[key1, key2].Values.Sum()));
             }
         }
-        var strats = result.map.Keys;
+        var strats = result.RawMap.Keys;
         var indxs = strats.Zip(Enumerable.Range(0, strats.Count)).ToDictionary(i => i.First, s => s.Second);
 
         foreach (var record in shrimped)

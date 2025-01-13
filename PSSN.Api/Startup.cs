@@ -2,8 +2,11 @@ using System.Net;
 using System.Reflection;
 
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-
+using Npgsql;
+using PSSN.Api.Controllers;
+using PSSN.Api.DAL;
 using PSSN.Api.Extensions.SerilogEnricher;
 using PSSN.Api.ServiceInterfaces;
 using PSSN.Api.Services;
@@ -76,7 +79,8 @@ public static class Startup
 
         builder.Services.AddScoped<IGameRunner, ParallelGameRunner>();
         builder.Services.AddScoped<PopulationFrequency>();
-        builder.Services.AddScoped<Random>();
+        builder.Services.AddScoped<Random>((_) => Random.Shared);
+        builder.Services.AddScoped<ScheduleResearchRunner>();
 
         builder.Services.AddAutoMapper(typeof(Program));
 
@@ -95,6 +99,21 @@ public static class Startup
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
+
+        //Database configuration credentials
+        var pgsqlHost = builder.Configuration.GetValue<string>("PGHOST");
+        var pgsqlPort = builder.Configuration.GetValue<string>("PGPORT");
+        var pgsqlUser = builder.Configuration.GetValue<string>("PGUSER");
+        var pgsqlPass = builder.Configuration.GetValue<string>("PGPASSWORD");
+        var pgsqlDb = builder.Configuration.GetValue<string>("PGDATABASE");
+        var connString = $"Host={pgsqlHost};Port={pgsqlPort};Database={pgsqlDb};Username={pgsqlUser};Password={pgsqlPass};";
+
+        //Database configuration
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connString);
+        var dataSource = dataSourceBuilder.Build();
+        builder.Services.AddDbContext<ApplicationContext>(options => options
+            .UseNpgsql(dataSource, x => x.MigrationsHistoryTable("migration_history", "scheduled_research"))
+            .UseSnakeCaseNamingConvention());
 
         return builder;
     }
@@ -141,6 +160,21 @@ public static class Startup
         });
 
         app.MapFallbackToFile("index.html");
+
+
+        using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.CreateScope())
+        {
+            if (serviceScope is not null)
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<ApplicationContext>();
+                context.Database.Migrate();
+                using var conn = (NpgsqlConnection)context.Database.GetDbConnection();
+                conn.Open();
+                conn.ReloadTypes();
+                conn.Close();
+            }
+        }
+
 
         return app;
     }

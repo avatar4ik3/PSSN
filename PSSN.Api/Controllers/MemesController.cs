@@ -41,13 +41,13 @@ public class MemesController : ControllerBase
     public ActionResult GenerateRandom([FromQuery] GenerateMemeRequestModel model)
     {
         Random random;
-        if (model.RandomSeed is not null)
+        if (model.RandomSeed is not null and not 0)
         {
             random = new Random(model.RandomSeed.Value);
         }
         else
         {
-            random = new Random();
+            random = Random.Shared;
         }
         var res = ConditionalStrategyBuilder.RandomMemes(random, model.Distr, model.Count, model.GenotypeSize, _patternsContainer).ToList();
         return Ok(_mapper.Map<List<ConditionalStrategyModel>>(res));
@@ -59,13 +59,13 @@ public class MemesController : ControllerBase
     {
         _logger.LogDebug("use crossing over ? {value}",model.UseCrossingOver);
         Random random;
-        if (model.RandomSeed is not null)
+        if (model.RandomSeed is not null and not 0)
         {
             random = new Random(model.RandomSeed.Value);
         }
         else
         {
-            random = new Random();
+            random = Random.Shared;
         }
         var strats = _mapper.Map<List<ConditionalStrategy>>(model.Models, opts => opts.AfterMap(afterFunction: (a, b) =>
         {

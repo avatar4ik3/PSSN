@@ -46,7 +46,7 @@ public class VectorProfile : Profile
                             context.Mapper.Map<KeyValuePair<string, double>>(kvp)).ToArray()));
 
         CreateMap<TreeGameRunnerResult, ResultTree>()
-            .ForMember(x => x.Map, m => m.MapFrom(y => y.map));
+            .ForMember(x => x.Map, m => m.MapFrom(y => y.RawMap));
 
         CreateMap<ConditionalStrategy, ConditionalStrategyModel>()
             .ForMember(x => x.Name, m => m.MapFrom(y => y.Name))

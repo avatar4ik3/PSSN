@@ -7,30 +7,30 @@ namespace PSSN.Core.Round;
 
 public class TreeGameRunnerResult
 {
-    public ConcurrentDictionary<IStrategy, ConcurrentDictionary<IStrategy, Dictionary<int, double>>> map = new(new StrategyComparer());
+    public ConcurrentDictionary<IStrategy, ConcurrentDictionary<IStrategy, Dictionary<int, double>>> RawMap = new(new StrategyComparer());
 
     public Dictionary<int, double> this[IStrategy s1, IStrategy s2]
     {
-        get => map[s1][s2];
+        get => RawMap[s1][s2];
         set
         {
-            if (map.ContainsKey(s1) is false) map[s1] = new ConcurrentDictionary<IStrategy, Dictionary<int, double>>();
-            map[s1][s2] = value;
+            if (RawMap.ContainsKey(s1) is false) RawMap[s1] = new ConcurrentDictionary<IStrategy, Dictionary<int, double>>();
+            RawMap[s1][s2] = value;
         }
     }
 
     public double this[IStrategy s1, IStrategy s2, int round]
     {
-        get => map[s1][s2][round];
+        get => RawMap[s1][s2][round];
         set
         {
-            if (map.ContainsKey(s1) is false) map[s1] = new ConcurrentDictionary<IStrategy, Dictionary<int, double>>();
-            if (map[s1].ContainsKey(s2) is false) map[s1][s2] = new Dictionary<int, double>();
-            map[s1][s2][round] = value;
+            if (RawMap.ContainsKey(s1) is false) RawMap[s1] = new ConcurrentDictionary<IStrategy, Dictionary<int, double>>();
+            if (RawMap[s1].ContainsKey(s2) is false) RawMap[s1][s2] = new Dictionary<int, double>();
+            RawMap[s1][s2][round] = value;
         }
     }
 
-    public ConcurrentDictionary<IStrategy, Dictionary<int, double>> this[IStrategy s] => map[s];
+    public ConcurrentDictionary<IStrategy, Dictionary<int, double>> this[IStrategy s] => RawMap[s];
 }
 
 public class StrategyComparer : IEqualityComparer<IStrategy>
