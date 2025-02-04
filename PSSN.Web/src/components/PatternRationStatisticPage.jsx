@@ -162,7 +162,8 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 			<JsonSerializationComponent
 				data={[
 					{ commonRequestData, setcommonRequestData },
-					{ allstratsCO, setallstratsCO }
+					{ allstratsCO, setallstratsCO },
+					{ allstratsWCO, setallstratsWCO }
 				]}
 			/>
             <PatternRation allStrats={allstratsCO} title={"С использованием кроссинг овера"} patternName={"CttPattern"}></PatternRation>

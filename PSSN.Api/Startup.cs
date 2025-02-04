@@ -74,7 +74,7 @@ public static class Startup
 
         builder.Services.AddScoped<IParserService, ParserService>();
 
-        builder.Services.AddScoped<IGameRunner, ParallelGameRunner>();
+        builder.Services.AddScoped<IGameRunner, SimpleGameRunner>();
         builder.Services.AddScoped<PopulationFrequency>();
         builder.Services.AddScoped<Random>();
 
