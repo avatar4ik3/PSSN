@@ -90,31 +90,68 @@ public class CttPattern : IBehaviourPattern
 
     public void Apply(Game g, Player p, ConditionalStrategy s)
     {
-        if (Coeffs is null || Coeffs.Length != 5)
+        //if (Coeffs is null || Coeffs.Length != 5)
+        //{
+        //    throw new ArgumentException(nameof(Coeffs));
+        //}
+        //if (g.State.currentStage == 0)
+        //{
+        //    s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[1].Value;
+        //    return;
+        //}
+        //if (Coeffs[3].Value == 0 || g.State.currentStage + 1 < Coeffs[0].Value)
+        //{
+        //    var beh = g.State.GetOpponentPlayerState(p).previousBehaviours.Last();
+        //    s.Behaviours[g.State.currentStage] = Coeffs[4].Value == 1 ? beh.Other() : beh;
+        //    return;
+        //}
+        //else if (Coeffs[3].Value == 1 && g.State.currentStage + 1 >= Coeffs[0].Value)
+        //{
+        //    s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[2].Value;
+        //    return;
+        //}
+
+        //FALLBACK до просто мемной стратегии. сделано потому что я не помню почему блин массивы для ctt и для мемов отличаются
+
+        //условие
+        //false = greater
+        //true = less
+        if (Coeffs is null || Coeffs.Length != 6)
         {
             throw new ArgumentException(nameof(Coeffs));
         }
-        if (g.State.currentStage == 0)
+        //набор истории
+        if (g.State.currentStage <= Coeffs[0].Value)
         {
             s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[1].Value;
-            return;
         }
-        if (Coeffs[3].Value == 0 || g.State.currentStage + 1 < Coeffs[0].Value)
+
+        //условие
+        //false = greater
+        //true = less
+        var lessOrGreater = Coeffs[2].Value is 0;
+
+        //сколько раз противник за выбранный промежуток [3] сыграл [4]
+        var a = g.State.GetOpponentPlayerState(p).previousBehaviours
+            .Skip(g.State.currentStage - Coeffs[0].Value)
+            .Where(x => (int)x == Coeffs[4].Value)
+            .Count();
+        if (
+            (a >= Coeffs[3].Value) == lessOrGreater
+        )
         {
-            var beh = g.State.GetOpponentPlayerState(p).previousBehaviours.Last();
-            s.Behaviours[g.State.currentStage] = Coeffs[4].Value == 1 ? beh.Other() : beh;
-            return;
+            s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[5].Value;
         }
-        else if (Coeffs[3].Value == 1 && g.State.currentStage + 1 >= Coeffs[0].Value)
+        else
         {
-            s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[2].Value;
-            return;
+            s.Behaviours[g.State.currentStage] = (Behavior)(Coeffs[5].Value is 0 ? 1 : 0);
         }
+
     }
 
     public IBehaviourPattern Copy()
     {
-        var arr = new IntWrapper[5];
+        var arr = new IntWrapper[6];
         Coeffs.CopyTo(arr,0);
         return new CttPattern(arr.Select(x => x.Value).ToArray());
     }

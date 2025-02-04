@@ -81,19 +81,12 @@ namespace PSSN.Api.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("current_generation");
 
-                    b.Property<Guid>("GenerationResultsGuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("generation_results_guid");
-
                     b.Property<Guid?>("ResearchGuid")
                         .HasColumnType("uuid")
                         .HasColumnName("research_guid");
 
                     b.HasKey("Guid")
                         .HasName("pk_game_results");
-
-                    b.HasIndex("GenerationResultsGuid")
-                        .HasDatabaseName("ix_game_results_generation_results_guid");
 
                     b.HasIndex("ResearchGuid")
                         .HasDatabaseName("ix_game_results_research_guid");
@@ -108,8 +101,16 @@ namespace PSSN.Api.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("guid");
 
+                    b.Property<Guid>("GameResultsGuid")
+                        .HasColumnType("uuid")
+                        .HasColumnName("game_results_guid");
+
                     b.HasKey("Guid")
                         .HasName("pk_generation_results");
+
+                    b.HasIndex("GameResultsGuid")
+                        .IsUnique()
+                        .HasDatabaseName("ix_generation_results_game_results_guid");
 
                     b.ToTable("GenerationResults", "scheduled_research");
                 });
@@ -205,6 +206,10 @@ namespace PSSN.Api.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("total_games_count");
 
+                    b.Property<bool>("UseCrossingOver")
+                        .HasColumnType("boolean")
+                        .HasColumnName("use_crossing_over");
+
                     b.HasKey("Guid")
                         .HasName("pk_research");
 
@@ -216,24 +221,27 @@ namespace PSSN.Api.Migrations
                     b.HasOne("PSSN.Api.DAL.Entities.GenerationResults", null)
                         .WithMany("Strategies")
                         .HasForeignKey("GenerationResultsGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_conditional_strategy_generation_results_generation_results_gu");
                 });
 
             modelBuilder.Entity("PSSN.Api.DAL.Entities.GameResults", b =>
                 {
-                    b.HasOne("PSSN.Api.DAL.Entities.GenerationResults", "GenerationResults")
-                        .WithMany()
-                        .HasForeignKey("GenerationResultsGuid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_game_results_generation_results_generation_results_guid");
-
                     b.HasOne("PSSN.Api.DAL.Entities.Research", null)
                         .WithMany("GameResults")
                         .HasForeignKey("ResearchGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_game_results_research_research_guid");
+                });
 
-                    b.Navigation("GenerationResults");
+            modelBuilder.Entity("PSSN.Api.DAL.Entities.GenerationResults", b =>
+                {
+                    b.HasOne("PSSN.Api.DAL.Entities.GameResults", null)
+                        .WithOne("GenerationResults")
+                        .HasForeignKey("PSSN.Api.DAL.Entities.GenerationResults", "GameResultsGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_generation_results_game_results_game_results_guid");
                 });
 
             modelBuilder.Entity("PSSN.Api.DAL.Entities.GenerationTreeNode", b =>
@@ -241,25 +249,32 @@ namespace PSSN.Api.Migrations
                     b.HasOne("PSSN.Api.DAL.Entities.GenerationResults", null)
                         .WithMany("Tree")
                         .HasForeignKey("GenerationResultsGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_generation_tree_node_generation_results_generation_results_guid");
 
                     b.HasOne("PSSN.Api.DAL.Entities.ConditionalStrategy", "Strategy1")
                         .WithMany()
                         .HasForeignKey("Strategy1Guid")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("fk_generation_tree_node_conditional_strategy_strategy1guid");
 
                     b.HasOne("PSSN.Api.DAL.Entities.ConditionalStrategy", "Strategy2")
                         .WithMany()
                         .HasForeignKey("Strategy2Guid")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("fk_generation_tree_node_conditional_strategy_strategy2guid");
 
                     b.Navigation("Strategy1");
 
                     b.Navigation("Strategy2");
+                });
+
+            modelBuilder.Entity("PSSN.Api.DAL.Entities.GameResults", b =>
+                {
+                    b.Navigation("GenerationResults")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PSSN.Api.DAL.Entities.GenerationResults", b =>

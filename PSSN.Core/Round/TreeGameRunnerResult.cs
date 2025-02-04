@@ -21,7 +21,18 @@ public class TreeGameRunnerResult
 
     public double this[IStrategy s1, IStrategy s2, int round]
     {
-        get => RawMap[s1][s2][round];
+        get
+        {
+            try
+            {
+
+                return RawMap[s1][s2][round];
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
         set
         {
             if (RawMap.ContainsKey(s1) is false) RawMap[s1] = new ConcurrentDictionary<IStrategy, Dictionary<int, double>>();

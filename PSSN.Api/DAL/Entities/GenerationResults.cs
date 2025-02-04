@@ -11,4 +11,5 @@ public class GenerationResults
 
     public List<GenerationTreeNode> Tree { get; set; } = [];
     public List<ConditionalStrategy> Strategies { get; set; } = [];
+    public Guid GameResultsGuid { get; set; }
 }

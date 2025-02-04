@@ -16,6 +16,7 @@ using PSSN.Core.Matricies;
 using PSSN.Core.Round;
 
 using Serilog;
+using Serilog.Formatting.Elasticsearch;
 using Serilog.OpenTelemetry;
 
 namespace PSSN.Api;
@@ -29,7 +30,7 @@ public static class Startup
             .Enrich.WithResource(
                 ("server", Environment.MachineName),
                 ("app", AppDomain.CurrentDomain.FriendlyName))
-            .WriteTo.Console()
+            .WriteTo.Console(new ElasticsearchJsonFormatter())
             .ReadFrom.Configuration(context.Configuration)
         );
 
@@ -77,7 +78,7 @@ public static class Startup
 
         builder.Services.AddScoped<IParserService, ParserService>();
 
-        builder.Services.AddScoped<IGameRunner, ParallelGameRunner>();
+        builder.Services.AddScoped<IGameRunner, SimpleGameRunner>();
         builder.Services.AddScoped<PopulationFrequency>();
         builder.Services.AddScoped<Random>((_) => Random.Shared);
         builder.Services.AddScoped<ScheduleResearchRunner>();
@@ -112,7 +113,11 @@ public static class Startup
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connString);
         var dataSource = dataSourceBuilder.Build();
         builder.Services.AddDbContext<ApplicationContext>(options => options
-            .UseNpgsql(dataSource, x => x.MigrationsHistoryTable("migration_history", "scheduled_research"))
+            .UseNpgsql(dataSource, x =>
+            {
+                x.MigrationsHistoryTable("migration_history", "scheduled_research");
+                x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            })
             .UseSnakeCaseNamingConvention());
 
         return builder;

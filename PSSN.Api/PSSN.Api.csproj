@@ -6,12 +6,8 @@
         <IsPackable>false</IsPackable>
         <ImplicitUsings>enable</ImplicitUsings>
         <NoWarn>$(NoWarn);1591;8618;8602</NoWarn>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DocumentationFile>bin\Debug\net6.0\PSSN.Api.xml</DocumentationFile>
-    </PropertyGroup>
-
+	    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
     <ItemGroup>
         <!-- Logger section -->
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -21,6 +17,7 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 
         <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="10.0.0" />
         <PackageReference Include="microsoft.aspnet.webapi.cors" Version="5.3.0" />
 
         <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />

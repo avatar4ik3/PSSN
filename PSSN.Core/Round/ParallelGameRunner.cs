@@ -11,7 +11,7 @@ public class ParallelGameRunner : IGameRunner
     public TreeGameRunnerResult Play(IEnumerable<IStrategy> strategies, double[][] payoffs, int rounds)
     {
         TreeGameRunnerResult results = new();
-        var combos = (new Combinations<IStrategy>(strategies, 2, GenerateOption.WithoutRepetition));
+        var combos = (new Combinations<IStrategy>(strategies, 2, GenerateOption.WithRepetition));
         Parallel.ForEach(combos,
             new ParallelOptions
             {

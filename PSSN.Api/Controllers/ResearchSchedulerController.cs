@@ -37,9 +37,12 @@ public class ResearchSchedulerController(ScheduleResearchRunner _scheduleResearc
     }
 
     [HttpGet("{researchGuid:Guid}")]
-    public ActionResult GetScheduledResearch([FromRoute] Guid researchGuid)
+    public async Task<ActionResult> GetScheduledResearch([FromRoute] Guid researchGuid)
     {
-        throw new NotImplementedException();
+        var research = await _scheduleResearchRunner.GetResearch(researchGuid);
+        if (research is null) return NotFound();
+
+        return Ok(research);
     }
 }
 
@@ -50,6 +53,7 @@ public class ScheduleResearchRequestModel
     public decimal DistributionStep { get; set; }
     public double[][]? Ro { get; set; }
     public int CountOfExperiments { get; set; }
+    public int GenerationCount { get; set; }
     public int GenCount { get; set; }
     public double SwapChance { get; set; }
     public int CrossingCount { get; set; }
@@ -66,14 +70,22 @@ public class SchedulerResearchResponseModel
     public bool IsDropped { get; set; }
 }
 
-public class CompletedResearchResponseModel : List<MemeSingleGenerationResponseModel>;
+public class CompletedResearchResponseModel
+{
+    public Guid ResearchGuid { get; set; }
+    public int CurrentCountOfGames { get; set; }
+    public int TotalCountOfGames { get; set; }
+    public bool IsCompleted { get; set; }
+    public bool IsDropped { get; set; }
+    public List<KeyValuePair<decimal, MemeSingleGenerationResponseModel>>? Results { get; set; }
+}
 
 public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _serviceProvider, ApplicationContext _context)
 {
     public async Task<SchedulerResearchResponseModel> ScheduleResearch(ScheduleResearchRequestModel request)
     {
         var countOfDistributions = (int)Math.Ceiling(1 / request.DistributionStep);
-        var totalGamesCount = countOfDistributions * request.GenCount * request.CountOfExperiments;
+        var totalGamesCount = countOfDistributions * request.CountOfExperiments;
 
         var createdResearch = await _context.Researches.AddAsync(new()
         {
@@ -86,7 +98,8 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
             StrategiesCount = request.StrategiesCount,
             SwapChance = request.SwapChance,
             CountOfDistributions = countOfDistributions,
-            TotalGamesCount = totalGamesCount
+            TotalGamesCount = totalGamesCount,
+            UseCrossingOver = request.UseCrossingOver,
         });
         await _context.SaveChangesAsync();
 
@@ -107,31 +120,56 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
             {
                 await using var scope = _serviceProvider.CreateAsyncScope();
                 var container = scope.ServiceProvider.GetRequiredService<PatternsContainer>();
-                var tasks = Enumerable.Range(0, countOfDistributions + 1)
-                    .Select(x => x * request.DistributionStep)
-                    .SelectMany(x =>
-                        Enumerable.Range(1, request.CountOfExperiments)
-                            .Select(xx => RunSingleExperiment(x, xx, container, writer)))
-                    .ToArray();
-                await Task.WhenAll(tasks);
+                //var tasks = Enumerable.Range(0, countOfDistributions + 1)
+                //    .Select(x => x * request.DistributionStep)
+                //    .SelectMany(x =>
+                //        Enumerable.Range(1, request.CountOfExperiments)
+                //            .Select(xx => RunSingleExperiment(x, xx, container, writer)).ToArray())
+                //    .ToArray();
+
+                await Parallel.ForEachAsync(
+                    Enumerable.Range(0, countOfDistributions + 1).Select(x => x * request.DistributionStep), new ParallelOptions()
+                    {
+                        MaxDegreeOfParallelism = Environment.ProcessorCount
+                    }, async (distr, ct) =>
+                    {
+                        await Parallel.ForEachAsync(
+                            Enumerable.Range(1, request.CountOfExperiments), new ParallelOptions()
+                            {
+                                MaxDegreeOfParallelism = Environment.ProcessorCount
+                            }, async (expNo, ct) =>
+                            {
+                                await RunSingleExperiment(distr, expNo, container, writer);
+                            });
+                    });
 
 
 
-                async Task RunSingleExperiment(decimal currentDistribution, int currentExperiment, PatternsContainer patternsContainer,
-                    ChannelWriter<WorkerResults> channelWriter)
+                async Task RunSingleExperiment(decimal currentDistribution, int currentExperiment, PatternsContainer patternsContainer, ChannelWriter<WorkerResults> channelWriter)
                 {
                     try
                     {
-
                         Log.Information("Started experiment {experiment} for distribution {distribution}", currentExperiment,
                             currentDistribution);
                         var strats = new List<ConditionalStrategy>(request.StrategiesCount);
-                        var newPopulation = ConditionalStrategyBuilder.RandomMemes(Random.Shared, (double)currentDistribution, request.StrategiesCount, request.GenCount, patternsContainer).ToList();
+                        var newPopulation = ConditionalStrategyBuilder
+                            .RandomMemes(Random.Shared, (double)currentDistribution, request.StrategiesCount, request.GenCount, patternsContainer)
+                            .Select((x, i) =>
+                            {
+                                x.Id = i;
+                                return x;
+                            }).ToList();
+
                         TreeGameRunnerResult tree = null!;
 
-                        foreach (var generation in Enumerable.Range(1, request.GenCount))
+                        foreach (var generation in Enumerable.Range(1, request.GenerationCount))
                         {
-                            strats = newPopulation.Select(x => x).ToList();
+                            strats = newPopulation.Select((x, i) =>
+                            {
+                                x.Id = i;
+                                return x;
+                            }).ToList();
+
                             newPopulation = new List<ConditionalStrategy>();
                             tree = _gameRunner.Play(strats, request.Ro!, request.GenCount);
 
@@ -145,6 +183,7 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
                                 var s1 = selectionOperator.Operate(strats);
                                 var s2 = selectionOperator.Operate(strats);
                                 var toMutate = new[] { s1, s2 };
+
 
                                 if (request.UseCrossingOver)
                                 {
@@ -184,6 +223,7 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
             }
             finally
             {
+                Log.Information("WRITE completed of research {researchGuid}", researchGuid);
                 writer.Complete();
             }
         });
@@ -196,19 +236,17 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
                 await using var asyncScope = _serviceProvider.CreateAsyncScope();
                 await using var context = asyncScope.ServiceProvider.GetRequiredService<ApplicationContext>();
                 var research = await context.Researches.FirstAsync(x => x.Guid == researchGuid);
-                using var cts = new CancellationTokenSource();
-                reader.Completion.ContinueWith(x => cts.Cancel(), TaskScheduler.Current);
 
-                while (await reader.WaitToReadAsync(cts.Token))
+                await foreach (var record in reader.ReadAllAsync())
                 {
-                    var record = await reader.ReadAsync(cts.Token);
-                    Log.Information("Begining reading of experiment {experiment} of distribution {distribution}", record.CurrentExperiment, record.CurrentDistribution);
+                    Log.Information("Begining reading of experiment {experiment} of distribution {distribution}",
+                        record.CurrentExperiment, record.CurrentDistribution);
 
                     var generationResults = new GenerationResults()
                     {
                         Strategies = record.Strategies.Select(x => new DAL.Entities.ConditionalStrategy()
                         {
-                            PatternName = x.GetType().Name,
+                            PatternName = x.Pattern.GetType().Name,
                             PatternCoefs = x.Pattern.Coeffs.Select(x => x.Value).ToArray(),
                             Id = x.Id,
                             Name = x.Name
@@ -233,13 +271,18 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
                         })).SelectMany(x => x).ToList();
 
                     context.Update(research);
-                    await context.SaveChangesAsync(cts.Token);
-
+                    await context.SaveChangesAsync();
+                    Log.Information("Done reading of experiment {experiment} of distribution {distribution}",
+                        record.CurrentExperiment, record.CurrentDistribution);
                 }
 
                 research.Status = ResearchCompletionStatus.Completed;
                 context.Update(research);
-                await context.SaveChangesAsync(cts.Token);
+                await context.SaveChangesAsync();
+            }
+            catch (OperationCanceledException oce)
+            {
+
             }
             catch (Exception ex)
             {
@@ -257,9 +300,84 @@ public class ScheduleResearchRunner(IGameRunner _gameRunner, IServiceProvider _s
             IsCompleted = false,
             IsDropped = false
         };
+    }
 
+    public async Task<CompletedResearchResponseModel?> GetResearch(Guid guid)
+    {
+        var research = await _context.Researches.AsNoTracking()
+            .Include(research => research.GameResults)
+            .ThenInclude(x => x.GenerationResults)
+            .ThenInclude(x => x.Strategies)
+            .Include(x => x.GameResults)
+            .ThenInclude(x => x.GenerationResults)
+            .ThenInclude(x => x.Tree)
+            .ThenInclude(x => x.Strategy1)
+            .Include(x => x.GameResults)
+            .ThenInclude(x => x.GenerationResults)
+            .ThenInclude(x => x.Tree)
+            .ThenInclude(x => x.Strategy2)
+            .FirstOrDefaultAsync(x => x.Guid == guid);
 
+        if (research is null) return null;
 
+        var result = new CompletedResearchResponseModel()
+        {
+            CurrentCountOfGames = await _context.Researches.AsNoTracking().Where(x => x.Guid == guid).Select(x => x.GameResults).CountAsync(),
+            IsCompleted = research.Status == ResearchCompletionStatus.Completed,
+            IsDropped = research.Status == ResearchCompletionStatus.Dropped,
+            TotalCountOfGames = research.TotalGamesCount,
+            ResearchGuid = research.Guid
+        };
+
+        if (result is { IsCompleted: true })
+        {
+            result.Results = research.GameResults.GroupBy(x => x.CurrentDistribution).Select(x =>
+            {
+                return (new MemeSingleGenerationResponseModel()
+                {
+                    GameResult = new()
+                    {
+                        Strats = x.Select(xx => xx.GenerationResults.Strategies.Select(xxx =>
+                            new ConditionalStrategyModel()
+                            {
+                                Pattern = new PatternModel()
+                                {
+                                    Coeffs = xxx.PatternCoefs,
+                                    Name = xxx.PatternName
+                                },
+                                Id = xxx.Id,
+                                Name = xxx.Name
+                            })).SelectMany(x => x).ToList(),
+                        Result = new()
+                        {
+                            Map = x.Select(xx => xx.GenerationResults.Tree
+                                    .Select(xxx => (
+                                        s1: new TreeId()
+                                        {
+                                            Id = xxx.Strategy1.Id,
+                                            Name = xxx.Strategy1.Name
+                                        },
+                                        s2: new TreeId()
+                                        {
+                                            Id = xxx.Strategy2.Id,
+                                            Name = xxx.Strategy2.Name
+                                        },
+                                        results: xxx.Results.Select((r, i) => (i, r)).ToDictionary(x => x.i, x => x.r)
+                                        )
+                                    ))
+                                 .SelectMany(xx => xx)
+                                 .DistinctBy(x => new { x.s1, x.s2 })
+                                 .GroupBy(xx => xx.s1)
+                                 .Select(xx => (xx, xx.ToDictionary(xxx => xxx.s2, xxx => xxx.results).Select(x => x).ToList()))
+                                 .ToDictionary(xx => xx.xx.Key, xx => xx.Item2).Select(xx => xx).ToList()
+                        }
+
+                    }
+                }, x.Key);
+            }).ToDictionary(x => x.Key, x => x.Item1).Select(x => x).ToList();
+        }
+
+        return result;
     }
 }
 

@@ -22,6 +22,7 @@ public class Research
     public int CountOfDistributions { get; set; }
     public int TotalGamesCount { get; set; }
     public ResearchCompletionStatus Status { get; set; }
+    public bool UseCrossingOver { get; set; }
 }
 
 public enum ResearchCompletionStatus

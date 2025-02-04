@@ -15,6 +15,7 @@ public sealed class ParserService : IParserService
 
     public async Task<IEnumerable<ResultVector>> GetVectors()
     {
+        return [];
         var lines = await ReadAllLines("vectors.txt");
 
         var strategies = lines[0].Split()

@@ -28,7 +28,7 @@ public class ConditionalStrategyBuilder
         }
         else
         {
-            return new[]{0,0,0,0,0};
+            return new[]{1, 0, 0,1, 0, 0};
             var res = new[] { random.Next(0, gameLength) };
             return res.Concat(Enumerable.Range(0, 4).Select(x => random.Proc(0.5) ? 1 : 0)).ToArray();
         }
