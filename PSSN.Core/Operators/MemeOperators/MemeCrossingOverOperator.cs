@@ -97,44 +97,34 @@ public class MemeCrossingOverOperator
         var r1 = res1.Pattern.CrossingOverPresentation;
         var r2 = res2.Pattern.CrossingOverPresentation;
 
-        //свапаем только ту часть, в которой разница по очкам максимальна
-        // if (sum_after_dif > sum_setup_dif)
-        // {
-        //если нужно свапать часть после сетапа
-
         if (sum_after_s_1 > sum_after_s_2)
         {
             for (int i = 2; i < 6; ++i)
             {
-                r2.Indexies[i].Value = cs_1.Indexies[i].Value;
+                res2.Pattern.Coeffs[i].Value = res1.Pattern.Coeffs[i].Value;
             }
         }
         else
         {
             for (int i = 2; i < 6; ++i)
             {
-                r1.Indexies[i].Value = cs_2.Indexies[i].Value;
+                res1.Pattern.Coeffs[i].Value = res2.Pattern.Coeffs[i].Value;
             }
         }
-        // }
-        // else
-        // {
-        //если нужно свапать сетап
         if (sum_setup_s_1 > sum_setup_s_2)
         {
             for (int i = 0; i < 2; ++i)
             {
-                r2.Indexies[i].Value = cs_1.Indexies[i].Value;
+                res2.Pattern.Coeffs[i].Value = res1.Pattern.Coeffs[i].Value;
             }
         }
         else
         {
             for (int i = 0; i < 2; ++i)
             {
-                r1.Indexies[i].Value = cs_2.Indexies[i].Value;
+                res1.Pattern.Coeffs[i].Value = res2.Pattern.Coeffs[i].Value;
             }
         }
-        // }
         return new[] { res1, res2 };
     }
 }

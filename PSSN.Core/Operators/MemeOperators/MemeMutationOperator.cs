@@ -20,7 +20,8 @@ public class MemeMutationOperator
         {
             Pattern = strategy.Pattern.Copy(),
             Behaviours = strategy.Behaviours,
-            Name = strategy.Name
+            Name = strategy.Name,
+            Id = strategy.Id
         };
         if (res.Pattern.Coeffs != null)
         {
