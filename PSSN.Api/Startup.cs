@@ -83,18 +83,18 @@ public static class Startup
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
 
-        builder.Services.AddSwaggerGen(opt =>
-        {
-            opt.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Version = "v1",
-                Title = "PSSN API",
-                Description = "ASP.NET Core Web API"
-            });
+        //builder.Services.AddSwaggerGen(opt =>
+        //{
+        //    opt.SwaggerDoc("v1", new OpenApiInfo
+        //    {
+        //        Version = "v1",
+        //        Title = "PSSN API",
+        //        Description = "ASP.NET Core Web API"
+        //    });
 
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        });
+        //    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        //    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        //});
 
         return builder;
     }
@@ -118,8 +118,8 @@ public static class Startup
             Log.ForContext("Mode", app.Environment.EnvironmentName);
             Log.Debug("App activated in [{Environment}] mode", app.Environment.EnvironmentName);
 
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            //app.UseSwagger();
+            //app.UseSwaggerUI();
         }
         else
         {

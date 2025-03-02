@@ -12,7 +12,7 @@ public class MemePattern : IBehaviourPattern
 
     public MemePattern(int[] coeffs)
     {
-        this.Coeffs = coeffs.Select(x => new IntWrapper(x)).ToArray();
+        this.Coeffs =IntWrapper.FromList(coeffs);
         CrossingOverPresentation = new()
         {
             Source = Coeffs,
@@ -46,6 +46,7 @@ public class MemePattern : IBehaviourPattern
         if (g.State.currentStage <= Coeffs[0].Value)
         {
             s.Behaviours[g.State.currentStage] = (Behavior)Coeffs[1].Value;
+            return;
         }
 
         //условие
@@ -56,8 +57,7 @@ public class MemePattern : IBehaviourPattern
         //сколько раз противник за выбранный промежуток [3] сыграл [4]
         var a = g.State.GetOpponentPlayerState(p).previousBehaviours
             .Skip(g.State.currentStage - Coeffs[0].Value)
-            .Where(x => (int)x == Coeffs[4].Value)
-            .Count();
+            .Count(x => (int)x == Coeffs[4].Value);
         if (
             (a >= Coeffs[3].Value) == lessOrGreater
         )

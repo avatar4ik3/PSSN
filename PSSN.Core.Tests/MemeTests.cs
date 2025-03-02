@@ -1,11 +1,31 @@
+using FluentAssertions;
 using PSSN.Core.Operators.MemeOperators;
 using PSSN.Core.Strategies;
 using PSSN.Core.Strategies.BehabiourPatterns;
 using Moq;
+using PSSN.Core.Containers;
+using PSSN.Core.Generators;
+using PSSN.Core.Round;
 namespace PSSN.Core.Tests;
 
 public class MemeTests
 {
+    [Fact]
+    public void CTT_vs_CTT_must_play_only_C()
+    {
+        var payoffs = new double[][] { new double[] { 4, 0 }, new double[] { 6, 1 } };
+        var _patternsContainer = new PatternsContainer();
+        var gameLength = 6;
+        var strats = ConditionalStrategyBuilder.RandomMemes(new Random(), 1, 2, gameLength, _patternsContainer).ToList();
+        var gameRunner = new SimpleGameRunner();
+
+        var results = gameRunner.Play(strats, payoffs, gameLength);
+
+        var isOk = results[strats[0], strats[1]].Values.All(x => Math.Abs(x - 4) < 1e-6);
+
+        Assert.True(isOk);
+    }
+
     [Fact]
     public void CTT_Conversion()
     {

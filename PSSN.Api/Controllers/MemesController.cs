@@ -57,7 +57,7 @@ public class MemesController : ControllerBase
     [Route("research-single")]
     public ActionResult ResearchSingleGeneration([FromBody] MemeSingleGeneratinoRequestModel model)
     {
-        _logger.LogDebug("use crossing over ? {value}",model.UseCrossingOver);
+        //_logger.LogDebug("use crossing over ? {value}",model.UseCrossingOver);
         Random random;
         if (model.RandomSeed is not null)
         {
@@ -86,7 +86,7 @@ public class MemesController : ControllerBase
         foreach (var _ in ..(strats.Length / 2 + strats.Length % 2))
         {
             var s1 = selectionOperator.Operate(strats);
-            var s2 = selectionOperator.Operate(strats);
+            var s2 = selectionOperator.Operate(strats.Where(x => x != s1));
             var toMutate = new[] { s1, s2 };
             if (model.UseCrossingOver is true)
             {

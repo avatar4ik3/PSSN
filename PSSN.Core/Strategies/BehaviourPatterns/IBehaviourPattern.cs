@@ -24,4 +24,10 @@ public class IntWrapper{
     {
         Value = value;
     }
+
+    public static IntWrapper[] FromList(int[] source)
+    {
+        return source.Select(x => new IntWrapper(x)).ToArray();
+    }
 }
+

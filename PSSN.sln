@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSN.Api", "PSSN.Api\PSSN.Api.csproj", "{B918FC6E-AA34-46EC-AC2C-8AF9049E9FC4}"
 EndProject
@@ -12,27 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSN.Api.Tests", "PSSN.Api.Tests\PSSN.Api.Tests.csproj", "{842CBA3E-5A29-4BE6-A8C6-DA07482DDBAB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSSN.Core.Tests", "PSSN.Core.Tests\PSSN.Core.Tests.csproj", "{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}"
-EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "PSSN.Web", "PSSN.Web\", "{183CE40D-454C-46A3-A5A9-5D6D0CD0CF6B}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_49932"
-		Debug.AspNetCompiler.PhysicalPath = "PSSN.Web\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49932\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_49932"
-		Release.AspNetCompiler.PhysicalPath = "PSSN.Web\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49932\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "49932"
-		SlnRelativePath = "PSSN.Web\"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,10 +39,6 @@ Global
 		{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3ED9D6E-CBAA-493A-9F54-10CF3616FD4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{183CE40D-454C-46A3-A5A9-5D6D0CD0CF6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{183CE40D-454C-46A3-A5A9-5D6D0CD0CF6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{183CE40D-454C-46A3-A5A9-5D6D0CD0CF6B}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{183CE40D-454C-46A3-A5A9-5D6D0CD0CF6B}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,7 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 			[4, 0],
 			[6, 1],
 		],
+		winThreshold: 0.9,
 	})
 	const [allstratsCO, setallstratsCO] = useState(null)
 	const [allstratsWCO,setallstratsWCO] = useState(null)
@@ -127,6 +128,8 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 						distr += step
 					) {
                         let currentLastStratCO = [];
+						let localLastWinCO = [];
+						let localLastWinWCO = [];
 						let currentLastStratWCO = [];
 						for (
 							let expIndex = 0;
@@ -135,24 +138,31 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 						) {
 							let payloadCO = await GetInitialStrategies(distr)
 							let payloadWCO = [...payloadCO]
+							let lastWinCO = {}
+							let lastWinWCO = {}
 							for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-								const { newStrats: newStratsCO } = await GetOneGeneration(
+								const { newStrats: newStratsCO , gameResult: gameResultCO} = await GetOneGeneration(
 									payloadCO,
 									true
 								)
-								const {newStrats : newStratsWCO} = await GetOneGeneration(
+								const {newStrats : newStratsWCO, gameResult: gameResultWCO} = await GetOneGeneration(
 									payloadWCO,
 									false
 								)
 								payloadCO = newStratsCO
 								payloadWCO = newStratsWCO
+								lastWinCO = gameResultCO
+								lastWinWCO = gameResultWCO
 							}
                             currentLastStratCO.push(payloadCO)
+							localLastWinCO.push(lastWinCO)
 							currentLastStratWCO.push(payloadWCO)
+							localLastWinWCO.push(lastWinWCO)
 						}
-						localstratsCO.push({strats:currentLastStratCO,ds: distr})
-						localstratsWCO.push({strats:currentLastStratWCO,ds: distr})
+						localstratsCO.push({strats:currentLastStratCO,win: localLastWinCO, ds: distr})
+						localstratsWCO.push({strats:currentLastStratWCO,win: localLastWinWCO,ds: distr})
 					}
+					console.error(localstratsCO)
 					setallstratsCO(localstratsCO)
 					setallstratsWCO(localstratsWCO)
 				}}
@@ -166,8 +176,8 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 					{ allstratsWCO, setallstratsWCO }
 				]}
 			/>
-            <PatternRation allStrats={allstratsCO} title={"С использованием кроссинг овера"} patternName={"CttPattern"}></PatternRation>
-			<PatternRation allStrats={allstratsWCO} title={"Без использования кроссинг овера"} patternName={"CttPattern"}></PatternRation>
+            <PatternRation allStrats={allstratsCO} title={"С использованием кроссинг овера"} patternName={"CttPattern"} winThreshold={commonRequestData.winThreshold}></PatternRation>
+			<PatternRation allStrats={allstratsWCO} title={"Без использования кроссинг овера"} patternName={"CttPattern"} winThreshold={commonRequestData.winThreshold}></PatternRation>
 		</div>
 	)
 }

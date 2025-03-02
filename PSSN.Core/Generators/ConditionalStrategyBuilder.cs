@@ -1,5 +1,6 @@
 using MathNet.Numerics;
 using PSSN.Core.Containers;
+using PSSN.Core.Round;
 using PSSN.Core.Strategies;
 using PSSN.Core.Strategies.BehabiourPatterns;
 
@@ -24,11 +25,17 @@ public class ConditionalStrategyBuilder
             var res_1_2 = new[] { random.Next(0, 2), random.Next(0, 2) };
             var res_3 = new[] { random.Next(1, res_0[0] + 1) };
             var res_4_5 = new[] { random.Next(0, 2), random.Next(0, 2) };
+            //return new[] { gameLength, 1, 1, 1, 1, 1 };
             return res_0.Concat(res_1_2).Concat(res_3).Concat(res_4_5).ToArray();
         }
         else
         {
-            return new[]{0,0,0,0,0};
+            return new[] { 1, 0, 0, 1, 0, 0};
+            //var setupLength = random.Next(0, gameLength);
+            //var setupBehaviour = random.Next(2);
+            //var conditionMemoryLength = random.Next(0, gameLength);
+            //var conditionalBehaviour = random.Next(2);
+            //return new[]{ setupLength, setupBehaviour, 0, conditionMemoryLength,0, conditionalBehaviour};
             var res = new[] { random.Next(0, gameLength) };
             return res.Concat(Enumerable.Range(0, 4).Select(x => random.Proc(0.5) ? 1 : 0)).ToArray();
         }
@@ -40,10 +47,12 @@ public class ConditionalStrategyBuilder
         for (int i = 0; i < count; ++i)
         {
             var type = random.Proc(distr) is true ? types[0] : types[1];
+            Console.WriteLine($"selected type for distr {distr} is {type}");
 
             var coeffs = buildRandomCoefs(random, type, gameLength);
 
-            var pattern = container.CreatePattern(type, coeffs);
+            var pattern = new MemePattern(coeffs);
+            //var pattern = container.CreatePattern(type, coeffs);
             yield return new ConditionalStrategy()
             {
                 Pattern = pattern,

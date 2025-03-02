@@ -7,19 +7,37 @@ const divStyle = {
 	margin: "0px auto",
 }
 
-const Graph = ({ series,xLabel,yLabel,title }) => {
+const Graph = ({ series, xLabel, yLabel, title, twoAxis, y1_label, y2_label, y1_max, y1_min, ...rest }) => {
+	let opts = {
+		series: series,
+		title_label_text: title,
+		legend_visible: true,
+		legend_template: "%average %icon %name",
+		xAxis_label_text: xLabel,
+		yAxis_label_text: yLabel,
+		type: 'scatter',
+	}
+
+	if (twoAxis) {
+		opts.yAxis = [{
+			id: 'y_left',
+			label_text: y1_label,
+			ticks: {
+				max: y1_max,
+				min: y1_min
+			}
+		},
+		{
+			id: 'y_right',
+			label_text: y2_label,
+			orientation: 'right'
+		}
+		]
+	}
 	return (
 		<div style={divStyle}>
 			<JSCharting
-				options={{
-					series: series,
-					title_label_text: title,
-					legend_visible: true,
-					legend_template: "%average %icon %name",
-					xAxis_label_text: xLabel,
-					yAxis_label_text: yLabel,
-					type: 'scatter',
-				}}
+				options={opts}
 			/>
 		</div>
 	)
