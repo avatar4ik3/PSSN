@@ -15,7 +15,7 @@ const Graph = ({ series, xLabel, yLabel, title, twoAxis, y1_label, y2_label, y1_
 		legend_template: "%average %icon %name",
 		xAxis_label_text: xLabel,
 		yAxis_label_text: yLabel,
-		type: 'scatter',
+		type: 'line',
 	}
 
 	if (twoAxis) {

@@ -8,6 +8,7 @@ import PatternRation from "./Graphs/CTTPatternRation"
 import JsonSaveComponent from "./Serialization/JsonSaveComponent"
 import JsonLoadComponent from "./Serialization/JsonLoadComponent"
 import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
+import ThresholdScoresByExperimentGraph from "./Graphs/ThresholdScoresByExperimentGraph"
 
 const MemeStatisticPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
@@ -23,6 +24,9 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 			[4, 0],
 			[6, 1],
 		],
+		GameProlongationChance: 0,
+		MaxGameProlongationLength: 10,
+		maxLengthThreshold: 0.95
 	})
 
 	const [allmapsCO, setallmapsCO] = useState(null)
@@ -58,10 +62,13 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				models: payload,
 				UseCrossingOver: co,
 				RandomSeed: seed,
+				GameProlongationChance: commonRequestData.GameProlongationChance,
+				MaxGameProlongationLength: commonRequestData.MaxGameProlongationLength
 			})
 			.then((r) => ({
 				gameResult: r.data.gameResult,
 				newStrats: r.data.newStrats,
+				gameLength: r.data.gameLength
 			}))
 	}
 
@@ -140,7 +147,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 						)
 
 						for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
-							const { gameResult, newStrats } = await GetOneGeneration(
+							const { gameResult, newStrats, gameLength } = await GetOneGeneration(
 								payload,
 								true,
 								commonRequestData.RandomSeed + i + expIndex
@@ -203,6 +210,18 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 			<AverageScoresByExperimentGraph
 				allMaps={allmapsNCO}
 				title={"Без применения оператора кроссинговера"}
+			/>
+			<ThresholdScoresByExperimentGraph
+				allMaps={allmapsCO}
+				populationSize={commonRequestData.PopulationSize}
+				threshold={commonRequestData.maxLengthThreshold}
+				title={"ЧЕТАТАМ ТРЕШХОЛД С применением оператора кроссинговера"}
+			/>
+			<ThresholdScoresByExperimentGraph
+				allMaps={allmapsNCO}
+				populationSize={commonRequestData.PopulationSize}
+				threshold={commonRequestData.maxLengthThreshold}
+				title={"ЧЕТАТАМ ТРЕШХОЛД Без применением оператора кроссинговера"}
 			/>
 			{/* <PatternRation allStrats={allstratsCO} title={"Доля CTT паттерна в последней популяции"} patternName={"CttPattern"}></PatternRation> */}
 			{/* <CToDGraph stratsByRounds={allstrats[0]}></CToDGraph> */}

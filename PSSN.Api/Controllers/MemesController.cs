@@ -67,6 +67,12 @@ public class MemesController : ControllerBase
         {
             random = new Random();
         }
+
+
+        var gameLength = model.GenCount + Enumerable.Range(0, model.MaxGameProlongationLength)
+            .Select(x => random.Proc(model.GameProlongationChance) ? 1 : 0).Sum();
+
+
         var strats = _mapper.Map<List<ConditionalStrategy>>(model.Models, opts => opts.AfterMap(afterFunction: (a, b) =>
         {
             foreach (var (dest, src) in b.Zip(model.Models))
@@ -74,7 +80,13 @@ public class MemesController : ControllerBase
                 dest.Pattern = _patternsContainer.CreatePattern(src.Pattern.Name!, src.Pattern.Coeffs!);
             }
         })).ToArray();
-        var tree = _gameRunner.Play(strats, model.Payofss, model.GenCount);
+
+        foreach (var strat in strats)
+        {
+            strat.Behaviours = Enumerable.Range(0, gameLength).ToDictionary(x => x, _ => Behavior.D);
+        }
+
+        var tree = _gameRunner.Play(strats, model.Payofss, gameLength);
 
         var selectionOperator = new SelectionOperator<ConditionalStrategy>(model.SelectionGroupSize, tree, random);
         var crossingOverOperator = new MemeCrossingOverOperator(strats, tree);
@@ -99,6 +111,7 @@ public class MemesController : ControllerBase
 
         var response = new MemeSingleGenerationResponseModel()
         {
+            GameLength = gameLength,
             GameResult = new MemeGenerationResponseModel()
             {
                 Strats = _mapper.Map<List<ConditionalStrategyModel>>(strats.Zip(Enumerable.Range(0, strats.Count())).Select(x =>
@@ -121,6 +134,7 @@ public class MemesController : ControllerBase
 
 public class MemeSingleGenerationResponseModel
 {
+    public int GameLength { get; set; }
     public List<ConditionalStrategyModel> NewStrats { get; set; }
     public MemeGenerationResponseModel GameResult { get; set; }
 }
@@ -140,6 +154,8 @@ public class MemeSingleGeneratinoRequestModel
 
     public bool UseCrossingOver { get; set; }
     public int? RandomSeed { get; set; }
+    public double GameProlongationChance { get; set; } = 0;
+    public int MaxGameProlongationLength { get; set; } = 10;
 }
 
 public class GenerateMemeRequestModel
