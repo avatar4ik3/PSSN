@@ -8,6 +8,8 @@ const divStyle = {
 }
 
 const Graph = ({ series, xLabel, yLabel, title, twoAxis, y1_label, y2_label, y1_max, y1_min, ...rest }) => {
+	console.error(series[0].points)
+
 	let opts = {
 		series: series,
 		title_label_text: title,

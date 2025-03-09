@@ -1,32 +1,20 @@
 import Graph from "../Graph"
 
 const ThresholdScoresByExperimentGraph = ({ allMaps, title, threshold, populationSize, ...rest }) => {
-    console.log("asdasdasd")
-    const population = Number(populationSize)
+	console.log("asdasdasd")
+	const population = Number(populationSize)
 	const thresh = Number(threshold)
 
-    function PrepareOne(oneMap) {
-        console.log(oneMap)
-		let gameLength = Object.entries(oneMap[0][0].value[0].value).length
-		//2*a11*((PopulationSize^2)/2) * GameLength * threshold
-
-		let maxScore = 4 * 2 * ((Math.pow(population,2)) / 2) * gameLength * thresh;
-        console.log("results for population are", oneMap, "game length is", gameLength, "max score", maxScore)
-		let scoresByStratId = oneMap.map((x) =>
-			x.map((xx) => {
-
-				return xx.value
-						.map((xxx) =>
-							Object.entries(xxx.value)
-								.map(([k, v]) => v)
-								.reduce((s1, s2) => s1 + s2)
-						)
-						.reduce((s1, s2) => s1 + s2)}
-				
-			).reduce((s1, s2) => s1 + s2) >= maxScore
+	function PrepareOne(oneMap) {
+		console.log(oneMap)
+		let lastGeneration = oneMap[oneMap.length - 1]
+		let lastGenerationGameLength = Object.entries(lastGeneration[0].value[0].value).length
+		let lastGenerationScores = lastGeneration.map((x) => 
+			x.value.map((xx) => Object.entries(xx.value).map(([k, v]) => v).reduce((s1, s2) => s1 + s2)
 		)
-		let totalScores = scoresByStratId.filter(x => x === true)
-		return totalScores.length 
+		.reduce((s1, s2) => s1 + s2)).reduce((s1, s2) => s1 + s2)
+		console.log("last generation", lastGeneration, "game length is", lastGenerationGameLength, "scores are", lastGenerationScores)
+		return lastGenerationScores / lastGenerationGameLength
 	}
 
 	function PrepareAll() {
