@@ -30,7 +30,6 @@ const MemesPage = ({ apiHost, ...rest }) => {
 	const [ctd, setctd] = useState(null)
 	const [rs, setrs] = useState(null)
 	function GetInitialStrategies() {
-		console.log(apiHost, "a")
 		return axios
 			.get(
 				apiHost +

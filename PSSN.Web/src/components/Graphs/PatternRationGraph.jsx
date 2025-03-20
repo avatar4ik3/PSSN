@@ -5,7 +5,7 @@ const PatternRationGraph = ({ strats, count, ...rest }) => {
 			if (strat.pattern.name === "CttPattern") {
 				return [1, strat.pattern.coeffs[1], 0, 1, 0, strat.pattern.coeffs[4]]
 			}
-			console.log("string repr", strat.pattern.coeffs.toString())
+			// console.log("string repr", strat.pattern.coeffs.toString())
 			return strat.pattern.coeffs
 		}
 

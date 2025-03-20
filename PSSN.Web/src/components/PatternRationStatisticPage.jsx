@@ -26,7 +26,6 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 	const [allstratsWCO,setallstratsWCO] = useState(null)
  
 	function GetInitialStrategies(distr) {
-		console.log(apiHost)
 		return axios
 			.get(
 				apiHost +
@@ -38,7 +37,7 @@ const PatternRationStatisticPage = ({ apiHost, ...rest }) => {
 					})
 			)
 			.then((response, err) => {
-				console.log(response.data)
+				// console.log(response.data)
 				return response.data
 			})
 	}

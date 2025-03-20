@@ -6,7 +6,7 @@ const JsonLoadComponent =
 		let fileReader = new FileReader()
 
 		fileReader.onload = (fe) => {
-			console.log("Uploaded file", fe.target.result)
+			// console.log("Uploaded file", fe.target.result)
 			let uploadedObject = JSON.parse(fe.target.result)
 			let entries = Object.entries(uploadedObject)
 			for (let i = 0; i < entries.length; i++) {

@@ -2,7 +2,7 @@ import Graph from "../Graph"
 
 const CtoDinResultGraph = ({ maps, ...rest }) => {
 	function Prepare(){
-        console.log(maps)
+        // console.log(maps)
 
         function valueToStrat(value){
             if(value === 4 || value == 0){

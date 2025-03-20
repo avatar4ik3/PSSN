@@ -2,7 +2,6 @@ import Graph from "../Graph"
 
 const PatternTypeGraph = ({ strats, ...rest }) => {
 	function Prepare() {
-		console.log("started ptg")
 		let series = []
 		function stratPatternName(strat) {
 			if (strat.pattern === null) {
@@ -18,7 +17,7 @@ const PatternTypeGraph = ({ strats, ...rest }) => {
 		}
 		let alldata = strats.flat(1)
 		let names = new Set(alldata.map(stratPatternName))
-		console.log(names)
+		// console.log(names)
 		series = [...names].map((seriesName) => {
 			return {
 				name: f(seriesName),
@@ -31,7 +30,7 @@ const PatternTypeGraph = ({ strats, ...rest }) => {
 				}),
 			}
 		})
-		console.log(series)
+		// console.log(series)
 		return series
 	}
 

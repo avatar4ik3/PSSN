@@ -125,11 +125,11 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 				name: stratName,
 				points: data.map((tree, index) => {
 					// console.log(tree)
-					console.log({
-						name: stratName,
-						tree: tree,
-						allNames: additionalStratsIds,
-					})
+					// console.log({
+					// 	name: stratName,
+					// 	tree: tree,
+					// 	allNames: additionalStratsIds,
+					// })
 					let a = tree.map.find((xx) => xx.key.name == stratName)
 					return {
 						x: index,
@@ -147,7 +147,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 			})
 		})
 
-		console.log(series)
+		// console.log(series)
 		return series
 	}
 
@@ -171,7 +171,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 			}
 		)
 		const flattenedStrats = [].concat.apply([], stratsLists)
-		console.log(flattenedStrats)
+		// console.log(flattenedStrats)
 		return flattenedStrats
 	}
 
@@ -239,20 +239,14 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 											type="text"
 											defaultValue={arr}
 											onChange={(e) => {
-												console.log("started event")
-												console.log(e.target.value)
 												if (e.target.value.endsWith(",") == false) {
-													console.log(arr, idx)
-													console.log("editing!")
 													const strats = e.target.value
 														.split(",")
 														.filter((s) => s && s != "" && s != " ")
 														.map((s) => s.replace(/\s/g, ""))
 
-													console.log(strats)
 													let allArs = commonRequestData.DeterminatedStrategies
 													allArs[idx] = strats
-													console.log(allArs)
 													setcommonRequestData({
 														...commonRequestData,
 														[k]: allArs,
@@ -331,9 +325,6 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 								)}
 								<button
 									onClick={(e) => {
-										console.log("clicked!")
-										console.log(commonRequestData.SettledDeterminatedStrategies)
-
 										commonRequestData.SettledDeterminatedStrategies.push({
 											strategy: "",
 											name: "",
@@ -382,7 +373,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					let payload = await requestInitialStrategies()
 					let detStrats = getStrategiesFromSettled(payload)
 					payload = payload.concat(detStrats)
-					console.log(payload)
+					// console.log(payload)
 					for (let i = 0; i < commonRequestData.GenerationsCount; ++i) {
 						const { gameResult, newStrats } = await getOneGeneration(payload)
 						for (const [idx, names] of enumerate(
@@ -403,7 +394,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 					for (const [idx, names] of enumerate(
 						commonRequestData.DeterminatedStrategies
 					)) {
-						console.log(againstCttData[idx])
+						// console.log(againstCttData[idx])
 						series.push(
 							await drawResultSeries(
 								againstCttData[idx],
@@ -413,7 +404,7 @@ const StepByStepUnDetPage = ({ apiHost, ...rest }) => {
 							)
 						)
 					}
-					console.log(series)
+					// console.log(series)
 					setcttChartData(series)
 					drawGraph(resultData)
 

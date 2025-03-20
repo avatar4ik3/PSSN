@@ -2,7 +2,6 @@ import Graph from "../Graph"
 
 const MemesScoresGraph = ({ maps, strats, ...rest }) => {
 	function Prepare() {
-		console.log("started ptg")
 		function toOneBase(strat) {
 			if (strat.pattern.name === "CttPattern") {
 				return [1, strat.pattern.coeffs[1], 0, 1, 0, strat.pattern.coeffs[4]]
@@ -45,7 +44,7 @@ const MemesScoresGraph = ({ maps, strats, ...rest }) => {
 
 		let alldata = realMap.flat(1).map((x) => x.key)
 		let names = new Set(alldata)
-		console.log(names)
+		// console.log(names)
 		series = [...names].map((seriesName) => {
 			return {
 				name: seriesName,
@@ -61,7 +60,7 @@ const MemesScoresGraph = ({ maps, strats, ...rest }) => {
 				}),
 			}
 		})
-		console.log(series)
+		// console.log(series)
 		return series
 	}
 

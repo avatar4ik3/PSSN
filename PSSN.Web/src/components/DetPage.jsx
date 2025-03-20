@@ -4,7 +4,6 @@ import Graph from "./Graph"
 import Array2DInput from "./Array2DInput"
 import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 const DetPage = ({ apiHost, ...rest }) => {
-	console.log(apiHost)
 	const [data, setdata] = useState(null)
 
 	const [request, setrequest] = useState({
@@ -31,7 +30,6 @@ const DetPage = ({ apiHost, ...rest }) => {
 	}
 
 	function GetSeries(lines) {
-		console.log(lines)
 		let names = []
 		let series = []
 		for (let [key, value] of Object.entries(lines[0].values)) {
@@ -48,7 +46,6 @@ const DetPage = ({ apiHost, ...rest }) => {
 		let result = []
 		for (let name of names) {
 			result.push({ name: name, points: series[name] })
-			console.log({ name: name, points: series[name] })
 		}
 		return result
 	}
@@ -101,13 +98,11 @@ const DetPage = ({ apiHost, ...rest }) => {
 									defaultValue={request.Strategies}
 									onChange={(e) => {
 										if (e.target.value.endsWith(",") === false) {
-											console.log("editing!")
 											const strats = e.target.value
 												.split(",")
 												.filter((s) => s && s != "" && s != " ")
 												.map((s) => s.replace(/\s/g, ""))
 
-											console.log(strats)
 											setrequest({ ...request, [k]: strats })
 										}
 									}}

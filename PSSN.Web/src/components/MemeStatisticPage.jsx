@@ -35,7 +35,6 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 	const [allstratsNCO, setallstratsNCO] = useState(null)
 
 	function GetInitialStrategies(seed) {
-		console.log(apiHost)
 		return axios
 			.get(
 				apiHost +
@@ -48,7 +47,7 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 					})
 			)
 			.then((response, err) => {
-				console.log(response.data)
+				// console.log(response.data)
 				return response.data
 			})
 	}
