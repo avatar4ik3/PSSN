@@ -3,12 +3,46 @@ import Array2DInput from "./Array2DInput"
 import axios from "axios"
 import qs from "qs"
 import AverageScoresByExperimentGraph from "./Graphs/AverageScoresByExperimentGraph"
-import CToDGraph from "./Graphs/CToDGraph"
-import PatternRation from "./Graphs/CTTPatternRation"
-import JsonSaveComponent from "./Serialization/JsonSaveComponent"
-import JsonLoadComponent from "./Serialization/JsonLoadComponent"
 import JsonSerializationComponent from "./Serialization/JsonSerializationComponent"
 import ThresholdScoresByExperimentGraph from "./Graphs/ThresholdScoresByExperimentGraph"
+
+
+const LastPopulationBreackdown = ({allstrats, allMaps, titleMaps, titleStrats, ...rest }) => {
+	const PrepareStrats = () => {
+		if(!allstrats) return <div></div>
+
+		let lastPopulations = allstrats
+			.map(
+				(x, i) => x[x.length - 1]
+				.map(xx => xx.pattern.coeffs.toString())
+				.sort()
+			)
+			console.error(titleStrats, lastPopulations)
+		return <div></div>
+	}
+
+	const PrepareMaps = () => {
+		if(!allMaps) return <div></div>
+		let lastPopuldation = (score) => allMaps
+		.map(
+			x => x[x.length - 1]
+			.map(xx => xx.value
+				.map(xxx => Object.entries(xxx.value).filter(xxxx => xxxx[1] === score).length)
+				.reduce((x,y) => x + y)
+			).reduce((x,y) => x + y) / 2
+		)
+		console.error(titleMaps, "CC", lastPopuldation(4), "DD", lastPopuldation(1))
+
+		return <div></div>
+	}
+
+	return <div>
+		<PrepareStrats/>
+		<PrepareMaps/>
+	</div>
+}
+
+
 
 const MemeStatisticPage = ({ apiHost, ...rest }) => {
 	const [commonRequestData, setcommonRequestData] = useState({
@@ -38,13 +72,13 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 		return axios
 			.get(
 				apiHost +
-					"/api/v1/memes/generate?" +
-					qs.stringify({
-						Count: commonRequestData.PopulationSize,
-						GenotypeSize: commonRequestData.GenotypeSize,
-						Distr: commonRequestData.StrategyTypeDistributionChance,
-						RandomSeed: seed,
-					})
+				"/api/v1/memes/generate?" +
+				qs.stringify({
+					Count: commonRequestData.PopulationSize,
+					GenotypeSize: commonRequestData.GenotypeSize,
+					Distr: commonRequestData.StrategyTypeDistributionChance,
+					RandomSeed: seed,
+				})
 			)
 			.then((response, err) => {
 				// console.log(response.data)
@@ -222,6 +256,18 @@ const MemeStatisticPage = ({ apiHost, ...rest }) => {
 				threshold={commonRequestData.maxLengthThreshold}
 				title={"ЧЕТАТАМ ТРЕШХОЛД Без применением оператора кроссинговера"}
 			/>
+			<LastPopulationBreackdown
+				allMaps={allmapsCO}
+				allstrats={allstratsCO}
+				titleStrats={"Разбор генов последних популяций исследования С КРОСИНГОВЕРОМ"}
+				titleMaps={"Количество уникальных пар последних популяций С КРОСИНГОВЕРОМ"}
+			/>
+			<LastPopulationBreackdown
+				allMaps={allmapsNCO}
+				allstrats={allstratsNCO}
+				titleStrats={"Разбор генов последних популяций исследования БЕЗ КРОСИНГОВЕРА"}
+				titleMaps={"Количество уникальных пар последних популяций БЕЗ КРОСИНГОВЕРА"}
+				/>
 			{/* <PatternRation allStrats={allstratsCO} title={"Доля CTT паттерна в последней популяции"} patternName={"CttPattern"}></PatternRation> */}
 			{/* <CToDGraph stratsByRounds={allstrats[0]}></CToDGraph> */}
 		</div>
